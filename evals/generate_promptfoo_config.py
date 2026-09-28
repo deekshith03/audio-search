@@ -81,66 +81,8 @@ def generate_config():
     with open("promptfooconfig.json", "w", encoding="utf-8") as f:
         json.dump(promptfoo_config, f, indent=2, ensure_ascii=False)
 
-    # Save clean standard YAML
-    yaml_lines = [
-        "description: 'Conversational Audio Hybrid Search: 18 Cross-File Evaluation Benchmark'",
-        "prompts:",
-        "  - '{{query}}'",
-        "providers:",
-        "  - id: python:evals/search_provider.py",
-        "    label: Hybrid (RRF)",
-        "    config:",
-        "      mode: hybrid",
-        "      top_k: 5",
-        "  - id: python:evals/search_provider.py",
-        "    label: Lexical (FTS)",
-        "    config:",
-        "      mode: lexical",
-        "      top_k: 5",
-        "  - id: python:evals/search_provider.py",
-        "    label: Dense (pgvector)",
-        "    config:",
-        "      mode: dense",
-        "      top_k: 5",
-        "tests:"
-    ]
-
-    for t in tests:
-        v = t["vars"]
-        yaml_lines.append(f"  - description: \"{t['description']}\"")
-        yaml_lines.append("    vars:")
-        yaml_lines.append(f"      query: {json.dumps(v['query'], ensure_ascii=False)}")
-        yaml_lines.append(f"      query_id: {v['query_id']}")
-        yaml_lines.append(f"      category: {v['category']}")
-        yaml_lines.append(f"      archetype: {v['archetype']}")
-        yaml_lines.append("      expected_moments:")
-        for em in v["expected_moments"]:
-            yaml_lines.append("        - file_id: " + em["file_id"])
-            yaml_lines.append(f"          turn_id: {em['turn_id']}")
-            yaml_lines.append(f"          speaker: {json.dumps(em['speaker'], ensure_ascii=False)}")
-            yaml_lines.append(f"          start_seconds: {em['start_seconds']}")
-            yaml_lines.append(f"          end_seconds: {em['end_seconds']}")
-            yaml_lines.append(f"          matched_text: {json.dumps(em['matched_text'], ensure_ascii=False)}")
-        
-        # Explicit empty list [] for empty hard_negatives to prevent YAML null coercion
-        if v["hard_negatives"]:
-            yaml_lines.append("      hard_negatives:")
-            for hn in v["hard_negatives"]:
-                yaml_lines.append("        - file_id: " + hn["file_id"])
-                yaml_lines.append(f"          turn_id: {hn['turn_id']}")
-                yaml_lines.append(f"          speaker: {json.dumps(hn['speaker'], ensure_ascii=False)}")
-                yaml_lines.append(f"          start_seconds: {hn['start_seconds']}")
-                yaml_lines.append(f"          end_seconds: {hn['end_seconds']}")
-                yaml_lines.append(f"          reason: {json.dumps(hn['reason'], ensure_ascii=False)}")
-        else:
-            yaml_lines.append("      hard_negatives: []")
-
-        yaml_lines.append("    assert:")
-        yaml_lines.append("      - type: python")
-        yaml_lines.append("        value: file://evals/assertions.py")
-
     with open("promptfooconfig.yaml", "w", encoding="utf-8") as f:
-        f.write("\n".join(yaml_lines) + "\n")
+        yaml.safe_dump(promptfoo_config, f, sort_keys=False, allow_unicode=True, width=120)
 
     # True Self-Validation: parse both files and assert complete equality
     with open("promptfooconfig.json", "r", encoding="utf-8") as fj:

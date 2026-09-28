@@ -33,6 +33,8 @@ Located in `dataset/audio/`. All files are standardized to **16,000 Hz, 1-channe
 | **`audio_06_constitutional_jurisprudence.wav`** | Constitutional Law & Jurisprudence | *Conversations with Tyler (Ep. 262)* | Tyler Cowen + Cass Sunstein | Faculty Office Studio | `08:26` (506.0s) |
 | **`audio_07_investigative_history_cafe.wav`** | Investigative Military History | *Lex Fridman #499* | Lex Fridman + Gary Gallagher | **Authentic Cafe Chatter (12 dB SNR)** | `08:54` (534.0s) |
 
+> **Provenance:** `dataset/metadata/sources.json` records each file's title, speakers, transcript source, output format and SHA-256; `python -m scripts.build_dataset --verify` checks the committed audio against it. The source audio URLs, clip offsets and audio licenses were not recorded during curation and are `null` there, so `--build` cannot yet recreate the clips from scratch.
+
 > **Acoustic Robustness (`audio_07`):** Mixed with real environmental cafe chatter (background voices, coffee cups, dishes, room walla) at a calibrated **12.0 dB SNR** from the DEMAND acoustic dataset (CC BY 4.0 license, preserved in `dataset/noise_profiles/authentic_cafe_chatter_16k.wav`).
 
 ---
@@ -44,6 +46,7 @@ Seven canonical JSON files (`audio_01_...json` to `audio_07_...json`) serve as t
 - **100% Strict Turn Continuity:** Adjacent turns have exact temporal equality ($t1_{\text{end}} == t2_{\text{start}}$) with **0.0s gaps and 0.0s overlaps**.
 - **Finite, Positive Durations:** All turns satisfy $t_{\text{start}} < t_{\text{end}}$ and are strictly bounded by physical audio duration.
 - **Role & Speaker Metadata:** Explicit mapping of speaker identity to conversational role.
+- **Timing provenance:** text is from each show's official transcript (link in `provenance`). Lex Fridman transcripts publish per-paragraph timestamps; the other four shows do not publish per-turn times, so those were assigned during curation without using Whisper or pyannote output, keeping the references independent of the Phase 2 pipeline.
 
 ---
 
@@ -78,7 +81,9 @@ Superficially similar language appears in multiple files, but only one file is t
 - `NM-05`: Why General Grant was labeled a butcher (`audio_07` true target vs. `audio_05` MMA combat violence distractor)
 - `NM-06`: Kantian dignity under state enforcement (`audio_06` true target vs. `audio_04` immigration distractor)
 
-> **Verbatim Substring Integrity:** 100% of all 28 target moments across all 18 queries are verified continuous verbatim substrings of their referenced turns.
+> **Verbatim Substring Integrity:** 100% of all 29 target moments across all 18 queries are verified continuous verbatim substrings of their referenced turns.
+
+> **Moment spans (tightened in Phase 2 remediation):** each relevant moment's `start_seconds` / `end_seconds` now cover only its `matched_text`, not the whole turn (turns run up to 180 s while matched text is often under 10% of the turn). Spans come from force-aligning the ground-truth turn text to the audio with wav2vec2 (`scripts/tighten_qrels.py`), independent of pipeline outputs; the original turn bounds are kept as `turn_start_seconds` / `turn_end_seconds`. As a QA check, 27 of 29 spans agree with the pipeline transcript's placement of the same words to within 1.3 s; the other two (both MF-01) are QA-matcher misses caused by ASR errors, not span errors: "pgvector" transcribed as "PG vector" (audio_02) and "OpenAI and Anthropic" as "OpenAnthropic" (audio_04). Hard-negative spans remain whole turns.
 
 ---
 
@@ -136,24 +141,12 @@ The evaluation setup was subjected to independent audits by **`@three-eyed-raven
 
 ## 7. Next Phases Roadmap
 
-With Phase 1 sealed, upcoming implementation proceeds as follows:
+Phase 2 was implemented with different choices than originally planned here (faster-whisper `large-v3-turbo` fp32 on CPU, no Silero VAD, no LUFS normalization); see `docs/PHASE_2_SPECIFICATION.md` for the as-built design and rationale.
 
 ```
-[Phase 2: ML Conversion Pipeline]
-• Audio Ingestion & Normalization (-23 LUFS, 16kHz mono)
-• Silero-VAD Speech Boundary Gating
-• faster-whisper ASR Transcription (local CTranslate2)
-• pyannote.audio Speaker Diarization (constrained k=2)
-• Word-to-Speaker Reconciliation -> Output: Canonical JSON
-
-[Phase 3: Database & Hybrid Search Engine]
-• PostgreSQL 16 + pgvector Schema Setup (GIN index + Vector Cosine index)
-• Local Dense Embedding Generation (all-MiniLM-L6-v2)
-• Dual Retrieval & Reciprocal Rank Fusion (RRF k=60)
-• Presentation Layer: Highlight matching keywords with <mark> tags
-
-[Phase 4: Benchmark Verification & Ablations]
-• Run ./evals/run_evals.sh --enforce-gate
-• Verify Micro Recall@5 >= 0.85 and Recall@1 >= 0.60
-• Verify Strict Ablation: Hybrid > Lexical AND Hybrid > Dense
+[Phase 2: Transcription Pipeline]                 → docs/PHASE_2_SPECIFICATION.md
+[Phase B: Streamlit upload + speaker labeling]
+[Phase C: Docker single-command setup]
+[Phase 3: PostgreSQL + pgvector hybrid search, RRF fusion, <mark> highlighting]
+[Phase 4: ./evals/run_evals.sh --enforce-gate (Recall@5 >= 0.85, Recall@1 >= 0.60, hybrid > lexical and dense)]
 ```

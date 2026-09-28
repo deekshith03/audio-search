@@ -117,6 +117,8 @@ PHASE 2: INDEXING, HYBRID SEARCH & RETRIEVAL             │
 
 ### Step 1: Preprocessing & Normalization
 - **Format:** Audio decoded and converted to `16,000 Hz`, single-channel `mono`, `16-bit PCM WAV`.
+> **As-built note:** the implemented Phase 2 pipeline differs from this blueprint: faster-whisper `large-v3-turbo` fp32 on CPU, pyannote `community-1`, no Silero VAD and no LUFS normalization. See `docs/PHASE_2_SPECIFICATION.md`.
+
 - **Loudness Normalization:** Standardized to `-23 LUFS` (or peak `-1.0 dBFS`) using `ffmpeg` filters (`loudnorm`) to avoid dropping quiet speakers.
 - **Voice Activity Detection (VAD):** Deep-learning VAD (Silero) strips leading/trailing silences and filters background murmur.
 

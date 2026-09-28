@@ -1,17 +1,16 @@
 [project]
 name = "audio-search"
 version = "0.1.0"
-description = "Conversational Audio Hybrid Search with pgvector, Promptfoo evals, and MLX"
+description = "Conversational Audio Hybrid Search with pgvector and Promptfoo evals"
 requires-python = ">=3.12"
 dependencies = [
+    "faster-whisper>=1.2.1",
     "fastapi>=0.110.0",
     "huggingface-hub>=0.23.0",
     "jiwer>=3.0.0",
-    "mlx>=0.29.0",
-    "mlx-whisper>=0.4.0",
     "pgvector>=0.2.0",
     "psycopg2-binary>=2.9.0",
-    "pyannote-audio>=3.1.0",
+    "pyannote-audio>=4.0.0,<5",
     "pyannote-metrics>=3.2.0",
     "pyyaml>=6.0",
     "sentence-transformers>=2.6.0",
@@ -20,7 +19,7 @@ dependencies = [
     "torchaudio>=2.2.0",
     "uvicorn>=0.28.0",
     "whisper-normalizer>=0.1.15",
-    "whisperx>=3.1.0",
+    "whisperx>=3.4.2,<3.5",
 ]
 
 [tool.uv]

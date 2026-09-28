@@ -1,8 +1,29 @@
 {
   "file_id": "audio_01_lex_dhh_omarchy.wav",
   "diarizer_model": "pyannote/speaker-diarization-community-1",
-  "runtime_seconds": 44.71,
+  "config": {
+    "stage": "diarize",
+    "model": "pyannote/speaker-diarization-community-1",
+    "pyannote_version": "4.0.7",
+    "device": "cpu",
+    "min_speakers": 2,
+    "max_speakers": 2,
+    "refinement": {
+      "centroid_min_segment_seconds": 6.0,
+      "trigger_centroid_similarity": 0.35,
+      "candidate_min_seconds": 0.5,
+      "candidate_max_seconds": 5.0,
+      "reassign_margin": 0.1
+    }
+  },
+  "cache_key": "f842f9fd23b289d42aac8b3a4fa9577580810f2613cceb4d7b67d72856cf62ac",
+  "runtime_seconds": 255.92,
   "total_intervals": 96,
+  "refinement": {
+    "applied": false,
+    "centroid_similarity": 0.0803,
+    "reassigned_segments": 0
+  },
   "intervals": [
     {
       "speaker": "SPEAKER_00",

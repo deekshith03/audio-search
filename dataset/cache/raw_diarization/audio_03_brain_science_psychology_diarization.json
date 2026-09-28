@@ -1,8 +1,29 @@
 {
   "file_id": "audio_03_brain_science_psychology.wav",
   "diarizer_model": "pyannote/speaker-diarization-community-1",
-  "runtime_seconds": 38.78,
+  "config": {
+    "stage": "diarize",
+    "model": "pyannote/speaker-diarization-community-1",
+    "pyannote_version": "4.0.7",
+    "device": "cpu",
+    "min_speakers": 2,
+    "max_speakers": 2,
+    "refinement": {
+      "centroid_min_segment_seconds": 6.0,
+      "trigger_centroid_similarity": 0.35,
+      "candidate_min_seconds": 0.5,
+      "candidate_max_seconds": 5.0,
+      "reassign_margin": 0.1
+    }
+  },
+  "cache_key": "7c230c0055d47b5a8e8ca670ff6a59f3cf8a7d1fe011aa2f26c264d9a3838261",
+  "runtime_seconds": 245.5,
   "total_intervals": 92,
+  "refinement": {
+    "applied": false,
+    "centroid_similarity": 0.102,
+    "reassigned_segments": 0
+  },
   "intervals": [
     {
       "speaker": "SPEAKER_00",

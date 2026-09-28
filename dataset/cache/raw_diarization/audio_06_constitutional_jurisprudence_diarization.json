@@ -1,8 +1,29 @@
 {
   "file_id": "audio_06_constitutional_jurisprudence.wav",
   "diarizer_model": "pyannote/speaker-diarization-community-1",
-  "runtime_seconds": 37.15,
+  "config": {
+    "stage": "diarize",
+    "model": "pyannote/speaker-diarization-community-1",
+    "pyannote_version": "4.0.7",
+    "device": "cpu",
+    "min_speakers": 2,
+    "max_speakers": 2,
+    "refinement": {
+      "centroid_min_segment_seconds": 6.0,
+      "trigger_centroid_similarity": 0.35,
+      "candidate_min_seconds": 0.5,
+      "candidate_max_seconds": 5.0,
+      "reassign_margin": 0.1
+    }
+  },
+  "cache_key": "3c08f41e4c9e391eb9d8cbd114d4158a0fc4aa5e1147a0d5fb3d2b8cdf7b4101",
+  "runtime_seconds": 227.12,
   "total_intervals": 47,
+  "refinement": {
+    "applied": false,
+    "centroid_similarity": 0.3446,
+    "reassigned_segments": 0
+  },
   "intervals": [
     {
       "speaker": "SPEAKER_01",

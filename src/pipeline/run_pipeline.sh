@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# Sequential Multi-Process Pipeline Runner on Apple Silicon
-# Runs each stage as an isolated Python process to completely release Metal GPU / PyTorch memory between stages.
+# Sequential pipeline runner. Each stage runs as its own Python process with its own cache,
+# so a failed or changed stage can be re-run in isolation.
+#
+# Usage: src/pipeline/run_pipeline.sh [--file dataset/audio/x.wav ...] [--force]
+# Arguments are forwarded to every stage. Stage 4 (evaluation) runs only for files with ground truth.
 
 set -euo pipefail
 
@@ -8,10 +11,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 cd "${ROOT_DIR}"
 
-# Ensure .venv is used
-export PATH="${ROOT_DIR}/.venv/bin:$PATH"
+if [ -x "${ROOT_DIR}/.venv/bin/python" ]; then
+  PYTHON="${ROOT_DIR}/.venv/bin/python"
+else
+  PYTHON="python3"
+fi
 
-# Load .env file if present
 if [ -f "${ROOT_DIR}/.env" ]; then
   set -a
   source "${ROOT_DIR}/.env"
@@ -24,31 +29,17 @@ if [ -z "${HF_TOKEN:-}" ] && [ ! -f "$HOME/.cache/huggingface/token" ]; then
   exit 1
 fi
 
-echo "=========================================================================="
-echo "  STAGE 1A: Batch ASR Transcription on Apple Metal GPU (mlx-whisper)"
-echo "=========================================================================="
-python3 -m src.pipeline.asr
+run_stage() {
+  local title="$1"; shift
+  echo ""
+  echo "=========================================================================="
+  echo "  ${title}"
+  echo "=========================================================================="
+  "${PYTHON}" -m "$@"
+}
 
-echo ""
-echo "=========================================================================="
-echo "  STAGE 1B: Word-Level Forced Alignment (wav2vec2 / WhisperX)"
-echo "=========================================================================="
-python3 -m src.pipeline.align
-
-echo ""
-echo "=========================================================================="
-echo "  STAGE 2: Speaker Diarization via PyAnnote Community-1 (MPS / CPU)"
-echo "=========================================================================="
-python3 -m src.pipeline.diarize
-
-echo ""
-echo "=========================================================================="
-echo "  STAGE 3: Deterministic Turn Reconciliation & Canonical Output Emission"
-echo "=========================================================================="
-python3 -m src.pipeline.reconcile
-
-echo ""
-echo "=========================================================================="
-echo "  STAGE 4: Quality Evaluation (WER, DER 0ms/250ms & Word Speaker Accuracy)"
-echo "=========================================================================="
-python3 -m src.pipeline.evaluate_pipeline
+run_stage "STAGE 1A: ASR (faster-whisper large-v3-turbo, fp32, CPU)" src.pipeline.asr "$@"
+run_stage "STAGE 1B: Word-Level Forced Alignment (wav2vec2, CPU)" src.pipeline.align "$@"
+run_stage "STAGE 2: Speaker Diarization (pyannote community-1, k=2, CPU)" src.pipeline.diarize "$@"
+run_stage "STAGE 3: Word-to-Speaker Turn Reconciliation" src.pipeline.reconcile "$@"
+run_stage "STAGE 4: Quality Evaluation (WER, DER raw/refined/reconciled, Word Speaker Accuracy)" src.pipeline.evaluate_pipeline "$@"

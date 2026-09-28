@@ -1,8 +1,29 @@
 {
   "file_id": "audio_02_postgres_fm_pgvector.wav",
   "diarizer_model": "pyannote/speaker-diarization-community-1",
-  "runtime_seconds": 41.18,
+  "config": {
+    "stage": "diarize",
+    "model": "pyannote/speaker-diarization-community-1",
+    "pyannote_version": "4.0.7",
+    "device": "cpu",
+    "min_speakers": 2,
+    "max_speakers": 2,
+    "refinement": {
+      "centroid_min_segment_seconds": 6.0,
+      "trigger_centroid_similarity": 0.35,
+      "candidate_min_seconds": 0.5,
+      "candidate_max_seconds": 5.0,
+      "reassign_margin": 0.1
+    }
+  },
+  "cache_key": "a655415b853d621c76425be3f52b9790eb30feb77962eb776c6f25b0d9bdef90",
+  "runtime_seconds": 252.46,
   "total_intervals": 47,
+  "refinement": {
+    "applied": false,
+    "centroid_similarity": 0.1797,
+    "reassigned_segments": 0
+  },
   "intervals": [
     {
       "speaker": "SPEAKER_00",

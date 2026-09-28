@@ -42,9 +42,12 @@
             "file_id": "audio_01_lex_dhh_omarchy.wav",
             "turn_id": 5,
             "speaker": "Lex Fridman",
-            "start_seconds": 116.0,
-            "end_seconds": 138.0,
-            "matched_text": "Omarchy is a highly opinionated Arch Linux-based desktop distribution centered on the Hyprland Wayland tiling compositor."
+            "start_seconds": 119.0,
+            "end_seconds": 125.94,
+            "matched_text": "Omarchy is a highly opinionated Arch Linux-based desktop distribution centered on the Hyprland Wayland tiling compositor.",
+            "turn_start_seconds": 116.0,
+            "turn_end_seconds": 138.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -68,9 +71,12 @@
             "file_id": "audio_02_postgres_fm_pgvector.wav",
             "turn_id": 12,
             "speaker": "Jonathan",
-            "start_seconds": 442.2,
-            "end_seconds": 533.8,
-            "matched_text": "storing the data within the index, that you have to fit your index value for a single row within an 8 kilobyte limit within the page."
+            "start_seconds": 463.61,
+            "end_seconds": 472.19,
+            "matched_text": "storing the data within the index, that you have to fit your index value for a single row within an 8 kilobyte limit within the page.",
+            "turn_start_seconds": 442.2,
+            "turn_end_seconds": 533.8,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -94,9 +100,12 @@
             "file_id": "audio_03_brain_science_psychology.wav",
             "turn_id": 19,
             "speaker": "Dr. Mireille B. Reece",
-            "start_seconds": 469.9,
+            "start_seconds": 495.73,
             "end_seconds": 503.7,
-            "matched_text": "So obviously she's going to struggle, in a certain way, if she continues to think that that's what it's used for."
+            "matched_text": "So obviously she's going to struggle, in a certain way, if she continues to think that that's what it's used for.",
+            "turn_start_seconds": 469.9,
+            "turn_end_seconds": 503.7,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -120,9 +129,12 @@
             "file_id": "audio_04_macroeconomics_semiconductor.wav",
             "turn_id": 11,
             "speaker": "Dwarkesh Patel",
-            "start_seconds": 435.5,
-            "end_seconds": 454.5,
-            "matched_text": "in order to make a gigawatt of, I think, Vera Rubins, you need 55,000 N3 wafers, 6K N5 wafers, and 170K DRAM wafers."
+            "start_seconds": 440.95,
+            "end_seconds": 452.4,
+            "matched_text": "in order to make a gigawatt of, I think, Vera Rubins, you need 55,000 N3 wafers, 6K N5 wafers, and 170K DRAM wafers.",
+            "turn_start_seconds": 435.5,
+            "turn_end_seconds": 454.5,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -146,9 +158,12 @@
             "file_id": "audio_05_sports_tactics_debate.wav",
             "turn_id": 32,
             "speaker": "Khabib Nurmagomedov",
-            "start_seconds": 487.0,
-            "end_seconds": 532.0,
-            "matched_text": "Hitler stood behind Schmeling, and Roosevelt stood behind Louis."
+            "start_seconds": 500.05,
+            "end_seconds": 503.5,
+            "matched_text": "Hitler stood behind Schmeling, and Roosevelt stood behind Louis.",
+            "turn_start_seconds": 487.0,
+            "turn_end_seconds": 532.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -173,8 +188,11 @@
             "turn_id": 20,
             "speaker": "Cass Sunstein",
             "start_seconds": 460.5,
-            "end_seconds": 506.0,
-            "matched_text": "There’s Kantian liberalism, which says people should be treated as ends, not as means, and that everyone has dignity. That’s bedrock."
+            "end_seconds": 471.15,
+            "matched_text": "There’s Kantian liberalism, which says people should be treated as ends, not as means, and that everyone has dignity. That’s bedrock.",
+            "turn_start_seconds": 460.5,
+            "turn_end_seconds": 506.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -198,25 +216,34 @@
             "file_id": "audio_01_lex_dhh_omarchy.wav",
             "turn_id": 10,
             "speaker": "DHH",
-            "start_seconds": 211.0,
-            "end_seconds": 266.0,
-            "matched_text": "I could look at any feature in Windows, on Mac, on other Linux systems and say, “I want that,” and the agents would deliver."
+            "start_seconds": 236.86,
+            "end_seconds": 247.87,
+            "matched_text": "I could look at any feature in Windows, on Mac, on other Linux systems and say, “I want that,” and the agents would deliver.",
+            "turn_start_seconds": 211.0,
+            "turn_end_seconds": 266.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_02_postgres_fm_pgvector.wav",
             "turn_id": 10,
             "speaker": "Jonathan",
-            "start_seconds": 247.0,
-            "end_seconds": 427.2,
-            "matched_text": "The pgvector project started in 2021. Andrew had the foresight to see that a lot of data was going to be generated around machine learning and AI systems. And Postgres didn't really have support for the types of vector lookups that we needed."
+            "start_seconds": 277.35,
+            "end_seconds": 291.75,
+            "matched_text": "The pgvector project started in 2021. Andrew had the foresight to see that a lot of data was going to be generated around machine learning and AI systems. And Postgres didn't really have support for the types of vector lookups that we needed.",
+            "turn_start_seconds": 247.0,
+            "turn_end_seconds": 427.2,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_04_macroeconomics_semiconductor.wav",
             "turn_id": 4,
             "speaker": "Dylan Patel",
-            "start_seconds": 37.0,
-            "end_seconds": 203.7,
-            "matched_text": "most of GDP growth in America was just AI infrastructure. As we look towards this year, about a third of the compute coming online is for the labs, for OpenAI and Anthropic."
+            "start_seconds": 41.24,
+            "end_seconds": 52.46,
+            "matched_text": "most of GDP growth in America was just AI infrastructure. As we look towards this year, about a third of the compute coming online is for the labs, for OpenAI and Anthropic.",
+            "turn_start_seconds": 37.0,
+            "turn_end_seconds": 203.7,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -240,33 +267,45 @@
             "file_id": "audio_01_lex_dhh_omarchy.wav",
             "turn_id": 12,
             "speaker": "Lex Fridman",
-            "start_seconds": 273.0,
+            "start_seconds": 295.24,
             "end_seconds": 310.0,
-            "matched_text": "and I find myself truly overwhelmed with the multitasking on the verge of almost burnt out. Super excited about so many things, but ultimately looking back, you want to focus on one thing and really ship."
+            "matched_text": "and I find myself truly overwhelmed with the multitasking on the verge of almost burnt out. Super excited about so many things, but ultimately looking back, you want to focus on one thing and really ship.",
+            "turn_start_seconds": 273.0,
+            "turn_end_seconds": 310.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_03_brain_science_psychology.wav",
             "turn_id": 17,
             "speaker": "Dr. Mireille B. Reece",
             "start_seconds": 402.0,
-            "end_seconds": 466.5,
-            "matched_text": "Right, and I think that's really a significant lie, when we do struggle... That we're like \"Oh my word, nobody's ever struggled like this. I'm all alone in this, and now I can't find a way out.\""
+            "end_seconds": 416.55,
+            "matched_text": "Right, and I think that's really a significant lie, when we do struggle... That we're like \"Oh my word, nobody's ever struggled like this. I'm all alone in this, and now I can't find a way out.\"",
+            "turn_start_seconds": 402.0,
+            "turn_end_seconds": 467.5,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_05_sports_tactics_debate.wav",
             "turn_id": 4,
             "speaker": "Khabib Nurmagomedov",
-            "start_seconds": 5.0,
-            "end_seconds": 69.0,
-            "matched_text": "Yes, I had a coach for a father, and how many, how many trainers have kids who compete but aren’t successful? And then when I went to the big leagues, you know, I had already fought."
+            "start_seconds": 11.52,
+            "end_seconds": 25.31,
+            "matched_text": "Yes, I had a coach for a father, and how many, how many trainers have kids who compete but aren’t successful? And then when I went to the big leagues, you know, I had already fought.",
+            "turn_start_seconds": 5.0,
+            "turn_end_seconds": 69.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_07_investigative_history_cafe.wav",
             "turn_id": 2,
             "speaker": "Gary Gallagher",
             "start_seconds": 24.0,
-            "end_seconds": 67.0,
-            "matched_text": "So he’d known a lot of failure, he’d known a lot of setbacks, and his wartime record"
+            "end_seconds": 29.12,
+            "matched_text": "So he’d known a lot of failure, he’d known a lot of setbacks, and his wartime record",
+            "turn_start_seconds": 24.0,
+            "turn_end_seconds": 67.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -290,17 +329,23 @@
             "file_id": "audio_02_postgres_fm_pgvector.wav",
             "turn_id": 10,
             "speaker": "Jonathan",
-            "start_seconds": 247.0,
-            "end_seconds": 427.2,
-            "matched_text": "To do an exact nearest neighbor search, as they call it, or the k nearest neighbor, you have to compare against every single vector that you store in a database. So you have a million vectors that are 1,500 dimensions, you're doing a million times 1,500 computations on them. And that's really expensive."
+            "start_seconds": 403.98,
+            "end_seconds": 422.44,
+            "matched_text": "To do an exact nearest neighbor search, as they call it, or the k nearest neighbor, you have to compare against every single vector that you store in a database. So you have a million vectors that are 1,500 dimensions, you're doing a million times 1,500 computations on them. And that's really expensive.",
+            "turn_start_seconds": 247.0,
+            "turn_end_seconds": 427.2,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_04_macroeconomics_semiconductor.wav",
             "turn_id": 4,
             "speaker": "Dylan Patel",
-            "start_seconds": 37.0,
-            "end_seconds": 203.7,
-            "matched_text": "The base cost of compute tends to be around $10 or $13 or $15 million per megawatt."
+            "start_seconds": 149.15,
+            "end_seconds": 156.51,
+            "matched_text": "The base cost of compute tends to be around $10 or $13 or $15 million per megawatt.",
+            "turn_start_seconds": 37.0,
+            "turn_end_seconds": 203.7,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -324,17 +369,23 @@
             "file_id": "audio_05_sports_tactics_debate.wav",
             "turn_id": 32,
             "speaker": "Khabib Nurmagomedov",
-            "start_seconds": 487.0,
-            "end_seconds": 532.0,
-            "matched_text": "Hitler stood behind Schmeling, and Roosevelt stood behind Louis. For those who don’t know this story, I just watched it recently."
+            "start_seconds": 500.05,
+            "end_seconds": 506.92,
+            "matched_text": "Hitler stood behind Schmeling, and Roosevelt stood behind Louis. For those who don’t know this story, I just watched it recently.",
+            "turn_start_seconds": 487.0,
+            "turn_end_seconds": 532.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_07_investigative_history_cafe.wav",
             "turn_id": 4,
             "speaker": "Gary Gallagher",
-            "start_seconds": 76.0,
-            "end_seconds": 121.0,
-            "matched_text": "He was the perfect person to end up heading the Union armies, and he and Lincoln– And Lincoln realized that, and he proved indispensable."
+            "start_seconds": 81.42,
+            "end_seconds": 90.75,
+            "matched_text": "He was the perfect person to end up heading the Union armies, and he and Lincoln– And Lincoln realized that, and he proved indispensable.",
+            "turn_start_seconds": 76.0,
+            "turn_end_seconds": 121.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -360,15 +411,21 @@
             "speaker": "DHH",
             "start_seconds": 88.0,
             "end_seconds": 116.0,
-            "matched_text": "Why isn’t American GDP running at 12% year over year? First of all, give it a minute. It hasn’t even been a year, goddammit. But second of all, I feel on my own account, I have actually brought the pudding. Omarchy Quattro launched on Friday. It’s been downloaded by tens of thousands of people. And they like it. They like it a lot."
+            "matched_text": "Why isn’t American GDP running at 12% year over year? First of all, give it a minute. It hasn’t even been a year, goddammit. But second of all, I feel on my own account, I have actually brought the pudding. Omarchy Quattro launched on Friday. It’s been downloaded by tens of thousands of people. And they like it. They like it a lot.",
+            "turn_start_seconds": 88.0,
+            "turn_end_seconds": 116.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_04_macroeconomics_semiconductor.wav",
             "turn_id": 4,
             "speaker": "Dylan Patel",
             "start_seconds": 37.0,
-            "end_seconds": 203.7,
-            "matched_text": "When we go back to last year, even at the end of the year, most of GDP growth in America was just AI infrastructure."
+            "end_seconds": 44.58,
+            "matched_text": "When we go back to last year, even at the end of the year, most of GDP growth in America was just AI infrastructure.",
+            "turn_start_seconds": 37.0,
+            "turn_end_seconds": 203.7,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -392,17 +449,23 @@
             "file_id": "audio_06_constitutional_jurisprudence.wav",
             "turn_id": 19,
             "speaker": "Tyler Cowen",
-            "start_seconds": 412.2,
-            "end_seconds": 460.5,
-            "matched_text": "how immigration restrictions are enforced, I sometimes worry that liberal societies ultimately, at some margin, have to use illiberal means"
+            "start_seconds": 413.12,
+            "end_seconds": 421.49,
+            "matched_text": "how immigration restrictions are enforced, I sometimes worry that liberal societies ultimately, at some margin, have to use illiberal means",
+            "turn_start_seconds": 412.2,
+            "turn_end_seconds": 460.5,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_03_brain_science_psychology.wav",
             "turn_id": 5,
             "speaker": "Dr. Mireille B. Reece",
-            "start_seconds": 70.2,
+            "start_seconds": 127.55,
             "end_seconds": 137.5,
-            "matched_text": "Think about it within the context of the prison system - why is it that the punishment for prisoners when they don't fall in line is isolation?"
+            "matched_text": "Think about it within the context of the prison system - why is it that the punishment for prisoners when they don't fall in line is isolation?",
+            "turn_start_seconds": 70.2,
+            "turn_end_seconds": 137.5,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": []
@@ -426,9 +489,12 @@
             "file_id": "audio_02_postgres_fm_pgvector.wav",
             "turn_id": 12,
             "speaker": "Jonathan",
-            "start_seconds": 442.2,
-            "end_seconds": 533.8,
-            "matched_text": "And I'll tell you, the first time I used pgvector, and I was playing around with it, and I was not getting the results I expected, at first I'm like, oh, this is broken, this doesn't work, this doesn't make sense."
+            "start_seconds": 514.99,
+            "end_seconds": 523.42,
+            "matched_text": "And I'll tell you, the first time I used pgvector, and I was playing around with it, and I was not getting the results I expected, at first I'm like, oh, this is broken, this doesn't work, this doesn't make sense.",
+            "turn_start_seconds": 442.2,
+            "turn_end_seconds": 533.8,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": [
@@ -461,9 +527,12 @@
             "file_id": "audio_03_brain_science_psychology.wav",
             "turn_id": 15,
             "speaker": "Dr. Mireille B. Reece",
-            "start_seconds": 267.7,
-            "end_seconds": 360.1,
-            "matched_text": "Struggle - an example I think of is like my brother and I; so I'm a twin, and when we were in elementary school, he was diagnosed with both ADHD and a learning disability. In school, he just struggled all the time."
+            "start_seconds": 283.59,
+            "end_seconds": 300.35,
+            "matched_text": "Struggle - an example I think of is like my brother and I; so I'm a twin, and when we were in elementary school, he was diagnosed with both ADHD and a learning disability. In school, he just struggled all the time.",
+            "turn_start_seconds": 267.7,
+            "turn_end_seconds": 360.1,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": [
@@ -498,7 +567,10 @@
             "speaker": "Khabib Nurmagomedov",
             "start_seconds": 128.0,
             "end_seconds": 139.0,
-            "matched_text": "I was, let’s say, like squeezing this energy out of them, and I was getting better and better minute by minute."
+            "matched_text": "I was, let’s say, like squeezing this energy out of them, and I was getting better and better minute by minute.",
+            "turn_start_seconds": 128.0,
+            "turn_end_seconds": 139.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": [
@@ -531,9 +603,12 @@
             "file_id": "audio_02_postgres_fm_pgvector.wav",
             "turn_id": 13,
             "speaker": "Michael",
-            "start_seconds": 533.8,
-            "end_seconds": 559.0,
-            "matched_text": "you can run a database without adding any indexes and you can run any query you want and get the results back. It's just faster to use an index. Your query result will not change as a result of you having an index."
+            "start_seconds": 536.62,
+            "end_seconds": 549.24,
+            "matched_text": "you can run a database without adding any indexes and you can run any query you want and get the results back. It's just faster to use an index. Your query result will not change as a result of you having an index.",
+            "turn_start_seconds": 533.8,
+            "turn_end_seconds": 559.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": [
@@ -566,17 +641,23 @@
             "file_id": "audio_07_investigative_history_cafe.wav",
             "turn_id": 4,
             "speaker": "Gary Gallagher",
-            "start_seconds": 76.0,
-            "end_seconds": 121.0,
-            "matched_text": "he has this reputation as a butcher, Grant the Butcher. That’s something that former Confederates and some Democrats in the North fastened on him. His preferred way of fighting wasn’t just kind of slug it out."
+            "start_seconds": 92.34,
+            "end_seconds": 103.34,
+            "matched_text": "he has this reputation as a butcher, Grant the Butcher. That’s something that former Confederates and some Democrats in the North fastened on him. His preferred way of fighting wasn’t just kind of slug it out.",
+            "turn_start_seconds": 76.0,
+            "turn_end_seconds": 121.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_07_investigative_history_cafe.wav",
             "turn_id": 5,
             "speaker": "Gary Gallagher",
-            "start_seconds": 121.0,
-            "end_seconds": 168.0,
-            "matched_text": "Grant’s casualties get high when he runs into Robert E. Lee, just like everybody else. So the butcher tag is completely unfair about Grant."
+            "start_seconds": 144.62,
+            "end_seconds": 152.81,
+            "matched_text": "Grant’s casualties get high when he runs into Robert E. Lee, just like everybody else. So the butcher tag is completely unfair about Grant.",
+            "turn_start_seconds": 121.0,
+            "turn_end_seconds": 168.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           },
           {
             "file_id": "audio_07_investigative_history_cafe.wav",
@@ -584,7 +665,10 @@
             "speaker": "Gary Gallagher",
             "start_seconds": 232.0,
             "end_seconds": 233.0,
-            "matched_text": "It is from the Overland Campaign"
+            "matched_text": "It is from the Overland Campaign",
+            "turn_start_seconds": 232.0,
+            "turn_end_seconds": 233.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": [
@@ -618,8 +702,11 @@
             "turn_id": 20,
             "speaker": "Cass Sunstein",
             "start_seconds": 460.5,
-            "end_seconds": 506.0,
-            "matched_text": "There’s Kantian liberalism, which says people should be treated as ends, not as means, and that everyone has dignity. That’s bedrock. What it specifically entails for immigration policy is to be determined"
+            "end_seconds": 477.04,
+            "matched_text": "There’s Kantian liberalism, which says people should be treated as ends, not as means, and that everyone has dignity. That’s bedrock. What it specifically entails for immigration policy is to be determined",
+            "turn_start_seconds": 460.5,
+            "turn_end_seconds": 506.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
         "hard_negatives": [

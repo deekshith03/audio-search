@@ -1,0 +1,163 @@
+{
+  "description": "Provenance and build recipe for the golden audio set. Fields set to null were not recorded during Phase 1 curation and must be filled in before scripts/build_dataset.py can rebuild that file.",
+  "normalization": {
+    "sample_rate": 16000,
+    "channels": 1,
+    "subtype": "PCM_16",
+    "tool": "ffmpeg"
+  },
+  "files": [
+    {
+      "file_id": "audio_01_lex_dhh_omarchy.wav",
+      "title": "Lex Fridman Podcast #501 with DHH - Building Omarchy Linux Distro",
+      "speakers": [
+        "Lex Fridman",
+        "DHH"
+      ],
+      "transcript_source": "lexfridman.com/dhh-2-transcript",
+      "source_audio_url": null,
+      "source_audio_license": null,
+      "clip_start_seconds": null,
+      "clip_end_seconds": null,
+      "noise_mix": null,
+      "output": {
+        "sample_rate": 16000,
+        "channels": 1,
+        "subtype": "PCM_16",
+        "duration_seconds": 584.0,
+        "sha256": "b445940564c2ca334ac6a727b30bbef1456fb577b94e0bd989fa0de28b851514"
+      }
+    },
+    {
+      "file_id": "audio_02_postgres_fm_pgvector.wav",
+      "title": "Postgres FM - pgvector (Episode 74)",
+      "speakers": [
+        "Michael",
+        "Jonathan"
+      ],
+      "transcript_source": "postgres.fm/episodes/pgvector/transcript",
+      "source_audio_url": null,
+      "source_audio_license": null,
+      "clip_start_seconds": null,
+      "clip_end_seconds": null,
+      "noise_mix": null,
+      "output": {
+        "sample_rate": 16000,
+        "channels": 1,
+        "subtype": "PCM_16",
+        "duration_seconds": 559.0,
+        "sha256": "f6c02d96f7750a2f034ffa47402bb3ae983492ff9da7cb429e1dcba9c0c78369"
+      }
+    },
+    {
+      "file_id": "audio_03_brain_science_psychology.wav",
+      "title": "Brain Science Episode 1: Being Human & Emotional Regulation",
+      "speakers": [
+        "Adam Stacoviak",
+        "Dr. Mireille B. Reece"
+      ],
+      "transcript_source": "github.com/thechangelog/transcripts (brainscience/brain-science-1.md)",
+      "source_audio_url": null,
+      "source_audio_license": null,
+      "clip_start_seconds": null,
+      "clip_end_seconds": null,
+      "noise_mix": null,
+      "output": {
+        "sample_rate": 16000,
+        "channels": 1,
+        "subtype": "PCM_16",
+        "duration_seconds": 540.0,
+        "sha256": "9a802e4cc437be61a744af0a5b62e96d9ba7f01991774713b5efe6c116a177a2"
+      }
+    },
+    {
+      "file_id": "audio_04_macroeconomics_semiconductor.wav",
+      "title": "Dwarkesh Podcast: Dylan Patel – Compute Economics, Fab CapEx & Industrial Policy",
+      "speakers": [
+        "Dwarkesh Patel",
+        "Dylan Patel"
+      ],
+      "transcript_source": "dwarkesh.com/p/dylan-patel-3",
+      "source_audio_url": null,
+      "source_audio_license": null,
+      "clip_start_seconds": null,
+      "clip_end_seconds": null,
+      "noise_mix": null,
+      "output": {
+        "sample_rate": 16000,
+        "channels": 1,
+        "subtype": "PCM_16",
+        "duration_seconds": 541.6,
+        "sha256": "618fc60952f49a8b1e161f5bc14a5b82888c50a6cfda817718f559e5cfc24e7c"
+      }
+    },
+    {
+      "file_id": "audio_05_sports_tactics_debate.wav",
+      "title": "Lex Fridman Podcast #500: Khabib Nurmagomedov – Combat Strategy, Top Pressure & Fight Tactics",
+      "speakers": [
+        "Lex Fridman",
+        "Khabib Nurmagomedov"
+      ],
+      "transcript_source": "lexfridman.com/khabib-nurmagomedov-transcript",
+      "source_audio_url": null,
+      "source_audio_license": null,
+      "clip_start_seconds": null,
+      "clip_end_seconds": null,
+      "noise_mix": null,
+      "output": {
+        "sample_rate": 16000,
+        "channels": 1,
+        "subtype": "PCM_16",
+        "duration_seconds": 540.0,
+        "sha256": "e0bb91d7ee183d6efe460fb998feb55258d129428c78ba975dd5ea8ea2bdba48"
+      }
+    },
+    {
+      "file_id": "audio_06_constitutional_jurisprudence.wav",
+      "title": "Conversations with Tyler: Cass Sunstein on Constitutional Jurisprudence & Rights",
+      "speakers": [
+        "Tyler Cowen",
+        "Cass Sunstein"
+      ],
+      "transcript_source": "conversationswithtyler.com/episodes/cass-sunstein-2/",
+      "source_audio_url": null,
+      "source_audio_license": null,
+      "clip_start_seconds": null,
+      "clip_end_seconds": null,
+      "noise_mix": null,
+      "output": {
+        "sample_rate": 16000,
+        "channels": 1,
+        "subtype": "PCM_16",
+        "duration_seconds": 506.0,
+        "sha256": "7fdbf6453b39d785ed40c45f453ed9aefa2201fdc770f583e12a6f94e5a4b306"
+      }
+    },
+    {
+      "file_id": "audio_07_investigative_history_cafe.wav",
+      "title": "Lex Fridman Podcast #499: Gary Gallagher – Civil War Military Strategy, Grant vs Lee & Primary Archival Records",
+      "speakers": [
+        "Lex Fridman",
+        "Gary Gallagher"
+      ],
+      "transcript_source": "lexfridman.com/gary-gallagher-transcript",
+      "source_audio_url": null,
+      "source_audio_license": null,
+      "clip_start_seconds": null,
+      "clip_end_seconds": null,
+      "noise_mix": {
+        "noise_file": "dataset/noise_profiles/authentic_cafe_chatter_16k.wav",
+        "noise_source": "DEMAND acoustic noise dataset (cafe recording)",
+        "noise_license": "CC BY 4.0",
+        "snr_db": 12.0
+      },
+      "output": {
+        "sample_rate": 16000,
+        "channels": 1,
+        "subtype": "PCM_16",
+        "duration_seconds": 534.0,
+        "sha256": "d8fd16dd2adee53c57b1c2ea713326aaacb579ffcd085869e834bad13d0103c8"
+      }
+    }
+  ]
+}
