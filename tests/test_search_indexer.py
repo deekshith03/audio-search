@@ -135,6 +135,8 @@ class TestIndexer(ThrowawayDatabaseTestCase):
         context_chunks = self.scalar("SELECT count(*) FROM chunks WHERE chunker = ANY(%s)", (sorted(CONTEXT_CONFIGS),))
         self.assertEqual(self.scalar("SELECT count(*) FROM chunk_embeddings WHERE model = 'fake'"), chunks)
         self.assertEqual(self.scalar("SELECT count(*) FROM chunk_embeddings WHERE model = 'fake+ctx'"), context_chunks)
+        self.assertEqual(self.scalar("SELECT count(*) FROM sentence_embeddings WHERE model = 'fake'"),
+                         self.scalar("SELECT count(*) FROM sentences"))
 
     def test_context_variant_embeds_context_before_text(self):
         embedder = FakeEmbedder()
@@ -151,6 +153,7 @@ class TestIndexer(ThrowawayDatabaseTestCase):
         again = FakeEmbedder()
         stats = self.indexer(again).index_all(self.paths())
         self.assertEqual(again.calls, [])
+        self.assertEqual(self.scalar("SELECT count(*) FROM sentence_embeddings"), self.scalar("SELECT count(*) FROM sentences"))
         self.assertTrue(all(s["embedded"]["fake"]["vectors"] == 0 for s in stats))
         other = FakeEmbedder("other", dimensions=5)
         self.indexer(other).index_all(self.paths())

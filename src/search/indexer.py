@@ -1,6 +1,6 @@
 """
 Indexes canonical transcripts into the search database: files, speakers, sentences, the chunks of
-every config, and their embeddings.
+every config, their embeddings, and per-sentence embeddings (the localization index).
 
     uv run python -m src.search.indexer                          # golden set, default models
     uv run python -m src.search.indexer --workspace data --file x.wav
@@ -112,7 +112,7 @@ class Indexer:
 
         for embedder in self.embedders:
             started = time.perf_counter()
-            count = self._embed_missing(file_pk, embedder)
+            count = self._embed_missing(file_pk, embedder) + self._embed_missing_sentences(file_pk, embedder)
             self.conn.commit()
             stats["embedded"][embedder.model.key] = {"vectors": count, "seconds": round(time.perf_counter() - started, 3)}
         return stats
@@ -185,6 +185,26 @@ class Indexer:
                 )
             total += len(rows)
         return total
+
+    def _embed_missing_sentences(self, file_pk: int, embedder) -> int:
+        with self.conn.cursor() as cur:
+            cur.execute(
+                "SELECT s.id, s.text FROM sentences s WHERE s.file_pk = %s"
+                " AND NOT EXISTS (SELECT 1 FROM sentence_embeddings e WHERE e.sentence_id = s.id AND e.model = %s)"
+                " ORDER BY s.id",
+                (file_pk, embedder.model.key),
+            )
+            rows = cur.fetchall()
+            if not rows:
+                return 0
+            vectors = embedder.encode_documents([text for _, text in rows])
+            execute_values(
+                cur,
+                "INSERT INTO sentence_embeddings (sentence_id, model, embedding) VALUES %s",
+                [(sentence_id, embedder.model.key, vector_literal(v)) for (sentence_id, _), v in zip(rows, vectors)],
+                page_size=500,
+            )
+        return len(rows)
 
     def ensure_hnsw_indexes(self) -> None:
         with self.conn.cursor() as cur:

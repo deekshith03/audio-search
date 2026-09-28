@@ -58,11 +58,11 @@ canonical turns (single speaker, word-timed)
 chunks ──► embedding input = [previous turn, other speaker] + chunk text
        └─► BM25 / trigram input = chunk text only       (hits stay on the right speaker)
    │
-   │ 1. keyword: BM25 (ParadeDB pg_search) + trigram fuzzy (pg_trgm)
+   │ 1. keyword: BM25 (ParadeDB pg_search) + trigram fuzzy (pg_trgm, queries of ≤ 3 words)
    │ 2. semantic: pgvector cosine (HNSW index)
    │ 3. fusion: weighted RRF (k = 60) or min-max convex combination (chosen on dev)
    │ 4. rerank: cross-encoder on the top 20 (kept only if dev shows a gain)
-   │ 5. localize: best 1–3 sentences inside each top chunk
+   │ 5. localize: best 1–3 sentences inside each top chunk (sentence vectors + keyword rank)
    │ 6. de-duplicate overlapping hits
    ▼
 file · speaker name · [start–end] · text with <mark>highlights</mark> · ▶ play from start
@@ -105,9 +105,9 @@ A cross-encoder reads the query and each candidate together and re-orders the fu
 
 | Candidate | Size | License | Notes |
 | :--- | :---: | :--- | :--- |
-| `Qwen/Qwen3-Reranker-0.6B` | 0.6B | Apache 2.0 | top open reranker in 2026 comparisons |
+| `Qwen/Qwen3-Reranker-0.6B` (run as the `tomaarsen/Qwen3-Reranker-0.6B-seq-cls` CrossEncoder port) | 0.6B | Apache 2.0 | top open reranker in 2026 comparisons |
 | `BAAI/bge-reranker-v2-m3` | 568M | open | common open default |
-| `mixedbread-ai/mxbai-rerank-base-v2` | smaller | Apache 2.0 | fast option |
+| `cross-encoder/ms-marco-MiniLM-L6-v2` | 22M | Apache 2.0 | fast option (replaces mxbai-rerank-base-v2: ~0.5B, not faster, needs its own package) |
 
 Sources: [reranker comparison](https://futureagi.com/blog/best-rerankers-for-rag-2026/), [Qwen3 embedding/reranking](https://qwenlm.github.io/blog/qwen3-embedding/).
 
@@ -123,6 +123,7 @@ speakers         (file_pk, speaker_label, display_name)   ← synced from speake
 sentences        (id, file_pk, speaker_label, turn_id, start_s, end_s, text)
 chunks           (id, file_pk, chunker, speaker_label, start_s, end_s, text, context_text, sentence_ids)
 chunk_embeddings (chunk_id, model, embedding vector)      ← untyped: models are 384/768/1024-d
+sentence_embeddings (sentence_id, model, embedding)      ← localization index, independent of chunkers
 indexes:  BM25 (pg_search, English stemmer) on chunks(text) with chunker and file_pk as filter fields,
           GIN gin_trgm_ops on chunks.text, (file_pk, start_s) on chunks and sentences,
           one partial HNSW per model on (embedding::vector(d)) WHERE model = '<name>', created by the indexer
@@ -155,7 +156,7 @@ Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed
 2. ✅ Split qrels into dev/test files; `--split` in the scorer and eval runner; per-split validation and promptfoo configs; shared speaker resolution in the scorers.
 3. ✅ `db` image is `paradedb/paradedb:0.25.10-pg17`; schema in `db/migrations/` applied by `src.db.migrate` (also at app start in Docker).
 4. ✅ Sentence splitter, 6 chunk configs, 3 default embedders (+ Qwen3 registered), incremental indexer `src.search.indexer` (golden set: 1,877 chunks, 3,478 vectors per model, ~2 min for all three models).
-5. Keyword, semantic, fusion, reranker, localization, de-duplication; `src/search/engine.search(query, mode, top_k)` wired into `evals/search_provider.py`. Both fusion methods behind a config switch.
+5. ✅ `src/search/engine.py` (retrievers, `fusion.py`, `rerankers.py`, `localize.py`, dedupe, `<mark>` highlights) wired into `evals/search_provider.py`; every grid knob is a `SearchConfig` field, passed through provider config or `evaluate_recall.py --search-config`. Placeholder config (A-30s, bge-small+ctx, equal RRF, no reranker) on dev: hybrid micro R@5 52.6%, lexical 31.6%, dense 36.8%.
 5b. Benchmark reranker candidates' CPU latency (20 pairs per query), as done for the embedding models.
 6. Dev-set tuning grid; select the configuration.
 7. Streamlit search page; `indexing` job stage for uploads; label edits sync to `speakers`; model bootstrap for Docker.

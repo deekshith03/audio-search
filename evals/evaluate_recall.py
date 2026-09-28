@@ -17,6 +17,7 @@ Enforces benchmark gate criteria when run with --enforce-gate:
 """
 
 import argparse
+import json
 import os
 import sys
 from typing import List, Dict, Any
@@ -44,7 +45,8 @@ def top_result_is_hard_negative(top: Dict[str, Any], hard_negatives: List[Dict[s
 def run_benchmark(
     split: str = DEFAULT_SPLIT,
     modes: List[str] = ["hybrid", "lexical", "dense"],
-    top_k: int = 5
+    top_k: int = 5,
+    search_config: Dict[str, Any] = None,
 ) -> Dict[str, Any]:
     queries = load_qrels(split)["queries"]
     summary_report = {}
@@ -62,9 +64,11 @@ def run_benchmark(
 
             provider_resp = call_api(
                 prompt=q["query"],
-                options={"config": {"mode": mode, "top_k": top_k}},
+                options={"config": {**(search_config or {}), "mode": mode, "top_k": top_k}},
                 context={"vars": q}
             )
+            if "error" in provider_resp:
+                raise RuntimeError(f"{q['query_id']} [{mode}]: {provider_resp['error']}")
             retrieved = provider_resp.get("output", {}).get("results", [])
 
             query_eval = evaluate_retrieval(
@@ -205,8 +209,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Recall@k scorecard over a query split")
     add_split_argument(parser)
     parser.add_argument("--enforce-gate", action="store_true")
+    parser.add_argument("--search-config", default="{}", help='JSON SearchConfig overrides, e.g. \'{"chunker": "B"}\'')
     args = parser.parse_args()
-    report = run_benchmark(split=args.split)
+    report = run_benchmark(split=args.split, search_config=json.loads(args.search_config))
     print_scorecard(report)
     if args.enforce_gate:
         check_gate(report)
