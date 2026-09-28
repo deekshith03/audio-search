@@ -32,6 +32,7 @@ From the problem statement:
 2. **Conversations need speaker-aware chunking.** Boundaries only at turns, long turns split at sentences keeping their speaker, whole-unit overlap, short tails merged back. [chonkie #658](https://github.com/feyninc/chonkie/issues/658). Short turns indexed alone become "content-free fragments"; add surrounding context. [OpenTranscribe #523](https://github.com/attevon-llc/OpenTranscribe/issues/523)
 3. **Spoken content: retrieve broadly, then localize.** TREC Podcasts used overlapping 2-minute segments with BM25 + neural reranking, judged per segment. [TREC 2020](https://arxiv.org/pdf/2103.15953). Fixed windows are poor at exact boundaries; sentence-level span localization does much better, and spontaneous speech is hardest. [arXiv 2609.21844](https://arxiv.org/html/2609.21844)
 4. **Context and reranking compound.** Top-20 retrieval failures fell 35% with contextual embeddings, 49% adding contextual BM25, 67% adding a reranker. [Anthropic](https://www.anthropic.com/engineering/contextual-retrieval)
+7. **RRF is the safe default, not the best fusion.** A convex combination of normalized scores beat RRF in and out of domain, with one parameter tuned from few examples; tuned RRF generalizes poorly. [Bruch, ACM TOIS](https://arxiv.org/abs/2210.11934). RRF averaged 3.86% lower nDCG@10 than score-based fusion on six BEIR datasets. [OpenSearch](https://opensearch.org/blog/introducing-reciprocal-rank-fusion-hybrid-search/). Score-level BM25 + dense fusion added 9–17 Hit@1 points on conversation retrieval. [arXiv 2606.04194](https://arxiv.org/abs/2606.04194). LLM-weighted fusion ([DAT](https://arxiv.org/abs/2503.23013)) and learned fusion (needs 1,000+ labels) do not fit a local, 14-query setup.
 5. **Keyword ranking quality matters.** Native `ts_rank` ignores corpus statistics (no IDF). [ParadeDB](https://www.paradedb.com/blog/hybrid-search-in-postgresql-the-missing-manual). BM25 held up best as corpora grew in a 2026 scaling study. [arXiv 2607.26497](https://arxiv.org/html/2607.26497v2)
 6. **Industry practice (Gong).** Conversations are converted into sentences, each embedded as a 768-d vector with metadata (billions stored); the model reads dialog context (a question followed by "Unfortunately, no" implies a delay); exact keyword search remains a separate tool; question answering retrieves up to the top 100 calls, then reasons. Gong reports keyword tracking at ~50% recall/precision and up to 80% more occurrences with semantic trackers (vendor claim). [Pinecone case study](https://www.pinecone.io/customers/gong/), [Gong](https://www.gong.io/blog/introducing-generation-3-conversation-understanding), [Gong Help](https://help.gong.io/docs/understanding-ai-ask-anything)
 
@@ -59,7 +60,7 @@ chunks ──► embedding input = [previous turn, other speaker] + chunk text
    │
    │ 1. keyword: BM25 (ParadeDB pg_search) + trigram fuzzy (pg_trgm)
    │ 2. semantic: pgvector cosine (HNSW index)
-   │ 3. fusion: weighted reciprocal rank fusion (k = 60)
+   │ 3. fusion: weighted RRF (k = 60) or min-max convex combination (chosen on dev)
    │ 4. rerank: cross-encoder on the top 20 (kept only if dev shows a gain)
    │ 5. localize: best 1–3 sentences inside each top chunk
    │ 6. de-duplicate overlapping hits
@@ -89,16 +90,42 @@ All four return pinpointed sentence spans, so they are compared on retrieval qua
 
 Selection rule: the fastest model within ~2 points of the best dev recall@5.
 
+### Fusion (chosen on dev)
+
+| Method | Score | Parameters |
+| :--- | :--- | :--- |
+| Weighted RRF | `Σ wᵢ / (60 + rankᵢ)` | one weight per retriever |
+| Convex combination | `Σ wᵢ · normᵢ(score)`, weights sum to 1; BM25 min-max normalized per query, trigram and cosine already in [0, 1] | one weight per retriever |
+
+Three retrievers (BM25, trigram, dense) mean two free weights; with 14 dev queries this can overfit, so **RRF wins ties** (more robust out of domain). Both methods are reported side by side on dev and on the final test run.
+
+### Reranker (optional stage, decided on dev)
+
+A cross-encoder reads the query and each candidate together and re-orders the fused top 20. It targets look-alike results (the near-miss queries), and can only reorder the shortlist, so it helps recall@1 and MRR more than recall@5.
+
+| Candidate | Size | License | Notes |
+| :--- | :---: | :--- | :--- |
+| `Qwen/Qwen3-Reranker-0.6B` | 0.6B | Apache 2.0 | top open reranker in 2026 comparisons |
+| `BAAI/bge-reranker-v2-m3` | 568M | open | common open default |
+| `mixedbread-ai/mxbai-rerank-base-v2` | smaller | Apache 2.0 | fast option |
+
+Sources: [reranker comparison](https://futureagi.com/blog/best-rerankers-for-rag-2026/), [Qwen3 embedding/reranking](https://qwenlm.github.io/blog/qwen3-embedding/).
+
+- **CPU latency is not measured yet.** It runs on every search (20 query–chunk pairs); measure it the same way as the embedding models before choosing.
+- **Keep rule:** keep the reranker only if it clearly improves dev recall@1 / MRR / near-miss rejection without hurting recall@5, and its latency is acceptable. Otherwise ship fusion alone and report the comparison.
+
 ### Storage
 
 ```
-files     (file_id, workspace, display_name, duration, sha256, pipeline_key, indexed_at)
-speakers  (file_id, speaker_label, display_name)           ← synced from speaker_labels/*.json
-sentences (id, file_id, speaker_label, turn_id, start, end, text)
-chunks    (id, file_id, chunker, speaker_label, start, end, text, context_text,
-           embedding vector(d), sentence_ids)
-indexes:  BM25 (pg_search) on chunks.text, GIN gin_trgm_ops on chunks.text,
-          HNSW on chunks.embedding, (file_id, start)
+files            (id, workspace, file_id, display_name, duration_s, sha256, pipeline_key, indexed_at)
+                 UNIQUE (workspace, file_id): an upload may reuse a golden file name
+speakers         (file_pk, speaker_label, display_name)   ← synced from speaker_labels/*.json
+sentences        (id, file_pk, speaker_label, turn_id, start_s, end_s, text)
+chunks           (id, file_pk, chunker, speaker_label, start_s, end_s, text, context_text, sentence_ids)
+chunk_embeddings (chunk_id, model, embedding vector)      ← untyped: models are 384/768/1024-d
+indexes:  BM25 (pg_search, English stemmer) on chunks(text) with chunker and file_pk as filter fields,
+          GIN gin_trgm_ops on chunks.text, (file_pk, start_s) on chunks and sentences,
+          one partial HNSW per model on (embedding::vector(d)) WHERE model = '<name>', created by the indexer
 ```
 
 Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed.
@@ -114,8 +141,8 @@ Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed
 - **Keyword category (`short_keyword`)**: one- or two-word queries (e.g. `Neuralink`, `Roger Gracie`). Any listed occurrence counts as a hit and counts as one moment in micro recall. Two of them (`pgMustard` in dev, `Omakub` in test) target words the ASR misspelled ("PG Mustard", "Omacoup"), which exercises fuzzy matching.
 - **No-answer queries were considered and dropped**: scoring them needs a confidence threshold, and with 2–3 such queries per split the metric would be too noisy to tune or gate on. Consequence: search always returns its top results, even for queries unrelated to the corpus (listed as a limitation).
 - Every script defaults to `--split dev`; the test split runs only when asked for explicitly (`bash evals/run_evals.sh --split test --enforce-gate`).
-- Tuned on dev: chunker (A–D), embedding model (4), context on/off, window length (15/30/45 s), RRF weights, reranker on/off.
-- Reported: recall@1/3/5 (micro and macro), MRR, per-category recall, near-miss rejection, p50/p95 search latency, indexing time per file.
+- Tuned on dev: chunker (A–D), embedding model (4), context on/off, window length (15/30/45 s), fusion method (weighted RRF vs convex combination) and its weights, reranker on/off.
+- Reported: recall@1/3/5 (micro and macro), MRR, per-category recall, near-miss rejection, RRF vs convex combination (dev and test, report only; the frozen choice is the one gated), p50/p95 search latency, indexing time per file.
 - Gate (from Phase 1, applied to test): hybrid recall@5 ≥ 0.85, recall@1 ≥ 0.60, hybrid strictly better than keyword-only and semantic-only.
 - The match rule is not loosened.
 - Speaker matching in every scorer resolves anonymous `SPEAKER_xx` labels through `dataset/speaker_labels/` (shared `evals/speakers.py`).
@@ -124,9 +151,10 @@ Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed
 
 1. ✅ Dev queries drafted and reviewed (12 + 2 keyword), plus 3 keyword queries added to test.
 2. ✅ Split qrels into dev/test files; `--split` in the scorer and eval runner; per-split validation and promptfoo configs; shared speaker resolution in the scorers.
-3. Switch the `db` image to ParadeDB; schema and migrations.
+3. ✅ `db` image is `paradedb/paradedb:0.25.10-pg17`; schema in `db/migrations/` applied by `src.db.migrate` (also at app start in Docker).
 4. Sentence splitter and chunkers A–D; indexer (canonical transcripts → database).
-5. Keyword, semantic, fusion, reranker, localization, de-duplication; `src/search/engine.search(query, mode, top_k)` wired into `evals/search_provider.py`.
+5. Keyword, semantic, fusion, reranker, localization, de-duplication; `src/search/engine.search(query, mode, top_k)` wired into `evals/search_provider.py`. Both fusion methods behind a config switch.
+5b. Benchmark reranker candidates' CPU latency (20 pairs per query), as done for the embedding models.
 6. Dev-set tuning grid; select the configuration.
 7. Streamlit search page; `indexing` job stage for uploads; label edits sync to `speakers`; model bootstrap for Docker.
 8. One final test-set run; write-up (design, success criteria, results, limitations, coding-agent disclosure).

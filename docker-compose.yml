@@ -20,9 +20,9 @@ services:
       db:
         condition: service_healthy
 
-  # PostgreSQL + pgvector for Phase 3 hybrid search (idle until then).
+  # ParadeDB = PostgreSQL 17 + pg_search (BM25) + pgvector; schema via `python -m src.db.migrate`.
   db:
-    image: pgvector/pgvector:pg16
+    image: paradedb/paradedb:0.25.10-pg17
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-audio}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-audio}

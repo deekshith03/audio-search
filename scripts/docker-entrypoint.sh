@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Container entrypoint.
 #
-#   app                 download models on first start, then serve Streamlit on :8501 (default)
+#   app                 apply DB migrations, download models on first start, then serve Streamlit on :8501 (default)
 #   reproduce [--recompute]   provenance + integrity checks, scorecard, unit tests
 #   pipeline [args]     src/pipeline/run_pipeline.sh (e.g. --file dataset/audio/x.wav --force)
 #   test                unit tests
 #   bootstrap           download models only
+#   migrate [status]    apply (or list) database schema migrations
 #   anything else       executed as-is (e.g. bash)
 
 set -euo pipefail
@@ -16,6 +17,7 @@ command="${1:-app}"
 
 case "$command" in
   app)
+    uv run python -m src.db.migrate
     uv run python -m scripts.bootstrap_models
     exec uv run streamlit run app/streamlit_app.py --server.address 0.0.0.0 --server.port 8501 "$@"
     ;;
@@ -31,6 +33,9 @@ case "$command" in
     ;;
   bootstrap)
     exec uv run python -m scripts.bootstrap_models
+    ;;
+  migrate)
+    exec uv run python -m src.db.migrate "$@"
     ;;
   *)
     exec "$command" "$@"

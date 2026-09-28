@@ -12,8 +12,8 @@ docker compose up --build    # → http://localhost:8501
 ```
 docker compose up
    │
-   ├── db    pgvector/pgvector:pg16          healthcheck: pg_isready
-   │         volume pgdata                   port 127.0.0.1:5433 (idle until Phase 3)
+   ├── db    paradedb/paradedb:0.25.10-pg17  healthcheck: pg_isready
+   │         volume pgdata                   port 127.0.0.1:5433 (schema: src.db.migrate at app start)
    │
    └── app   audio-search (python:3.12-slim-bookworm + ffmpeg + uv)
              entrypoint: bootstrap models → streamlit :8501
