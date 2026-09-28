@@ -3,7 +3,8 @@ Stage 0: Audio Ingestion & Normalization.
 
 Validates an arbitrary user upload with ffprobe and converts it with ffmpeg to the format every
 downstream stage assumes: 16 kHz, mono, 16-bit PCM WAV. Uploads get a content-addressed
-`file_id` (SHA-256 of the original bytes), so re-uploading the same recording reuses its results.
+`file_id` ("upload_" + SHA-256 of the original bytes + ".wav", the same "<name>.wav" convention as
+the golden set), so re-uploading the same recording reuses its results.
 """
 
 import argparse
@@ -14,7 +15,7 @@ import subprocess
 from dataclasses import asdict, dataclass
 from typing import Optional
 
-from src.pipeline.common import AUDIO_DIR, sha256_file, write_json
+from src.pipeline.common import AUDIO_DIR, file_base, sha256_file, write_json
 
 SUPPORTED_EXTENSIONS = {".wav", ".mp3", ".m4a", ".aac", ".flac", ".ogg", ".opus", ".webm", ".mp4"}
 TARGET_SAMPLE_RATE = 16000
@@ -123,9 +124,10 @@ def ingest(
 ) -> IngestResult:
     info = validate_upload(src_path, max_duration=max_duration)
     source_sha = sha256_file(src_path)
-    file_id = file_id or f"upload_{source_sha[:16]}"
-    wav_path = os.path.join(out_dir, f"{file_id}.wav")
-    meta_path = os.path.join(out_dir, f"{file_id}.ingest.json")
+    base = file_base(file_id) if file_id else f"upload_{source_sha[:16]}"
+    file_id = f"{base}.wav"
+    wav_path = os.path.join(out_dir, file_id)
+    meta_path = os.path.join(out_dir, f"{base}.ingest.json")
 
     reused = os.path.exists(wav_path) and os.path.exists(meta_path)
     if reused:

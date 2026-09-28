@@ -234,4 +234,5 @@ def run_batch_reconciliation(
 
 if __name__ == "__main__":
     args = parse_stage_args("Stage 3: word-to-speaker turn reconciliation")
-    run_batch_reconciliation(resolve_audio_files(args))
+    ws = args.workspace
+    run_batch_reconciliation(resolve_audio_files(args), asr_dir=ws.raw_asr_dir, diar_dir=ws.diarization_dir, out_dir=ws.output_dir)

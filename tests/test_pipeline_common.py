@@ -5,6 +5,8 @@ import unittest
 from unittest.mock import patch
 
 from src.pipeline.common import (
+    GOLDEN,
+    Workspace,
     build_cache_key,
     file_base,
     get_hf_token,
@@ -97,6 +99,30 @@ class TestStageCli(unittest.TestCase):
 
     def test_file_base_strips_directory_and_extension(self):
         self.assertEqual(file_base("dataset/audio/audio_01_x.wav"), "audio_01_x")
+
+
+class TestWorkspace(unittest.TestCase):
+
+    def test_golden_workspace_matches_dataset_layout(self):
+        self.assertEqual(GOLDEN.audio_dir, "dataset/audio")
+        self.assertEqual(GOLDEN.raw_asr_dir, "dataset/cache/raw_asr")
+        self.assertEqual(GOLDEN.diarization_dir, "dataset/cache/raw_diarization")
+        self.assertEqual(GOLDEN.canonical_path("audio_01"), "dataset/pipeline_outputs/audio_01_canonical.json")
+
+    def test_upload_workspace_uses_same_layout(self):
+        ws = Workspace("data")
+        self.assertEqual(
+            (ws.labels_dir, ws.jobs_dir, ws.uploads_dir),
+            ("data/speaker_labels", "data/jobs", "data/uploads"),
+        )
+
+    def test_cli_workspace_sets_audio_dir(self):
+        args = parse_stage_args("x", ["--workspace", "data"])
+        self.assertEqual(args.workspace, Workspace("data"))
+        self.assertEqual(args.audio_dir, "data/audio")
+
+    def test_explicit_audio_dir_overrides_workspace(self):
+        self.assertEqual(parse_stage_args("x", ["--workspace", "data", "--audio-dir", "x"]).audio_dir, "x")
 
 
 class TestWriteJson(unittest.TestCase):

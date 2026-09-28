@@ -49,8 +49,9 @@ class TestIngest(unittest.TestCase):
     def test_file_id_is_content_hash_and_metadata_is_written(self):
         src = make_tone(os.path.join(self.src, "tone.mp3"), 11)
         res = ingest(src, out_dir=self.out)
-        self.assertEqual(res.file_id, f"upload_{res.source_sha256[:16]}")
-        with open(os.path.join(self.out, f"{res.file_id}.ingest.json")) as f:
+        self.assertEqual(res.file_id, f"upload_{res.source_sha256[:16]}.wav")
+        self.assertEqual(res.wav_path, os.path.join(self.out, res.file_id))
+        with open(os.path.join(self.out, f"upload_{res.source_sha256[:16]}.ingest.json")) as f:
             meta = json.load(f)
         self.assertEqual(meta["source_filename"], "tone.mp3")
         self.assertEqual(meta["source_codec"], "mp3")
@@ -67,7 +68,8 @@ class TestIngest(unittest.TestCase):
 
     def test_explicit_file_id_is_respected(self):
         src = make_tone(os.path.join(self.src, "tone.wav"), 11)
-        self.assertEqual(ingest(src, out_dir=self.out, file_id="audio_99_custom").file_id, "audio_99_custom")
+        self.assertEqual(ingest(src, out_dir=self.out, file_id="audio_99_custom").file_id, "audio_99_custom.wav")
+        self.assertEqual(ingest(src, out_dir=self.out, file_id="audio_99_custom.wav").file_id, "audio_99_custom.wav")
 
     def test_rejects_audio_longer_than_limit(self):
         src = make_tone(os.path.join(self.src, "long.wav"), 13)

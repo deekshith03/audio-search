@@ -202,4 +202,4 @@ def run_batch_alignment(audio_files: List[str], asr_dir: str = RAW_ASR_DIR, forc
 
 if __name__ == "__main__":
     args = parse_stage_args("Stage 1B: wav2vec2 forced alignment")
-    run_batch_alignment(resolve_audio_files(args), force=args.force)
+    run_batch_alignment(resolve_audio_files(args), asr_dir=args.workspace.raw_asr_dir, force=args.force)

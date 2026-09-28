@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "streamlit",
+      "runtimeExecutable": ".venv/bin/streamlit",
+      "runtimeArgs": [
+        "run",
+        "app/streamlit_app.py",
+        "--server.port",
+        "8501"
+      ],
+      "port": 8501
+    }
+  ]
+}

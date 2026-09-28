@@ -7,3 +7,4 @@ __pycache__/
 dataset/noise_profiles/*.wav
 dataset/raw_source/*.wav
 dataset/rebuilt_audio/
+data/

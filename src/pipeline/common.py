@@ -10,13 +10,54 @@ import argparse
 import hashlib
 import json
 import os
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-AUDIO_DIR = "dataset/audio"
-RAW_ASR_DIR = "dataset/cache/raw_asr"
-DIARIZATION_DIR = "dataset/cache/raw_diarization"
-OUTPUT_DIR = "dataset/pipeline_outputs"
-GROUND_TRUTH_DIR = "dataset/ground_truth"
+
+@dataclass(frozen=True)
+class Workspace:
+    """Directory layout shared by the golden set (`dataset/`) and user uploads (`data/`)."""
+
+    root: str
+
+    @property
+    def audio_dir(self) -> str:
+        return os.path.join(self.root, "audio")
+
+    @property
+    def raw_asr_dir(self) -> str:
+        return os.path.join(self.root, "cache", "raw_asr")
+
+    @property
+    def diarization_dir(self) -> str:
+        return os.path.join(self.root, "cache", "raw_diarization")
+
+    @property
+    def output_dir(self) -> str:
+        return os.path.join(self.root, "pipeline_outputs")
+
+    @property
+    def labels_dir(self) -> str:
+        return os.path.join(self.root, "speaker_labels")
+
+    @property
+    def jobs_dir(self) -> str:
+        return os.path.join(self.root, "jobs")
+
+    @property
+    def uploads_dir(self) -> str:
+        return os.path.join(self.root, "uploads")
+
+    def canonical_path(self, file_base_name: str) -> str:
+        return os.path.join(self.output_dir, f"{file_base_name}_canonical.json")
+
+
+GOLDEN = Workspace("dataset")
+AUDIO_DIR = GOLDEN.audio_dir
+RAW_ASR_DIR = GOLDEN.raw_asr_dir
+DIARIZATION_DIR = GOLDEN.diarization_dir
+OUTPUT_DIR = GOLDEN.output_dir
+GROUND_TRUTH_DIR = os.path.join(GOLDEN.root, "ground_truth")
 
 
 def sha256_file(path: str) -> str:
@@ -59,11 +100,15 @@ def parse_stage_args(description: str, argv: Optional[List[str]] = None) -> argp
         "--file",
         action="append",
         dest="files",
-        help="Normalized 16 kHz mono WAV to process (repeatable). Defaults to every WAV in --audio-dir.",
+        help="Normalized 16 kHz mono WAV to process (repeatable). Defaults to every WAV in the workspace audio dir.",
     )
-    parser.add_argument("--audio-dir", default=AUDIO_DIR)
+    parser.add_argument("--workspace", default=GOLDEN.root, help="Workspace root (dataset/ for the golden set, data/ for uploads).")
+    parser.add_argument("--audio-dir", default=None, help="Overrides <workspace>/audio.")
     parser.add_argument("--force", action="store_true", help="Recompute even when a valid cache exists.")
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    args.workspace = Workspace(args.workspace)
+    args.audio_dir = args.audio_dir or args.workspace.audio_dir
+    return args
 
 
 def resolve_audio_files(args: argparse.Namespace) -> List[str]:

@@ -1,0 +1,9 @@
+{
+  "file_id": "audio_02_postgres_fm_pgvector.wav",
+  "labeled_by": "golden_simulated",
+  "labeled_at": "2026-09-28T09:35:23+00:00",
+  "labels": {
+    "SPEAKER_00": "Michael",
+    "SPEAKER_01": "Jonathan"
+  }
+}

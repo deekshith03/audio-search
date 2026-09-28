@@ -20,6 +20,7 @@ dependencies = [
     "uvicorn>=0.28.0",
     "whisper-normalizer>=0.1.15",
     "whisperx>=3.4.2,<3.5",
+    "streamlit>=1.40",
 ]
 
 [tool.uv]

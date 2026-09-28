@@ -116,19 +116,19 @@ def transcribe_file(
     return out_file
 
 
-def run_batch_asr(audio_files: List[str], force: bool = False) -> List[str]:
+def run_batch_asr(audio_files: List[str], output_dir: str = RAW_ASR_DIR, force: bool = False) -> List[str]:
     print(f"Starting ASR on {len(audio_files)} file(s)...")
     model = None
     out_files = []
     for audio_path in audio_files:
         cache_key = build_cache_key(asr_config(), [audio_path])
-        out_file = os.path.join(RAW_ASR_DIR, f"{file_base(audio_path)}_raw.json")
+        out_file = os.path.join(output_dir, f"{file_base(audio_path)}_raw.json")
         if model is None and (force or not is_cache_valid(out_file, cache_key)):
             model = load_model()
-        out_files.append(transcribe_file(audio_path, force=force, model=model))
+        out_files.append(transcribe_file(audio_path, output_dir=output_dir, force=force, model=model))
     return out_files
 
 
 if __name__ == "__main__":
     args = parse_stage_args("Stage 1A: faster-whisper ASR")
-    run_batch_asr(resolve_audio_files(args), force=args.force)
+    run_batch_asr(resolve_audio_files(args), output_dir=args.workspace.raw_asr_dir, force=args.force)

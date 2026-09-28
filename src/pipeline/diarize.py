@@ -196,11 +196,11 @@ def diarize_file(audio_path: str, output_dir: str = DIARIZATION_DIR, force: bool
     return paths
 
 
-def run_batch_diarization(audio_files: List[str], force: bool = False) -> List[Dict[str, str]]:
+def run_batch_diarization(audio_files: List[str], output_dir: str = DIARIZATION_DIR, force: bool = False) -> List[Dict[str, str]]:
     print(f"Starting diarization on {len(audio_files)} file(s)...")
-    return [diarize_file(f, force=force) for f in audio_files]
+    return [diarize_file(f, output_dir=output_dir, force=force) for f in audio_files]
 
 
 if __name__ == "__main__":
     args = parse_stage_args("Stage 2: pyannote speaker diarization")
-    run_batch_diarization(resolve_audio_files(args), force=args.force)
+    run_batch_diarization(resolve_audio_files(args), output_dir=args.workspace.diarization_dir, force=args.force)

@@ -1,0 +1,9 @@
+{
+  "file_id": "audio_01_lex_dhh_omarchy.wav",
+  "labeled_by": "golden_simulated",
+  "labeled_at": "2026-09-28T09:33:33+00:00",
+  "labels": {
+    "SPEAKER_00": "Lex Fridman",
+    "SPEAKER_01": "DHH"
+  }
+}
