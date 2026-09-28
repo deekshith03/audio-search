@@ -1,0 +1,13 @@
+.git
+.venv
+.env
+.env.*
+.claude
+.cache
+**/__pycache__
+**/*.pyc
+node_modules
+data/
+dataset/rebuilt_audio/
+dataset/noise_profiles/*.wav
+dataset/raw_source/*.wav

@@ -34,6 +34,12 @@ STAGES = [
     ("diarizing", "src.pipeline.diarize"),
     ("reconciling", "src.pipeline.reconcile"),
 ]
+# Default cost per stage before any job has finished on this machine: seconds per second of audio
+# for the length-dependent stages, flat seconds otherwise. Replaced by observed timings once available.
+DEFAULT_STAGE_COST = {"transcribing": 0.18, "aligning": 12.0, "diarizing": 0.47, "reconciling": 3.0}
+PER_AUDIO_SECOND_STAGES = {"transcribing", "diarizing"}
+RATE_HISTORY = 5
+
 RUNNING_STATUSES = {"queued"} | {name for name, _ in STAGES}
 DONE_STATUSES = {"awaiting_labels", "labeled"}
 LOG_TAIL_LINES = 15
@@ -162,6 +168,40 @@ def run_job(
 
     final = "labeled" if load_labels(ws, file_id) else "awaiting_labels"
     return _update(ws, file_id, status=final, stages=stages, error=None, worker_pid=None)
+
+
+def _stage_seconds(info: Dict[str, Any]) -> Optional[float]:
+    if not info.get("started_at") or not info.get("finished_at") or info.get("returncode") != 0:
+        return None
+    return (datetime.fromisoformat(info["finished_at"]) - datetime.fromisoformat(info["started_at"])).total_seconds()
+
+
+def observed_stage_costs(ws: Workspace) -> Dict[str, float]:
+    """Median stage cost over the most recent successful jobs, so estimates match this machine."""
+    if not os.path.isdir(ws.jobs_dir):
+        return dict(DEFAULT_STAGE_COST)
+    finished = []
+    for name in os.listdir(ws.jobs_dir):
+        if name.endswith(".json"):
+            job = _read_json(os.path.join(ws.jobs_dir, name)) or {}
+            if job.get("status") in DONE_STATUSES and job.get("duration_seconds"):
+                finished.append(job)
+    finished.sort(key=lambda j: j.get("updated_at", ""), reverse=True)
+
+    costs = dict(DEFAULT_STAGE_COST)
+    for stage in DEFAULT_STAGE_COST:
+        samples = []
+        for job in finished[:RATE_HISTORY]:
+            secs = _stage_seconds(job.get("stages", {}).get(stage, {}))
+            if secs is not None:
+                samples.append(secs / job["duration_seconds"] if stage in PER_AUDIO_SECOND_STAGES else secs)
+        if samples:
+            costs[stage] = sorted(samples)[len(samples) // 2]
+    return costs
+
+
+def estimate_stage_seconds(stage: str, audio_seconds: float, costs: Dict[str, float]) -> float:
+    return costs[stage] * audio_seconds if stage in PER_AUDIO_SECOND_STAGES else costs[stage]
 
 
 def mark_labeled(ws: Workspace, file_id: str) -> None:

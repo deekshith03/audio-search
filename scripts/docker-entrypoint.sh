@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Container entrypoint.
+#
+#   app                 download models on first start, then serve Streamlit on :8501 (default)
+#   reproduce [--recompute]   provenance + integrity checks, scorecard, unit tests
+#   pipeline [args]     src/pipeline/run_pipeline.sh (e.g. --file dataset/audio/x.wav --force)
+#   test                unit tests
+#   bootstrap           download models only
+#   anything else       executed as-is (e.g. bash)
+
+set -euo pipefail
+cd /app
+
+command="${1:-app}"
+[ "$#" -gt 0 ] && shift
+
+case "$command" in
+  app)
+    python -m scripts.bootstrap_models
+    exec streamlit run app/streamlit_app.py --server.address 0.0.0.0 --server.port 8501 "$@"
+    ;;
+  reproduce)
+    exec scripts/reproduce.sh "$@"
+    ;;
+  pipeline)
+    python -m scripts.bootstrap_models
+    exec bash src/pipeline/run_pipeline.sh "$@"
+    ;;
+  test)
+    exec python -m unittest discover "$@"
+    ;;
+  bootstrap)
+    exec python -m scripts.bootstrap_models
+    ;;
+  *)
+    exec "$command" "$@"
+    ;;
+esac

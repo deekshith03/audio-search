@@ -112,6 +112,7 @@ class TestJobViews(AppTestCase):
         self.assertIn("✅ Transcribing speech", text)
         self.assertIn("**Identifying speakers**", text)
         self.assertIn("○ Building transcript", text)
+        self.assertIn("⚙️ Processing · 9:00", [c.value for c in at.caption])
 
     def test_failed_view_shows_error_and_retry(self):
         self.make_job(status="failed", error="Stage 'diarizing' failed (exit 1).")

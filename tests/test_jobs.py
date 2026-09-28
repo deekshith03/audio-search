@@ -169,3 +169,48 @@ class TestIngestToJobContract(unittest.TestCase):
             self.assertEqual([e["file_id"] for e in listed], [res.file_id])
             self.assertEqual(listed[0]["status"], "queued")
             self.assertEqual(jobs.load_job(ws, res.file_id)["file_id"], res.file_id)
+
+
+class TestStageCostEstimates(unittest.TestCase):
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.ws = Workspace(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def finished_job(self, file_id, duration, asr_seconds, align_seconds, updated_at, status="labeled"):
+        stages = {
+            "transcribing": {"started_at": "2026-01-01T00:00:00+00:00", "finished_at": f"2026-01-01T00:{asr_seconds // 60:02d}:{asr_seconds % 60:02d}+00:00", "returncode": 0},
+            "aligning": {"started_at": "2026-01-01T01:00:00+00:00", "finished_at": f"2026-01-01T01:00:{align_seconds:02d}+00:00", "returncode": 0},
+        }
+        jobs.create_job(self.ws, file_id, "x.wav", "x.mp3", duration)
+        jobs._update(self.ws, file_id, status=status, stages=stages)
+        path = jobs.job_path(self.ws, file_id)
+        with open(path) as f:
+            job = json.load(f)
+        job["updated_at"] = updated_at
+        with open(path, "w") as f:
+            json.dump(job, f)
+
+    def test_defaults_without_history(self):
+        self.assertEqual(jobs.observed_stage_costs(self.ws), jobs.DEFAULT_STAGE_COST)
+
+    def test_uses_median_of_recent_successful_jobs(self):
+        self.finished_job("a.wav", 100.0, 30, 10, "2026-01-03")
+        self.finished_job("b.wav", 100.0, 50, 20, "2026-01-02")
+        self.finished_job("c.wav", 100.0, 60, 40, "2026-01-01")
+        costs = jobs.observed_stage_costs(self.ws)
+        self.assertAlmostEqual(costs["transcribing"], 0.5)
+        self.assertEqual(costs["aligning"], 20.0)
+        self.assertEqual(costs["diarizing"], jobs.DEFAULT_STAGE_COST["diarizing"])
+
+    def test_failed_and_running_jobs_are_ignored(self):
+        self.finished_job("a.wav", 100.0, 59, 10, "2026-01-01", status="failed")
+        self.assertEqual(jobs.observed_stage_costs(self.ws)["transcribing"], jobs.DEFAULT_STAGE_COST["transcribing"])
+
+    def test_estimate_scales_only_length_dependent_stages(self):
+        costs = {"transcribing": 0.5, "aligning": 20.0, "diarizing": 0.4, "reconciling": 2.0}
+        self.assertEqual(jobs.estimate_stage_seconds("transcribing", 600, costs), 300.0)
+        self.assertEqual(jobs.estimate_stage_seconds("aligning", 600, costs), 20.0)

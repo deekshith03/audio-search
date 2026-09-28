@@ -42,15 +42,6 @@ STATUS_BADGES = {
 }
 
 
-def estimated_stage_seconds(stage: str, audio_seconds: float) -> float:
-    return {
-        "transcribing": 0.18 * audio_seconds,
-        "aligning": 12.0,
-        "diarizing": 0.47 * audio_seconds,
-        "reconciling": 3.0,
-    }[stage]
-
-
 def _elapsed(iso: str) -> float:
     return (datetime.now(timezone.utc) - datetime.fromisoformat(iso)).total_seconds()
 
@@ -126,6 +117,13 @@ def render_upload(ws: Workspace) -> None:
     st.rerun()
 
 
+def render_status_caption(status: str, job: dict) -> None:
+    meta = [STATUS_BADGES.get(status, status)]
+    if job.get("duration_seconds"):
+        meta.append(mmss(job["duration_seconds"]))
+    st.caption(" · ".join(meta))
+
+
 @st.fragment(run_every=2)
 def render_progress(ws: Workspace, file_id: str) -> None:
     job = jobs.load_job(ws, file_id)
@@ -133,13 +131,16 @@ def render_progress(ws: Workspace, file_id: str) -> None:
         st.rerun()
         return
 
+    render_status_caption(job["status"], job)
+
     duration = float(job.get("duration_seconds") or 0.0)
-    total_estimate = sum(estimated_stage_seconds(s, duration) for s in STAGE_LABELS)
+    costs = jobs.observed_stage_costs(ws)
+    total_estimate = sum(jobs.estimate_stage_seconds(s, duration, costs) for s in STAGE_LABELS)
     done_estimate = 0.0
     remaining = 0.0
     for stage, label in STAGE_LABELS.items():
         info = job.get("stages", {}).get(stage, {})
-        expected = estimated_stage_seconds(stage, duration)
+        expected = jobs.estimate_stage_seconds(stage, duration, costs)
         if info.get("finished_at"):
             st.markdown(f"✅ {label}")
             done_estimate += expected
@@ -239,16 +240,14 @@ def render_transcript(ws: Workspace, file_id: str) -> None:
 def render_file(ws: Workspace, file_id: str) -> None:
     job = jobs.load_job(ws, file_id) or {}
     status = jobs.file_status(ws, file_id)
-    title = job.get("source_filename") or file_id
-    st.header(title)
-    meta = [STATUS_BADGES.get(status, status)]
-    if job.get("duration_seconds"):
-        meta.append(mmss(job["duration_seconds"]))
-    st.caption(" · ".join(meta))
+    st.header(job.get("source_filename") or file_id)
 
     if status in jobs.RUNNING_STATUSES:
         render_progress(ws, file_id)
-    elif status == "failed":
+        return
+
+    render_status_caption(status, job)
+    if status == "failed":
         render_failed(ws, file_id, job)
     elif status in jobs.DONE_STATUSES:
         render_labeling(ws, file_id)

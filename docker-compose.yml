@@ -1,0 +1,44 @@
+name: audio-search
+
+services:
+  app:
+    build: .
+    image: audio-search:latest
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+      MAX_DURATION_SECONDS: ${MAX_DURATION_SECONDS:-600}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-audio}:${POSTGRES_PASSWORD:-audio}@db:5432/${POSTGRES_DB:-audio_search}
+    ports:
+      - "${APP_PORT:-8501}:8501"
+    volumes:
+      - models:/models
+      - app_data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # PostgreSQL + pgvector for Phase 3 hybrid search (idle until then).
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-audio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-audio}
+      POSTGRES_DB: ${POSTGRES_DB:-audio_search}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-audio} -d ${POSTGRES_DB:-audio_search}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  models:
+  app_data:
+  pgdata:
