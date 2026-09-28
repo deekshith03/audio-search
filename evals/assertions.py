@@ -9,34 +9,16 @@ Replaces inlined JavaScript assertions with readable, testable Python code:
 - Evaluates Exact Speaker Attribution (anonymous SPEAKER_xx labels are resolved to names through
   dataset/speaker_labels/, the human labeling step, before comparing with qrel speakers)
 - Evaluates Near-Miss Hard Negative Rejection at Rank #1
-- Enforces Full Multi-File Recall for multi_file queries
+- Enforces Full Multi-File Recall for multi_file queries; any listed occurrence counts for
+  short_keyword queries (same rule as the non-multi-file categories)
 """
 
-import json
-import os
-import re
-from functools import lru_cache
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 
-LABELS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "dataset", "speaker_labels")
-_ANONYMOUS_LABEL = re.compile(r"^SPEAKER_\d+$")
-
-
-@lru_cache(maxsize=None)
-def _speaker_names(file_id: str, labels_dir: str = LABELS_DIR) -> Dict[str, str]:
-    path = os.path.join(labels_dir, f"{os.path.splitext(file_id)[0]}.json")
-    if not os.path.exists(path):
-        return {}
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f).get("labels", {})
-
-
-def resolve_result_speaker(result: Dict[str, Any], labels_dir: str = LABELS_DIR) -> Optional[str]:
-    """Returns the human speaker name for a search result, resolving anonymous diarization labels."""
-    speaker = result.get("speaker") or result.get("speaker_label")
-    if speaker and _ANONYMOUS_LABEL.match(speaker):
-        return _speaker_names(result.get("file_id", ""), labels_dir).get(speaker, speaker)
-    return speaker
+try:
+    from speakers import LABELS_DIR, _speaker_names, resolve_result_speaker  # noqa: F401  (loaded by promptfoo from evals/)
+except ImportError:
+    from evals.speakers import LABELS_DIR, _speaker_names, resolve_result_speaker  # noqa: F401
 
 
 def compute_temporal_iou(start_a: float, end_a: float, start_b: float, end_b: float) -> float:

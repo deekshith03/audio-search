@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # Runner for Conversational Audio Hybrid Search Evaluation Benchmark
 #
-#   bash evals/run_evals.sh [--mock] [--enforce-gate] [promptfoo eval args...]
+#   bash evals/run_evals.sh [--split dev|test] [--mock] [--enforce-gate] [promptfoo eval args...]
 #   bash evals/run_evals.sh --view      open the promptfoo results UI
+#
+# --split defaults to dev (used for tuning). The held-out test split is run only on purpose:
+#   bash evals/run_evals.sh --split test --enforce-gate
 #
 # Promptfoo is a Node tool run through a pinned npx (no package.json / node_modules);
 # Node itself is pinned by .mise.toml.
@@ -14,6 +17,7 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${ROOT_DIR}"
 
 PROMPTFOO_VERSION="0.123.1"
+SPLIT="dev"
 PROMPTFOO=(npx --registry https://registry.npmjs.org --yes "promptfoo@${PROMPTFOO_VERSION}")
 
 # Dynamically resolve Node >= 22
@@ -30,6 +34,27 @@ if [ "${1:-}" == "--view" ]; then
     exec "${PROMPTFOO[@]}" view
 fi
 
+PROMPTFOO_ARGS=()
+EVAL_ARGS=()
+MOCK_MODE=0
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --mock) MOCK_MODE=1 ;;
+        --enforce-gate) EVAL_ARGS+=("--enforce-gate") ;;
+        --split) shift; SPLIT="${1:-}" ;;
+        *) PROMPTFOO_ARGS+=("$1") ;;
+    esac
+    shift
+done
+
+case "$SPLIT" in
+    dev|test) ;;
+    *) echo "Unknown --split '${SPLIT}' (expected dev or test)" >&2; exit 64 ;;
+esac
+EVAL_ARGS+=("--split" "$SPLIT")
+PROMPTFOO_CONFIG="promptfooconfig.${SPLIT}.yaml"
+
 echo "================================================================="
 echo "  STAGE 1: Validating Dataset & Ground-Truth Integrity"
 echo "================================================================="
@@ -37,22 +62,9 @@ uv run python evals/validate_dataset_integrity.py
 
 echo ""
 echo "================================================================="
-echo "  STAGE 2: Running Promptfoo Test Matrix (54 Tests: 18 Queries x 3 Modes)"
+echo "  STAGE 2: Promptfoo test matrix [split: ${SPLIT}] (queries x hybrid/lexical/dense)"
 echo "================================================================="
 
-PROMPTFOO_ARGS=()
-EVAL_ARGS=()
-MOCK_MODE=0
-
-for arg in "$@"; do
-    if [ "$arg" == "--mock" ]; then
-        MOCK_MODE=1
-    elif [ "$arg" == "--enforce-gate" ]; then
-        EVAL_ARGS+=("--enforce-gate")
-    else
-        PROMPTFOO_ARGS+=("$arg")
-    fi
-done
 
 if [ $MOCK_MODE -eq 1 ]; then
     export EVAL_MOCK_MODE=1
@@ -64,9 +76,9 @@ export PROMPTFOO_PYTHON="$(uv run python -c 'import sys; print(sys.executable)')
 
 promptfoo_exit=0
 if [ ${#PROMPTFOO_ARGS[@]} -gt 0 ]; then
-    "${PROMPTFOO[@]}" eval --no-cache "${PROMPTFOO_ARGS[@]}" || promptfoo_exit=$?
+    "${PROMPTFOO[@]}" eval --no-cache -c "$PROMPTFOO_CONFIG" "${PROMPTFOO_ARGS[@]}" || promptfoo_exit=$?
 else
-    "${PROMPTFOO[@]}" eval --no-cache || promptfoo_exit=$?
+    "${PROMPTFOO[@]}" eval --no-cache -c "$PROMPTFOO_CONFIG" || promptfoo_exit=$?
 fi
 
 echo ""
@@ -74,11 +86,7 @@ echo "================================================================="
 echo "  STAGE 3: Computing Mathematical Recall@k & MRR Scorecard"
 echo "================================================================="
 eval_exit=0
-if [ ${#EVAL_ARGS[@]} -gt 0 ]; then
-    uv run python evals/evaluate_recall.py "${EVAL_ARGS[@]}" || eval_exit=$?
-else
-    uv run python evals/evaluate_recall.py || eval_exit=$?
-fi
+uv run python evals/evaluate_recall.py "${EVAL_ARGS[@]}" || eval_exit=$?
 
 # Fail-closed enforcement: exit with failure if either stage failed (except expected assertion failures during mock baseline)
 if [ $MOCK_MODE -ne 1 ] && [ $promptfoo_exit -ne 0 ]; then

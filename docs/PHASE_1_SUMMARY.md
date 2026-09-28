@@ -50,7 +50,9 @@ Seven canonical JSON files (`audio_01_...json` to `audio_07_...json`) serve as t
 
 ---
 
-## 4. Benchmark Evaluation Queries (`dataset/qrels/benchmark_queries.json`)
+## 4. Benchmark Evaluation Queries (`dataset/qrels/test_queries.json`)
+
+> **Phase 3 update:** this file (formerly `benchmark_queries.json`) is now the held-out **test** split, extended with 3 one/two-word keyword queries (21 queries). A separate **dev** split (`dev_queries.json`, 14 queries on disjoint turns) is used for all tuning. See `docs/PHASE_3_PLAN.md` §5.
 
 To prevent the evaluation from degrading into simple single-file topic classification, the benchmark contains **18 cross-file queries** structured across three distinct evaluation categories:
 

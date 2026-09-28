@@ -16,166 +16,125 @@ Enforces benchmark gate criteria when run with --enforce-gate:
 - Hybrid strictly > Lexical and Dense baselines (Strict Ablation Proof)
 """
 
+import argparse
 import os
 import sys
-import json
 from typing import List, Dict, Any
 
-from metrics import evaluate_retrieval, is_temporal_match
-from search_provider import call_api
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from metrics import evaluate_retrieval, is_temporal_match, result_matches_moment  # noqa: E402
+from qrels import ANY_OF_CATEGORIES, CATEGORIES, DEFAULT_SPLIT, add_split_argument, load_qrels  # noqa: E402
+from search_provider import call_api  # noqa: E402
+
+
+def top_result_is_hard_negative(top: Dict[str, Any], hard_negatives: List[Dict[str, Any]]) -> bool:
+    for hn in hard_negatives:
+        if top.get("file_id") != hn.get("file_id"):
+            continue
+        time_match, _, _ = is_temporal_match(
+            top.get("start_seconds", 0.0), top.get("end_seconds", 0.0),
+            hn.get("start_seconds", 0.0), hn.get("end_seconds", 0.0),
+        )
+        if time_match:
+            return True
+    return False
 
 
 def run_benchmark(
-    qrels_path: str = "dataset/qrels/benchmark_queries.json",
+    split: str = DEFAULT_SPLIT,
     modes: List[str] = ["hybrid", "lexical", "dense"],
     top_k: int = 5
 ) -> Dict[str, Any]:
-    with open(qrels_path, "r", encoding="utf-8") as f:
-        qrels_data = json.load(f)
-
-    queries = qrels_data["queries"]
+    queries = load_qrels(split)["queries"]
     summary_report = {}
 
     for mode in modes:
         mode_results = []
-        cat_metrics = {"single_file": [], "multi_file": [], "near_miss": []}
-
+        cat_metrics = {c: [] for c in CATEGORIES}
         total_gt_moments = 0
         total_gt_recovered = {1: 0, 3: 0, 5: 0}
 
         for q in queries:
-            qid = q["query_id"]
-            qtext = q["query"]
             cat = q["category"]
             expected = q["relevant_moments"]
-            hard_negs = q.get("hard_negatives", [])
-            total_gt_moments += len(expected)
+            any_of = cat in ANY_OF_CATEGORIES
 
-            # Call search provider
             provider_resp = call_api(
-                prompt=qtext,
+                prompt=q["query"],
                 options={"config": {"mode": mode, "top_k": top_k}},
                 context={"vars": q}
             )
-
             retrieved = provider_resp.get("output", {}).get("results", [])
 
-            # Compute Recall@k and MRR
             query_eval = evaluate_retrieval(
                 retrieved_results=retrieved,
                 expected_moments=expected,
                 k_values=[1, 3, 5],
                 tolerance_seconds=5.0,
-                min_iou=0.3
+                min_iou=0.3,
+                any_of=any_of,
             )
 
-            # Micro Recall: count moments recovered with BOTH temporal match AND speaker match
-            for k in [1, 3, 5]:
-                for exp in expected:
-                    for res in retrieved[:k]:
-                        file_match = (res.get("file_id") == exp.get("file_id"))
-                        speaker_match = (res.get("speaker") == exp.get("speaker")) if exp.get("speaker") else True
-                        time_match, _, _ = is_temporal_match(
-                            res.get("start_seconds", 0.0),
-                            res.get("end_seconds", 0.0),
-                            exp.get("start_seconds", 0.0),
-                            exp.get("end_seconds", 0.0)
-                        )
-                        if file_match and speaker_match and time_match:
-                            total_gt_recovered[k] += 1
-                            break
+            # Micro recall counts ground-truth moments; a short_keyword query is one moment
+            # (any of its listed occurrences), so repeated mentions do not inflate the total.
+            total_gt_moments += 1 if any_of else len(expected)
+            for k in (1, 3, 5):
+                found = [any(result_matches_moment(res, exp) for res in retrieved[:k]) for exp in expected]
+                total_gt_recovered[k] += (1 if any(found) else 0) if any_of else sum(found)
 
-            # Near-Miss Precision:
-            has_positive_hit = (query_eval.get("recall@5", 0.0) > 0.0)
-            avoided_hard_neg = False
+            has_positive_hit = query_eval.get("recall@5", 0.0) > 0.0
+            avoided_hard_neg = bool(retrieved) and has_positive_hit and not top_result_is_hard_negative(retrieved[0], q.get("hard_negatives", []))
 
-            if retrieved:
-                top_1 = retrieved[0]
-                is_hard_neg = False
-                for hn in hard_negs:
-                    time_match, _, _ = is_temporal_match(
-                        top_1.get("start_seconds", 0.0),
-                        top_1.get("end_seconds", 0.0),
-                        hn.get("start_seconds", 0.0),
-                        hn.get("end_seconds", 0.0)
-                    )
-                    file_match = (top_1.get("file_id") == hn.get("file_id"))
-                    if file_match and time_match:
-                        is_hard_neg = True
-                        break
-                
-                avoided_hard_neg = (not is_hard_neg) and has_positive_hit
-
-            query_eval["avoided_hard_negative"] = avoided_hard_neg
-            query_eval["query_id"] = qid
-            query_eval["category"] = cat
-
+            query_eval.update({"avoided_hard_negative": avoided_hard_neg, "query_id": q["query_id"], "category": cat})
             mode_results.append(query_eval)
             cat_metrics[cat].append(query_eval)
 
-        # Compute Macro-Averages
         def avg(lst, key):
             return sum(item[key] for item in lst) / len(lst) if lst else 0.0
 
-        near_miss_total = len(cat_metrics["near_miss"])
-        near_miss_success = sum(1 for r in cat_metrics["near_miss"] if r["avoided_hard_negative"])
-
-        mode_summary = {
-            "macro_overall": {
-                "recall@1": avg(mode_results, "recall@1"),
-                "recall@3": avg(mode_results, "recall@3"),
-                "recall@5": avg(mode_results, "recall@5"),
-                "mrr": avg(mode_results, "mrr"),
-            },
+        near_miss = cat_metrics["near_miss"]
+        summary_report[mode] = {
+            "split": split,
+            "macro_overall": {key: avg(mode_results, key) for key in ("recall@1", "recall@3", "recall@5", "mrr")},
             "micro_moments": {
-                "recall@1": total_gt_recovered[1] / total_gt_moments if total_gt_moments else 0.0,
-                "recall@3": total_gt_recovered[3] / total_gt_moments if total_gt_moments else 0.0,
-                "recall@5": total_gt_recovered[5] / total_gt_moments if total_gt_moments else 0.0,
+                f"recall@{k}": total_gt_recovered[k] / total_gt_moments if total_gt_moments else 0.0 for k in (1, 3, 5)
             },
             "by_category": {
-                cat: {
-                    "recall@1": avg(cat_metrics[cat], "recall@1"),
-                    "recall@3": avg(cat_metrics[cat], "recall@3"),
-                    "recall@5": avg(cat_metrics[cat], "recall@5"),
-                    "mrr": avg(cat_metrics[cat], "mrr"),
-                }
-                for cat in cat_metrics
+                cat: {key: avg(cat_metrics[cat], key) for key in ("recall@1", "recall@3", "recall@5", "mrr")}
+                for cat in CATEGORIES
             },
-            "near_miss_rejection_rate": (near_miss_success / near_miss_total) if near_miss_total > 0 else 0.0
+            "near_miss_rejection_rate": (sum(r["avoided_hard_negative"] for r in near_miss) / len(near_miss)) if near_miss else 0.0,
+            "queries": mode_results,
         }
-
-        summary_report[mode] = mode_summary
 
     return summary_report
 
 
+MODE_LABELS = {"hybrid": "HYBRID (RRF)", "lexical": "LEXICAL (BM25)", "dense": "DENSE (VEC)"}
+CATEGORY_LABELS = {"single_file": "Single-File", "multi_file": "Multi-File", "near_miss": "Near-Miss", "short_keyword": "Keyword"}
+
+
 def print_scorecard(summary: Dict[str, Any]):
+    split = next(iter(summary.values()), {}).get("split", "?")
     print("\n" + "=" * 82)
-    print("        CONVERSATIONAL AUDIO HYBRID SEARCH: RECALL@K EVALUATION SCORECARD")
+    print(f"        CONVERSATIONAL AUDIO HYBRID SEARCH: RECALL@K SCORECARD  [split: {split}]")
     print("=" * 82)
     print(f"{'Retrieval Mode':<16} | {'Recall@1':<10} | {'Recall@3':<10} | {'Recall@5':<10} | {'Micro R@5':<10} | {'MRR':<7}")
     print("-" * 82)
     for mode, data in summary.items():
         o = data["macro_overall"]
-        m5 = data["micro_moments"]["recall@5"]
-        mode_label = mode.upper()
-        if mode == "hybrid":
-            mode_label = "HYBRID (RRF)"
-        elif mode == "lexical":
-            mode_label = "LEXICAL (FTS)"
-        elif mode == "dense":
-            mode_label = "DENSE (VEC)"
-            
-        print(f"{mode_label:<16} | {o['recall@1']:<10.2%} | {o['recall@3']:<10.2%} | {o['recall@5']:<10.2%} | {m5:<10.2%} | {o['mrr']:<7.3f}")
+        print(f"{MODE_LABELS.get(mode, mode.upper()):<16} | {o['recall@1']:<10.2%} | {o['recall@3']:<10.2%} | {o['recall@5']:<10.2%} | {data['micro_moments']['recall@5']:<10.2%} | {o['mrr']:<7.3f}")
     print("=" * 82)
 
     print("\n[CATEGORY BREAKDOWN - MACRO RECALL@5]")
-    print(f"{'Mode':<16} | {'Single-File':<14} | {'Multi-File':<14} | {'Near-Miss':<14}")
-    print("-" * 65)
+    header = f"{'Mode':<16} | " + " | ".join(f"{CATEGORY_LABELS[c]:<12}" for c in CATEGORIES) + f" | {'NM reject':<10}"
+    print(header)
+    print("-" * len(header))
     for mode, data in summary.items():
         c = data["by_category"]
-        print(f"{mode.upper():<16} | {c['single_file']['recall@5']:<14.2%} | {c['multi_file']['recall@5']:<14.2%} | {c['near_miss']['recall@5']:<14.2%}")
-    print("=" * 65 + "\n")
+        print(f"{MODE_LABELS.get(mode, mode.upper()):<16} | " + " | ".join(f"{c[cat]['recall@5']:<12.2%}" for cat in CATEGORIES) + f" | {data['near_miss_rejection_rate']:<10.2%}")
+    print("=" * len(header) + "\n")
 
 
 def check_gate(summary: Dict[str, Any]):
@@ -243,7 +202,11 @@ def check_gate(summary: Dict[str, Any]):
 
 
 if __name__ == "__main__":
-    report = run_benchmark()
+    parser = argparse.ArgumentParser(description="Recall@k scorecard over a query split")
+    add_split_argument(parser)
+    parser.add_argument("--enforce-gate", action="store_true")
+    args = parser.parse_args()
+    report = run_benchmark(split=args.split)
     print_scorecard(report)
-    if "--enforce-gate" in sys.argv:
+    if args.enforce_gate:
         check_gate(report)

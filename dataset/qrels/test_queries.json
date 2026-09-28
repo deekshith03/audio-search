@@ -1,11 +1,13 @@
 {
-  "version": "1.1.0",
-  "benchmark_name": "Conversational Audio Hybrid Search Benchmark (Cross-File Qrels)",
-  "total_queries": 18,
+  "version": "2.0.0",
+  "benchmark_name": "Conversational Audio Hybrid Search Benchmark: test split",
+  "split": "test",
+  "total_queries": 21,
   "query_breakdown": {
-    "single_file_queries": 6,
-    "multi_file_queries": 6,
-    "near_miss_queries": 6
+    "single_file": 6,
+    "multi_file": 6,
+    "near_miss": 6,
+    "short_keyword": 3
   },
   "corpus_files": [
     "audio_01_lex_dhh_omarchy.wav",
@@ -16,6 +18,7 @@
     "audio_06_constitutional_jurisprudence.wav",
     "audio_07_investigative_history_cafe.wav"
   ],
+  "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
   "queries": [
     {
       "query_id": "SF-01",
@@ -575,7 +578,83 @@
           "reason": "Dwarkesh mentions immigration to North Dakota as a child, but not constitutional jurisprudence or Kantian dignity."
         }
       ]
+    },
+    {
+      "query_id": "KW-01",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Roger Gracie",
+      "description": "Two-word name; ASR spelled it correctly.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 12,
+          "speaker": "Lex Fridman",
+          "start_seconds": 229.54,
+          "end_seconds": 231.71,
+          "matched_text": "when I trained with Roger Gracie in a different sport",
+          "turn_start_seconds": 224.0,
+          "turn_end_seconds": 234.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": []
+    },
+    {
+      "query_id": "KW-02",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Winfield Scott",
+      "description": "Two-word name said twice; either occurrence counts.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 7,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 222.38,
+          "end_seconds": 225.58,
+          "matched_text": "Winfield Scott had had it by brevet.",
+          "turn_start_seconds": 215.0,
+          "turn_end_seconds": 227.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 21,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 403.74,
+          "end_seconds": 406.16,
+          "matched_text": "Winfield Scott thought he was the greatest soldier in the army",
+          "turn_start_seconds": 382.0,
+          "turn_end_seconds": 425.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": []
+    },
+    {
+      "query_id": "KW-03",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Omakub",
+      "description": "One-word product name the ASR wrote as 'Omacoup'; needs fuzzy matching.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 9,
+          "speaker": "DHH",
+          "start_seconds": 181.35,
+          "end_seconds": 184.08,
+          "matched_text": "The first iteration we talked about last time was called Omakub",
+          "turn_start_seconds": 167.0,
+          "turn_end_seconds": 211.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": []
     }
-  ],
-  "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+  ]
 }

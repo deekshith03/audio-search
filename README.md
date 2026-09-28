@@ -69,7 +69,7 @@ uv run streamlit run app/streamlit_app.py
 | Pipeline on uploads | add `--workspace data` to any stage, e.g. `uv run python -m src.pipeline.asr --workspace data` |
 | Reproduce benchmark | `scripts/reproduce.sh [--recompute]` |
 | Verify golden audio | `uv run python -m scripts.build_dataset --verify` |
-| Retrieval eval harness | `bash evals/run_evals.sh [--enforce-gate]` (Phase 3+); results UI: `bash evals/run_evals.sh --view` |
+| Retrieval eval harness | `bash evals/run_evals.sh [--split dev\|test] [--enforce-gate]` (dev by default; Phase 3+); results UI: `bash evals/run_evals.sh --view` |
 
 ---
 
@@ -85,7 +85,7 @@ tests/                      unit + Streamlit AppTest suites
 dataset/
   audio/                    7 golden recordings (16 kHz mono WAV, 8–10 min, unique speaker pairs)
   ground_truth/             official transcripts with speaker turns
-  qrels/                    18 labeled benchmark queries (29 target moments)
+  qrels/                    dev (14) and held-out test (21) labeled query sets
   speaker_labels/           human speaker names for the golden set
   pipeline_outputs/         canonical transcripts + quality manifest
   metadata/sources.json     provenance of every golden file

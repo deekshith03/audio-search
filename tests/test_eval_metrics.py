@@ -80,26 +80,32 @@ class TestEvaluationMetrics(unittest.TestCase):
         self.assertEqual(eval_correct["recall@5"], 1.0)
 
     def test_json_and_yaml_parity(self):
-        # Genuinely parses both promptfooconfig.json and promptfooconfig.yaml
-        with open("promptfooconfig.json", "r", encoding="utf-8") as fj:
-            d_json = json.load(fj)
+        for split in ("dev", "test"):
+            with self.subTest(split=split):
+                with open(f"promptfooconfig.{split}.json", "r", encoding="utf-8") as fj:
+                    d_json = json.load(fj)
+                with open(f"promptfooconfig.{split}.yaml", "r", encoding="utf-8") as fy:
+                    d_yaml = yaml.safe_load(fy)
 
-        with open("promptfooconfig.yaml", "r", encoding="utf-8") as fy:
-            d_yaml = yaml.safe_load(fy)
+                self.assertEqual(d_json, d_yaml, f"promptfooconfig.{split}.json and .yaml must be structurally identical")
 
-        # 1. Complete structural equality
-        self.assertEqual(d_json, d_yaml, "promptfooconfig.json and promptfooconfig.yaml must be structurally identical")
+                # hard_negatives must be an explicit list: empty except for near-miss queries
+                for i, t in enumerate(d_yaml["tests"]):
+                    cat = t["vars"]["category"]
+                    hn = t["vars"]["hard_negatives"]
+                    self.assertIsInstance(hn, list, f"{split} test {i} ({t['description']}) hard_negatives must be a list")
+                    if cat == "near_miss":
+                        self.assertGreater(len(hn), 0, f"{split} near-miss test {i} must have at least one hard negative")
+                    else:
+                        self.assertEqual(len(hn), 0, f"{split} test {i} ({t['description']}) hard_negatives must be empty")
 
-        # 2. Inspect all 12 single-file and multi-file tests: hard_negatives must be an empty list [] and not None/null
-        for i, t in enumerate(d_yaml["tests"]):
-            cat = t["vars"]["category"]
-            hn = t["vars"]["hard_negatives"]
-            if cat in ("single_file", "multi_file"):
-                self.assertIsInstance(hn, list, f"Test {i} ({t['description']}) hard_negatives must be a list []")
-                self.assertEqual(len(hn), 0, f"Test {i} ({t['description']}) hard_negatives must be empty list []")
-            elif cat == "near_miss":
-                self.assertIsInstance(hn, list)
-                self.assertGreater(len(hn), 0, f"Near-miss test {i} must have at least one hard negative")
+    def test_configs_match_qrels(self):
+        from evals.qrels import load_qrels
+        for split in ("dev", "test"):
+            with self.subTest(split=split):
+                with open(f"promptfooconfig.{split}.yaml", "r", encoding="utf-8") as fy:
+                    cfg = yaml.safe_load(fy)
+                self.assertEqual([t["vars"]["query_id"] for t in cfg["tests"]], [q["query_id"] for q in load_qrels(split)["queries"]])
 
     def test_near_miss_hard_negative_rejection(self):
         context = {

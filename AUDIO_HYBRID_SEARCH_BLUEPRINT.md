@@ -253,7 +253,7 @@ Because audio has a continuous temporal dimension, a retrieved result $r$ is def
 
 $$\text{Recall@k} = \frac{\text{Number of Ground Truth moments retrieved in top } k}{\text{Total Ground Truth moments in query set}}$$
 
-### Golden Labeled Query Benchmark (18 queries in `dataset/qrels/benchmark_queries.json`):
+### Golden Labeled Query Benchmark (18 queries, now the test split `dataset/qrels/test_queries.json`):
 1. **Single-File Queries (6 queries):** Needle-in-a-haystack retrieval isolated from 6 distractor files.
 2. **Multi-File Queries (6 queries):** Conceptual themes spanning 2-3 files to evaluate cross-corpus recall.
 3. **Near-Miss Queries (6 queries):** Hard semantic distractors that evaluate retrieval precision and reject false positives at Rank #1.

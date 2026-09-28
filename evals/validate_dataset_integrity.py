@@ -11,8 +11,10 @@ Strictly proves:
    - Exactly 2 declared foreground speakers per transcript.
    - Sequential, unique turn IDs (1..N).
    - Declared file durations match physical audio duration within 1.0s.
-3. Benchmark Queries (Qrels):
-   - Exactly 18 queries (6 single_file, 6 multi_file, 6 near_miss).
+3. Benchmark Queries (Qrels), for each split (dev, test):
+   - Query counts per category match EXPECTED_BREAKDOWN (evals/qrels.py).
+   - short_keyword queries have at most two words.
+   - dev and test reference disjoint (file_id, turn_id) pairs, including hard negatives.
    - All query IDs are unique.
    - target_file_count strictly equals len(unique_files).
    - Every relevant moment points to an existing file_id and turn_id.
@@ -27,6 +29,148 @@ import sys
 import json
 import wave
 import math
+
+try:
+    from qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, SPLIT_PATHS
+except ImportError:
+    from evals.qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, SPLIT_PATHS
+
+
+def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
+    """Validates one split and returns the set of (file_id, turn_id) it references."""
+    used_turns = set()
+    corpus_manifest = qrels_data.get("corpus_files", [])
+    if sorted(corpus_manifest) != sorted(audio_files):
+        errors.append(f"[{split}] corpus_files {corpus_manifest} does not match audio files {audio_files}")
+    if qrels_data.get("split") != split:
+        errors.append(f"[{split}] file declares split '{qrels_data.get('split')}'")
+
+    queries = qrels_data.get("queries", [])
+    expected_breakdown = EXPECTED_BREAKDOWN[split]
+    if len(queries) != sum(expected_breakdown.values()):
+        errors.append(f"[{split}] Expected {sum(expected_breakdown.values())} queries, found {len(queries)}")
+    if qrels_data.get("total_queries") != len(queries):
+        errors.append(f"[{split}] total_queries ({qrels_data.get('total_queries')}) does not match {len(queries)} queries")
+
+    breakdown = {c: 0 for c in CATEGORIES}
+    seen_qids = set()
+
+    for q in queries:
+        qid = q.get("query_id")
+        if not qid or qid in seen_qids:
+            errors.append(f"[{split}] Duplicate or empty query_id: {qid}")
+        seen_qids.add(qid)
+
+        category = q.get("category")
+        if category in breakdown:
+            breakdown[category] += 1
+        else:
+            errors.append(f"[{split}] {qid}: Invalid category '{category}'")
+
+        expected = q.get("relevant_moments", [])
+        if not expected:
+            errors.append(f"[{split}] {qid}: No relevant moments defined")
+
+        unique_files = set(m.get("file_id") for m in expected)
+        declared_tfc = q.get("target_file_count")
+        if declared_tfc != len(unique_files):
+            errors.append(f"[{split}] {qid}: target_file_count ({declared_tfc}) does not match unique files ({len(unique_files)})")
+
+        if category == "single_file" and len(unique_files) != 1:
+            errors.append(f"[{split}] {qid}: Category is single_file but references {len(unique_files)} files")
+        if category == "short_keyword" and len(q.get("query", "").split()) > MAX_SHORT_KEYWORD_WORDS:
+            errors.append(f"[{split}] {qid}: short_keyword query has more than {MAX_SHORT_KEYWORD_WORDS} words")
+        if category == "multi_file" and len(unique_files) < 2:
+            errors.append(f"[{split}] {qid}: Category is multi_file but references {len(unique_files)} files")
+
+        for m in expected:
+            fid = m.get("file_id")
+            tid = m.get("turn_id")
+            exp_spk = m.get("speaker")
+            mtxt = m.get("matched_text")
+            mst = m.get("start_seconds")
+            met = m.get("end_seconds")
+
+            if fid not in transcripts:
+                errors.append(f"[{split}] {qid}: References missing audio file {fid}")
+                continue
+
+            if tid not in transcripts[fid]:
+                errors.append(f"[{split}] {qid}: References non-existent Turn {tid} in {fid}")
+                continue
+
+            used_turns.add((fid, tid))
+            ref_turn = transcripts[fid][tid]
+            ref_spk = ref_turn.get("speaker")
+            ref_text = ref_turn.get("text")
+            ref_st = ref_turn.get("start_time")
+            ref_et = ref_turn.get("end_time")
+
+            # Check speaker match
+            if exp_spk and exp_spk != ref_spk:
+                errors.append(f"[{split}] {qid}: Declared speaker '{exp_spk}' does not match transcript speaker '{ref_spk}' in {fid} Turn {tid}")
+
+            # Check numeric, finite, non-boolean timestamps
+            if not isinstance(mst, (int, float)) or isinstance(mst, bool) or not isinstance(met, (int, float)) or isinstance(met, bool):
+                errors.append(f"[{split}] {qid}: Non-numeric moment interval [{mst}, {met}]")
+                continue
+            if math.isnan(mst) or math.isnan(met) or math.isinf(mst) or math.isinf(met):
+                errors.append(f"[{split}] {qid}: NaN or Inf moment interval [{mst}, {met}]")
+                continue
+            if met <= mst:
+                errors.append(f"[{split}] {qid}: Non-positive moment interval [{mst}, {met}]")
+                continue
+
+            # Check interval containment: moment must sit within turn boundaries
+            if mst < ref_st - 0.05 or met > ref_et + 0.05:
+                errors.append(f"[{split}] {qid}: Moment interval [{mst}, {met}] is outside Turn {tid} interval [{ref_st}, {ref_et}] in {fid}")
+
+            # Check non-empty and STRICT VERBATIM SUBSTRING MATCH
+            if not mtxt or not mtxt.strip():
+                errors.append(f"[{split}] {qid}: matched_text is empty")
+            elif mtxt not in ref_text:
+                errors.append(f"[{split}] {qid}: matched_text is NOT an exact verbatim substring of Turn {tid} in {fid}!\n  matched_text: '{mtxt[:60]}...'\n  turn_text:    '{ref_text[:60]}...'")
+
+        # Validate hard negatives
+        hard_negs = q.get("hard_negatives", [])
+        for hn in hard_negs:
+            hn_fid = hn.get("file_id")
+            hn_tid = hn.get("turn_id")
+            hn_spk = hn.get("speaker")
+            hn_st = hn.get("start_seconds")
+            hn_et = hn.get("end_seconds")
+
+            if hn_fid not in transcripts:
+                errors.append(f"[{split}] {qid} hard_negative: Unknown file {hn_fid}")
+            elif hn_tid not in transcripts[hn_fid]:
+                errors.append(f"[{split}] {qid} hard_negative: Unknown Turn {hn_tid} in {hn_fid}")
+            else:
+                used_turns.add((hn_fid, hn_tid))
+                hn_turn = transcripts[hn_fid][hn_tid]
+                if hn_spk and hn_spk != hn_turn.get("speaker"):
+                    errors.append(f"[{split}] {qid} hard_negative: Speaker '{hn_spk}' != '{hn_turn.get('speaker')}'")
+
+                # Check numeric, finite, non-boolean
+                if not isinstance(hn_st, (int, float)) or isinstance(hn_st, bool) or not isinstance(hn_et, (int, float)) or isinstance(hn_et, bool):
+                    errors.append(f"[{split}] {qid} hard_negative: Non-numeric interval [{hn_st}, {hn_et}]")
+                    continue
+                if math.isnan(hn_st) or math.isnan(hn_et) or math.isinf(hn_st) or math.isinf(hn_et):
+                    errors.append(f"[{split}] {qid} hard_negative: NaN or Inf interval [{hn_st}, {hn_et}]")
+                    continue
+                if hn_et <= hn_st:
+                    errors.append(f"[{split}] {qid} hard_negative: Non-positive interval [{hn_st}, {hn_et}]")
+                    continue
+
+                ref_st = hn_turn.get("start_time")
+                ref_et = hn_turn.get("end_time")
+                if hn_st < ref_st - 0.05 or hn_et > ref_et + 0.05:
+                    errors.append(f"[{split}] {qid} hard_negative: Interval [{hn_st}, {hn_et}] outside Turn {hn_tid} in {hn_fid}")
+
+    if breakdown != expected_breakdown:
+        errors.append(f"[{split}] Unexpected query breakdown: {breakdown} (expected {expected_breakdown})")
+
+    print(f"✓ [{split}] qrels validated: {len(queries)} queries {breakdown}, all verbatim substrings.")
+    return used_turns
 
 
 def validate_all():
@@ -135,133 +279,18 @@ def validate_all():
 
     print(f"✓ Ground-truth transcripts validated: exactly {len(transcripts)} files with 100% exact turn continuity.")
 
-    # 3. Validate Benchmark Queries (Qrels)
-    qrels_path = "dataset/qrels/benchmark_queries.json"
-    with open(qrels_path, "r", encoding="utf-8") as f:
-        qrels_data = json.load(f)
+    # 3. Validate benchmark queries: each split, then split independence
+    used_by_split = {}
+    for split in SPLIT_PATHS:
+        with open(SPLIT_PATHS[split], "r", encoding="utf-8") as f:
+            qrels_data = json.load(f)
+        used_by_split[split] = validate_qrels(split, qrels_data, transcripts, audio_files, errors)
 
-    corpus_manifest = qrels_data.get("corpus_files", [])
-    if sorted(corpus_manifest) != sorted(audio_files):
-        errors.append(f"Qrels corpus_files {corpus_manifest} does not match audio files {audio_files}")
-
-    queries = qrels_data.get("queries", [])
-    if len(queries) != 18:
-        errors.append(f"Expected exactly 18 benchmark queries, found {len(queries)}")
-
-    breakdown = {"single_file": 0, "multi_file": 0, "near_miss": 0}
-    seen_qids = set()
-
-    for q in queries:
-        qid = q.get("query_id")
-        if not qid or qid in seen_qids:
-            errors.append(f"Duplicate or empty query_id: {qid}")
-        seen_qids.add(qid)
-
-        category = q.get("category")
-        if category in breakdown:
-            breakdown[category] += 1
-        else:
-            errors.append(f"{qid}: Invalid category '{category}'")
-
-        expected = q.get("relevant_moments", [])
-        if not expected:
-            errors.append(f"{qid}: No relevant moments defined")
-
-        unique_files = set(m.get("file_id") for m in expected)
-        declared_tfc = q.get("target_file_count")
-        if declared_tfc != len(unique_files):
-            errors.append(f"{qid}: target_file_count ({declared_tfc}) does not match unique files ({len(unique_files)})")
-
-        if category == "single_file" and len(unique_files) != 1:
-            errors.append(f"{qid}: Category is single_file but references {len(unique_files)} files")
-        if category == "multi_file" and len(unique_files) < 2:
-            errors.append(f"{qid}: Category is multi_file but references {len(unique_files)} files")
-
-        for m in expected:
-            fid = m.get("file_id")
-            tid = m.get("turn_id")
-            exp_spk = m.get("speaker")
-            mtxt = m.get("matched_text")
-            mst = m.get("start_seconds")
-            met = m.get("end_seconds")
-
-            if fid not in transcripts:
-                errors.append(f"{qid}: References missing audio file {fid}")
-                continue
-
-            if tid not in transcripts[fid]:
-                errors.append(f"{qid}: References non-existent Turn {tid} in {fid}")
-                continue
-
-            ref_turn = transcripts[fid][tid]
-            ref_spk = ref_turn.get("speaker")
-            ref_text = ref_turn.get("text")
-            ref_st = ref_turn.get("start_time")
-            ref_et = ref_turn.get("end_time")
-
-            # Check speaker match
-            if exp_spk and exp_spk != ref_spk:
-                errors.append(f"{qid}: Declared speaker '{exp_spk}' does not match transcript speaker '{ref_spk}' in {fid} Turn {tid}")
-
-            # Check numeric, finite, non-boolean timestamps
-            if not isinstance(mst, (int, float)) or isinstance(mst, bool) or not isinstance(met, (int, float)) or isinstance(met, bool):
-                errors.append(f"{qid}: Non-numeric moment interval [{mst}, {met}]")
-                continue
-            if math.isnan(mst) or math.isnan(met) or math.isinf(mst) or math.isinf(met):
-                errors.append(f"{qid}: NaN or Inf moment interval [{mst}, {met}]")
-                continue
-            if met <= mst:
-                errors.append(f"{qid}: Non-positive moment interval [{mst}, {met}]")
-                continue
-
-            # Check interval containment: moment must sit within turn boundaries
-            if mst < ref_st - 0.05 or met > ref_et + 0.05:
-                errors.append(f"{qid}: Moment interval [{mst}, {met}] is outside Turn {tid} interval [{ref_st}, {ref_et}] in {fid}")
-
-            # Check non-empty and STRICT VERBATIM SUBSTRING MATCH
-            if not mtxt or not mtxt.strip():
-                errors.append(f"{qid}: matched_text is empty")
-            elif mtxt not in ref_text:
-                errors.append(f"{qid}: matched_text is NOT an exact verbatim substring of Turn {tid} in {fid}!\n  matched_text: '{mtxt[:60]}...'\n  turn_text:    '{ref_text[:60]}...'")
-
-        # Validate hard negatives
-        hard_negs = q.get("hard_negatives", [])
-        for hn in hard_negs:
-            hn_fid = hn.get("file_id")
-            hn_tid = hn.get("turn_id")
-            hn_spk = hn.get("speaker")
-            hn_st = hn.get("start_seconds")
-            hn_et = hn.get("end_seconds")
-
-            if hn_fid not in transcripts:
-                errors.append(f"{qid} hard_negative: Unknown file {hn_fid}")
-            elif hn_tid not in transcripts[hn_fid]:
-                errors.append(f"{qid} hard_negative: Unknown Turn {hn_tid} in {hn_fid}")
-            else:
-                hn_turn = transcripts[hn_fid][hn_tid]
-                if hn_spk and hn_spk != hn_turn.get("speaker"):
-                    errors.append(f"{qid} hard_negative: Speaker '{hn_spk}' != '{hn_turn.get('speaker')}'")
-
-                # Check numeric, finite, non-boolean
-                if not isinstance(hn_st, (int, float)) or isinstance(hn_st, bool) or not isinstance(hn_et, (int, float)) or isinstance(hn_et, bool):
-                    errors.append(f"{qid} hard_negative: Non-numeric interval [{hn_st}, {hn_et}]")
-                    continue
-                if math.isnan(hn_st) or math.isnan(hn_et) or math.isinf(hn_st) or math.isinf(hn_et):
-                    errors.append(f"{qid} hard_negative: NaN or Inf interval [{hn_st}, {hn_et}]")
-                    continue
-                if hn_et <= hn_st:
-                    errors.append(f"{qid} hard_negative: Non-positive interval [{hn_st}, {hn_et}]")
-                    continue
-
-                ref_st = hn_turn.get("start_time")
-                ref_et = hn_turn.get("end_time")
-                if hn_st < ref_st - 0.05 or hn_et > ref_et + 0.05:
-                    errors.append(f"{qid} hard_negative: Interval [{hn_st}, {hn_et}] outside Turn {hn_tid} in {hn_fid}")
-
-    if breakdown != {"single_file": 6, "multi_file": 6, "near_miss": 6}:
-        errors.append(f"Unexpected query breakdown: {breakdown} (expected 6/6/6)")
-
-    print(f"✓ Benchmark queries (qrels) validated: exactly 18 queries (6 single, 6 multi, 6 near-miss), all verbatim substrings.")
+    shared = used_by_split["dev"] & used_by_split["test"]
+    for fid, tid in sorted(shared):
+        errors.append(f"dev and test both reference {fid} turn {tid}; splits must use disjoint turns")
+    if not shared:
+        print("✓ dev and test splits reference disjoint turns.")
 
     if errors:
         print(f"\n❌ FOUND {len(errors)} INTEGRITY ERRORS:")
@@ -269,7 +298,7 @@ def validate_all():
             print("  -", e)
         sys.exit(1)
     else:
-        print("\n✅ ZERO DEFECTS: All audio, transcripts, and qrels pass 100% mathematical, schema, and verbatim integrity verification!")
+        print("\n✅ ZERO DEFECTS: All audio, transcripts, and qrels (dev + test) pass integrity verification!")
 
 
 if __name__ == "__main__":

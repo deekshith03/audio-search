@@ -1,20 +1,26 @@
 """
-Generates clean, readable promptfooconfig.json and promptfooconfig.yaml
-directly from dataset/qrels/benchmark_queries.json using standard library.
+Generates clean, readable promptfoo configs (YAML plus a structurally identical JSON copy)
+for each query split: promptfooconfig.{dev,test}.{yaml,json}, from dataset/qrels/{split}_queries.json.
 
 Self-validates that parsed YAML structure matches parsed JSON 100%.
 """
 
 import json
 import os
+import sys
+
 import yaml
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from qrels import SPLIT_PATHS, load_qrels  # noqa: E402
 
-def generate_config():
-    with open("dataset/qrels/benchmark_queries.json", "r", encoding="utf-8") as f:
-        qrels_data = json.load(f)
 
-    queries = qrels_data["queries"]
+def config_paths(split):
+    return f"promptfooconfig.{split}.json", f"promptfooconfig.{split}.yaml"
+
+
+def generate_config(split):
+    queries = load_qrels(split)["queries"]
 
     providers = [
         {
@@ -71,29 +77,30 @@ def generate_config():
         tests.append(test_entry)
 
     promptfoo_config = {
-        "description": "Conversational Audio Hybrid Search: 18 Cross-File Evaluation Benchmark",
+        "description": f"Conversational Audio Hybrid Search: {split} split ({len(tests)} queries)",
         "prompts": ["{{query}}"],
         "providers": providers,
         "tests": tests
     }
 
     # Save as promptfooconfig.json
-    with open("promptfooconfig.json", "w", encoding="utf-8") as f:
+    json_path, yaml_path = config_paths(split)
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(promptfoo_config, f, indent=2, ensure_ascii=False)
 
-    with open("promptfooconfig.yaml", "w", encoding="utf-8") as f:
+    with open(yaml_path, "w", encoding="utf-8") as f:
         yaml.safe_dump(promptfoo_config, f, sort_keys=False, allow_unicode=True, width=120)
 
     # True Self-Validation: parse both files and assert complete equality
-    with open("promptfooconfig.json", "r", encoding="utf-8") as fj:
+    with open(json_path, "r", encoding="utf-8") as fj:
         d_json = json.load(fj)
-    with open("promptfooconfig.yaml", "r", encoding="utf-8") as fy:
+    with open(yaml_path, "r", encoding="utf-8") as fy:
         d_yaml = yaml.safe_load(fy)
 
-    assert d_json == d_yaml, "Self-validation failed: parsed promptfooconfig.yaml does not match promptfooconfig.json!"
-    print(f"Generated promptfooconfig.yaml and promptfooconfig.json with {len(tests)} tests!")
-    print("✓ Self-validation passed: promptfooconfig.yaml and promptfooconfig.json are 100% structurally identical.")
+    assert d_json == d_yaml, f"Self-validation failed: {yaml_path} does not match {json_path}!"
+    print(f"✓ [{split}] {yaml_path} + {json_path}: {len(tests)} tests, structurally identical.")
 
 
 if __name__ == "__main__":
-    generate_config()
+    for split in SPLIT_PATHS:
+        generate_config(split)

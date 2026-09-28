@@ -2,25 +2,42 @@ import json
 import os
 import unittest
 
-from scripts.tighten_qrels import token_char_spans
+from scripts.tighten_qrels import word_char_spans
 
-QRELS_PATH = "dataset/qrels/benchmark_queries.json"
+from evals.qrels import SPLIT_PATHS
+
 GT_DIR = "dataset/ground_truth"
 
 
-class TestTokenCharSpans(unittest.TestCase):
+class TestWordCharSpans(unittest.TestCase):
 
-    def test_spans_map_back_to_tokens(self):
+    def test_spans_map_back_to_words(self):
         text = "Hello  big world."
-        self.assertEqual([text[s:e] for s, e in token_char_spans(text)], ["Hello", "big", "world."])
+        self.assertEqual([text[s:e] for s, e in word_char_spans(text, ("Hello", "big", "world."))], ["Hello", "big", "world."])
+
+    def test_token_split_by_aligner_is_located(self):
+        text = 'not weakness."But if'
+        spans = word_char_spans(text, ("not", 'weakness."', "But", "if"))
+        self.assertEqual([text[s:e] for s, e in spans], ["not", 'weakness."', "But", "if"])
+
+    def test_punctuation_shared_by_neighbours_is_tolerated(self):
+        text = 'not weakness."But if'
+        spans = word_char_spans(text, ("not", 'weakness."', '"But', "if"))
+        self.assertEqual([text[s:e] for s, e in spans], ["not", 'weakness."', "But", "if"])
+
+    def test_missing_word_raises(self):
+        with self.assertRaises(RuntimeError):
+            word_char_spans("hello world", ("goodbye",))
 
 
 class TestTightenedQrels(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(QRELS_PATH, encoding="utf-8") as f:
-            cls.queries = json.load(f)["queries"]
+        cls.queries = []
+        for path in SPLIT_PATHS.values():
+            with open(path, encoding="utf-8") as f:
+                cls.queries += json.load(f)["queries"]
         cls.turns = {}
         for name in os.listdir(GT_DIR):
             with open(os.path.join(GT_DIR, name), encoding="utf-8") as f:

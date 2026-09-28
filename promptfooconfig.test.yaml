@@ -1,4 +1,4 @@
-description: 'Conversational Audio Hybrid Search: 18 Cross-File Evaluation Benchmark'
+description: 'Conversational Audio Hybrid Search: test split (21 queries)'
 prompts:
 - '{{query}}'
 providers:
@@ -542,6 +542,75 @@ tests:
       start_seconds: 475.0
       end_seconds: 541.6
       reason: Dwarkesh mentions immigration to North Dakota as a child, but not constitutional jurisprudence or Kantian dignity.
+  assert:
+  - type: python
+    value: file://evals/assertions.py
+- description: '[KW-01] SHORT_KEYWORD: Roger Gracie...'
+  vars:
+    query: Roger Gracie
+    query_id: KW-01
+    category: short_keyword
+    archetype: keyword_short
+    expected_moments:
+    - file_id: audio_05_sports_tactics_debate.wav
+      turn_id: 12
+      speaker: Lex Fridman
+      start_seconds: 229.54
+      end_seconds: 231.71
+      matched_text: when I trained with Roger Gracie in a different sport
+      turn_start_seconds: 224.0
+      turn_end_seconds: 234.0
+      span_source: wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)
+    hard_negatives: []
+  assert:
+  - type: python
+    value: file://evals/assertions.py
+- description: '[KW-02] SHORT_KEYWORD: Winfield Scott...'
+  vars:
+    query: Winfield Scott
+    query_id: KW-02
+    category: short_keyword
+    archetype: keyword_short
+    expected_moments:
+    - file_id: audio_07_investigative_history_cafe.wav
+      turn_id: 7
+      speaker: Gary Gallagher
+      start_seconds: 222.38
+      end_seconds: 225.58
+      matched_text: Winfield Scott had had it by brevet.
+      turn_start_seconds: 215.0
+      turn_end_seconds: 227.0
+      span_source: wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)
+    - file_id: audio_07_investigative_history_cafe.wav
+      turn_id: 21
+      speaker: Gary Gallagher
+      start_seconds: 403.74
+      end_seconds: 406.16
+      matched_text: Winfield Scott thought he was the greatest soldier in the army
+      turn_start_seconds: 382.0
+      turn_end_seconds: 425.0
+      span_source: wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)
+    hard_negatives: []
+  assert:
+  - type: python
+    value: file://evals/assertions.py
+- description: '[KW-03] SHORT_KEYWORD: Omakub...'
+  vars:
+    query: Omakub
+    query_id: KW-03
+    category: short_keyword
+    archetype: keyword_short
+    expected_moments:
+    - file_id: audio_01_lex_dhh_omarchy.wav
+      turn_id: 9
+      speaker: DHH
+      start_seconds: 181.35
+      end_seconds: 184.08
+      matched_text: The first iteration we talked about last time was called Omakub
+      turn_start_seconds: 167.0
+      turn_end_seconds: 211.0
+      span_source: wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)
+    hard_negatives: []
   assert:
   - type: python
     value: file://evals/assertions.py

@@ -10,6 +10,11 @@ Implements objective, code-based evaluation metrics:
 
 from typing import List, Dict, Any, Tuple
 
+try:
+    from speakers import resolve_result_speaker
+except ImportError:
+    from evals.speakers import resolve_result_speaker
+
 
 def compute_temporal_iou(start_a: float, end_a: float, start_b: float, end_b: float) -> float:
     """Computes Intersection over Union for two temporal intervals."""
@@ -66,80 +71,55 @@ def is_temporal_match(
     return is_match, start_delta, iou
 
 
+def result_matches_moment(
+    res: Dict[str, Any],
+    gt: Dict[str, Any],
+    tolerance_seconds: float = 5.0,
+    min_iou: float = 0.3,
+) -> bool:
+    """File, speaker (resolved to a human name) and strict temporal match between one result and one moment."""
+    if res.get("file_id") != gt.get("file_id"):
+        return False
+    gt_speaker = gt.get("speaker")
+    if gt_speaker and resolve_result_speaker(res) != gt_speaker:
+        return False
+    pred_start = float(res.get("start_seconds", 0.0))
+    pred_end = float(res.get("end_seconds", pred_start + 1.0))
+    gt_start = float(gt.get("start_seconds", 0.0))
+    gt_end = float(gt.get("end_seconds", gt_start + 1.0))
+    match, _, _ = is_temporal_match(pred_start, pred_end, gt_start, gt_end, tolerance_seconds, min_iou)
+    return match
+
+
 def evaluate_retrieval(
     retrieved_results: List[Dict[str, Any]],
     expected_moments: List[Dict[str, Any]],
     k_values: List[int] = [1, 3, 5],
     tolerance_seconds: float = 5.0,
-    min_iou: float = 0.3
+    min_iou: float = 0.3,
+    any_of: bool = False,
 ) -> Dict[str, Any]:
     """
     Evaluates a retrieved list of segments against expected ground-truth moments.
+
+    Recall@k is the fraction of expected moments found in the top k. With any_of=True (short_keyword
+    queries, where each listed moment is an occurrence of the same term) it is 1.0 if any is found.
+    MRR uses the rank of the first result matching any expected moment.
     """
     if not expected_moments:
-        return {"recall@1": 1.0, "recall@3": 1.0, "recall@5": 1.0, "mrr": 1.0}
-
+        return {**{f"recall@{k}": 1.0 for k in k_values}, "mrr": 1.0}
     if not retrieved_results:
-        return {"recall@1": 0.0, "recall@3": 0.0, "recall@5": 0.0, "mrr": 0.0}
+        return {**{f"recall@{k}": 0.0 for k in k_values}, "mrr": 0.0}
 
-    first_hit_rank = None
-    total_gt = len(expected_moments)
+    def matches(res, gt):
+        return result_matches_moment(res, gt, tolerance_seconds, min_iou)
 
-    # For MRR: rank of first retrieved result that matches ANY expected moment
-    for rank, res in enumerate(retrieved_results, start=1):
-        pred_file = res.get("file_id")
-        pred_speaker = res.get("speaker")
-        pred_start = float(res.get("start_seconds", 0.0))
-        pred_end = float(res.get("end_seconds", pred_start + 1.0))
-
-        for gt in expected_moments:
-            gt_file = gt.get("file_id")
-            gt_speaker = gt.get("speaker")
-            gt_start = float(gt.get("start_seconds", 0.0))
-            gt_end = float(gt.get("end_seconds", gt_start + 1.0))
-
-            file_match = (pred_file == gt_file)
-            speaker_match = (pred_speaker == gt_speaker) if gt_speaker else True
-            match_time, _, _ = is_temporal_match(
-                pred_start, pred_end, gt_start, gt_end, tolerance_seconds, min_iou
-            )
-
-            if file_match and speaker_match and match_time:
-                if first_hit_rank is None:
-                    first_hit_rank = rank
-                break
-
-    metrics = {
-        "mrr": 1.0 / first_hit_rank if first_hit_rank else 0.0
-    }
-
-    # For Recall@k: fraction of expected moments recovered in top-k
+    first_hit_rank = next(
+        (rank for rank, res in enumerate(retrieved_results, start=1) if any(matches(res, gt) for gt in expected_moments)),
+        None,
+    )
+    metrics: Dict[str, Any] = {"mrr": 1.0 / first_hit_rank if first_hit_rank else 0.0}
     for k in k_values:
-        top_k_found = 0
-        for gt in expected_moments:
-            found = False
-            for res in retrieved_results[:k]:
-                pred_file = res.get("file_id")
-                pred_speaker = res.get("speaker")
-                pred_start = float(res.get("start_seconds", 0.0))
-                pred_end = float(res.get("end_seconds", pred_start + 1.0))
-
-                gt_file = gt.get("file_id")
-                gt_speaker = gt.get("speaker")
-                gt_start = float(gt.get("start_seconds", 0.0))
-                gt_end = float(gt.get("end_seconds", gt_start + 1.0))
-
-                file_match = (pred_file == gt_file)
-                speaker_match = (pred_speaker == gt_speaker) if gt_speaker else True
-                match_time, _, _ = is_temporal_match(
-                    pred_start, pred_end, gt_start, gt_end, tolerance_seconds, min_iou
-                )
-                if file_match and speaker_match and match_time:
-                    found = True
-                    break
-            if found:
-                top_k_found += 1
-
-        metrics[f"recall@{k}"] = top_k_found / total_gt
-
+        found = sum(1 for gt in expected_moments if any(matches(res, gt) for res in retrieved_results[:k]))
+        metrics[f"recall@{k}"] = (1.0 if found else 0.0) if any_of else found / len(expected_moments)
     return metrics
