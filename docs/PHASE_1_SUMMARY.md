@@ -97,15 +97,15 @@ The evaluation harness runs via **Promptfoo** and a standalone **Mathematical Sc
         ┌────────────────────────────────┴────────────────────────────────┐
         ▼                                                                 ▼
 [ STAGE 1: Integrity Check ]                               [ STAGE 2: Promptfoo Matrix ]
-• python3 evals/validate_dataset_integrity.py              • npx promptfoo eval
+• uv run python evals/validate_dataset_integrity.py         • npx promptfoo eval
 • Validates WAV headers (16kHz, mono, PCM)                 • 54 automated tests (18 queries x 3 modes)
 • Validates transcript continuity & non-zero turns         • Pure Python assertions (evals/assertions.py)
-• Validates qrel containment & verbatim text               • Powers interactive UI: `promptfoo view`
+• Validates qrel containment & verbatim text               • Results UI: `bash evals/run_evals.sh --view`
         │                                                                 │
         └────────────────────────────────┬────────────────────────────────┘
                                          ▼
                            [ STAGE 3: Mathematical Scorer ]
-                           • python3 evals/evaluate_recall.py
+                           • uv run python evals/evaluate_recall.py
                            • Computes Micro Recall@1, 3, 5 (per moment)
                            • Computes Macro Recall@1, 3, 5 (per query)
                            • Computes Mean Reciprocal Rank (MRR)
@@ -121,7 +121,7 @@ The evaluation harness runs via **Promptfoo** and a standalone **Mathematical Sc
 - `evals/assertions.py`: Pure Python assertion module. Requires strictly positive temporal overlap (`overlap > 0`), temporal tolerance ($IoU \ge 0.3$ or $|start_{\text{pred}} - start_{\text{gt}}| \le 5.0\text{s}$ with $\ge 25\%$ coverage), speaker match, and rejects hard-negative distractors at Rank #1.
 - `evals/metrics.py`: Reusable mathematical formulas for IoU, delta matching, and ranking metrics.
 - `evals/search_provider.py`: Adapter connecting Promptfoo to the search engine. Implements fail-closed behavior (returns critical error if `search_engine.py` is missing, unless `--mock` is explicitly passed).
-- `tests/test_eval_metrics.py`: Standalone unit tests (discovered by `python3 -m unittest discover -v`) verifying temporal matching, IoU partial calculations (1/3), speaker attribution, JSON/YAML parity, and gate checks (7/7 tests passing).
+- `tests/test_eval_metrics.py`: Standalone unit tests (discovered by `uv run python -m unittest discover -v`) verifying temporal matching, IoU partial calculations (1/3), speaker attribution, JSON/YAML parity, and gate checks (7/7 tests passing).
 
 ---
 

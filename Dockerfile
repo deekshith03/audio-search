@@ -9,6 +9,7 @@ ENV PYTHONUNBUFFERED=1 \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/opt/venv \
+    UV_NO_SYNC=1 \
     PATH="/opt/venv/bin:${PATH}" \
     MODEL_CACHE_DIR=/models \
     HF_HOME=/models/huggingface \
@@ -36,7 +37,7 @@ RUN chmod +x scripts/docker-entrypoint.sh scripts/reproduce.sh src/pipeline/run_
 EXPOSE 8501
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30m --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health', timeout=4)"
+    CMD uv run python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health', timeout=4)"
 
 ENTRYPOINT ["scripts/docker-entrypoint.sh"]
 CMD ["app"]

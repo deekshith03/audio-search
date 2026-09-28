@@ -3,8 +3,10 @@
   "configurations": [
     {
       "name": "streamlit",
-      "runtimeExecutable": ".venv/bin/streamlit",
+      "runtimeExecutable": "uv",
       "runtimeArgs": [
+        "run",
+        "streamlit",
         "run",
         "app/streamlit_app.py",
         "--server.port",

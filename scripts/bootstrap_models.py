@@ -1,7 +1,7 @@
 """
 Downloads every model the pipeline needs into the model cache (HF_HOME / TORCH_HOME), once.
 
-  python -m scripts.bootstrap_models
+  uv run python -m scripts.bootstrap_models
 
 Exit codes: 0 ready, 2 no Hugging Face token, 3 token invalid, 4 pyannote terms not accepted,
 1 any other download failure. A marker file records a successful bootstrap so later container

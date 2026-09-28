@@ -3,7 +3,7 @@
 A local web app where a user uploads a two-speaker recording, watches it being processed, listens to sample clips of each voice, and names the speakers. The named transcript is the input to Phase 3 search.
 
 ```
-streamlit run app/streamlit_app.py        # http://localhost:8501
+uv run streamlit run app/streamlit_app.py        # http://localhost:8501
 ```
 
 ---
@@ -26,7 +26,7 @@ streamlit run app/streamlit_app.py        # http://localhost:8501
 ```
 
 1. **Upload:** the file is saved to `data/uploads/`, validated and converted by `ingest.py` in the request (a few seconds), so format, length and corrupt-file errors appear immediately. Re-uploading the same bytes reuses the earlier results.
-2. **Processing:** the app writes `data/jobs/{id}.json` and launches a detached worker (`python -m src.pipeline.jobs run {id} --workspace data`). The worker runs ASR → align → diarize → reconcile as separate subprocesses and updates the job file; the app only reads it. The page can be closed; processing continues.
+2. **Processing:** the app writes `data/jobs/{id}.json` and launches a detached worker (`uv run python -m src.pipeline.jobs run {id} --workspace data`). The worker runs ASR → align → diarize → reconcile as separate subprocesses and updates the job file; the app only reads it. The page can be closed; processing continues.
 3. **Labeling:** three 4–15 s clips per voice, spread across the recording and chosen by word confidence, with their text and each voice's share of speaking time. Names are validated (both filled in, different, ≤ 80 characters); **Swap** fixes the common "typed them the wrong way round" case. Names can be changed later without re-processing.
 
 ## 2. Status Model
@@ -76,7 +76,7 @@ The run exposed one bug, now fixed with a regression test: `ingest()` returned f
 
 ## 5. Tests
 
-159 tests pass (`python -m unittest discover`). New in Phase B:
+159 tests pass (`uv run python -m unittest discover`). New in Phase B:
 
 | Module | Covers |
 | :--- | :--- |

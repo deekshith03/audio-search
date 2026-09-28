@@ -88,7 +88,7 @@ Diarization on CPU dominates. Expect Docker on the same machine to be somewhat s
 
 ## 4. Tests
 
-`python -m unittest discover` → **105 tests, all passing.**
+`uv run python -m unittest discover` → **105 tests, all passing.**
 
 | Module | Covers |
 | :--- | :--- |

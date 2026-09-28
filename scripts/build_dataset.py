@@ -1,8 +1,8 @@
 """
 Rebuilds or verifies the golden audio set from dataset/metadata/sources.json.
 
-  python -m scripts.build_dataset --verify   # check committed WAVs match recorded format + SHA-256
-  python -m scripts.build_dataset --build    # clip, normalize and (optionally) noise-mix from sources
+  uv run python -m scripts.build_dataset --verify   # check committed WAVs match recorded format + SHA-256
+  uv run python -m scripts.build_dataset --build    # clip, normalize and (optionally) noise-mix from sources
 
 Build steps per file:
 1. ffmpeg cuts [clip_start_seconds, clip_end_seconds] from source_audio_url (URL or local path)

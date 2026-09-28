@@ -9,7 +9,7 @@ the audio inside the turn's own boundaries (wav2vec2 via WhisperX), and the word
 
 Idempotent: the original turn bounds are kept in `turn_start_seconds` / `turn_end_seconds`.
 
-Usage: python -m scripts.tighten_qrels [--dry-run]
+Usage: uv run python -m scripts.tighten_qrels [--dry-run]
 """
 
 import argparse

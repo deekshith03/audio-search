@@ -11,12 +11,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 cd "${ROOT_DIR}"
 
-if [ -x "${ROOT_DIR}/.venv/bin/python" ]; then
-  PYTHON="${ROOT_DIR}/.venv/bin/python"
-else
-  PYTHON="python3"
-fi
-
 if [ -f "${ROOT_DIR}/.env" ]; then
   set -a
   source "${ROOT_DIR}/.env"
@@ -35,7 +29,7 @@ run_stage() {
   echo "=========================================================================="
   echo "  ${title}"
   echo "=========================================================================="
-  "${PYTHON}" -m "$@"
+  uv run python -m "$@"
 }
 
 run_stage "STAGE 1A: ASR (faster-whisper large-v3-turbo, fp32, CPU)" src.pipeline.asr "$@"

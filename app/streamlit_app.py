@@ -1,6 +1,6 @@
 """
 Audio Search: upload a two-speaker recording, let the pipeline transcribe and diarize it, then
-name each speaker. Run with:  streamlit run app/streamlit_app.py
+name each speaker. Run with:  uv run streamlit run app/streamlit_app.py
 """
 
 import json

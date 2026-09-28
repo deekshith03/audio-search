@@ -16,21 +16,21 @@ command="${1:-app}"
 
 case "$command" in
   app)
-    python -m scripts.bootstrap_models
-    exec streamlit run app/streamlit_app.py --server.address 0.0.0.0 --server.port 8501 "$@"
+    uv run python -m scripts.bootstrap_models
+    exec uv run streamlit run app/streamlit_app.py --server.address 0.0.0.0 --server.port 8501 "$@"
     ;;
   reproduce)
     exec scripts/reproduce.sh "$@"
     ;;
   pipeline)
-    python -m scripts.bootstrap_models
+    uv run python -m scripts.bootstrap_models
     exec bash src/pipeline/run_pipeline.sh "$@"
     ;;
   test)
-    exec python -m unittest discover "$@"
+    exec uv run python -m unittest discover "$@"
     ;;
   bootstrap)
-    exec python -m scripts.bootstrap_models
+    exec uv run python -m scripts.bootstrap_models
     ;;
   *)
     exec "$command" "$@"

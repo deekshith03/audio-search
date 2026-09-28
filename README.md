@@ -58,18 +58,18 @@ Requires Python 3.12, [uv](https://docs.astral.sh/uv/) and ffmpeg (`brew install
 ```bash
 uv sync
 cp env.example .env                               # set HF_TOKEN
-.venv/bin/python -m scripts.bootstrap_models      # optional: download models up front
-.venv/bin/streamlit run app/streamlit_app.py
+uv run python -m scripts.bootstrap_models       # optional: download models up front
+uv run streamlit run app/streamlit_app.py
 ```
 
 | Task | Command |
 | :--- | :--- |
-| Unit tests (171) | `.venv/bin/python -m unittest discover` |
+| Unit tests (171) | `uv run python -m unittest discover` |
 | Pipeline on the golden set | `src/pipeline/run_pipeline.sh [--file dataset/audio/x.wav] [--force]` |
-| Pipeline on uploads | add `--workspace data` to any stage, e.g. `.venv/bin/python -m src.pipeline.asr --workspace data` |
+| Pipeline on uploads | add `--workspace data` to any stage, e.g. `uv run python -m src.pipeline.asr --workspace data` |
 | Reproduce benchmark | `scripts/reproduce.sh [--recompute]` |
-| Verify golden audio | `.venv/bin/python -m scripts.build_dataset --verify` |
-| Retrieval eval harness | `npm run eval` (Phase 3+) |
+| Verify golden audio | `uv run python -m scripts.build_dataset --verify` |
+| Retrieval eval harness | `bash evals/run_evals.sh [--enforce-gate]` (Phase 3+); results UI: `bash evals/run_evals.sh --view` |
 
 ---
 

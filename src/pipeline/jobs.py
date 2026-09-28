@@ -4,7 +4,7 @@ Background job runner for user uploads.
 The Streamlit app never runs ML work in its own process. It ingests the upload (fast, gives
 immediate validation errors), creates a job file, and launches a detached worker:
 
-    python -m src.pipeline.jobs run <file_id> --workspace data
+    uv run python -m src.pipeline.jobs run <file_id> --workspace data
 
 The worker runs each stage as its own subprocess (the same CLIs as run_pipeline.sh) and records
 progress in `<workspace>/jobs/{file_id}.json`; the app only polls that file. Workers take an
@@ -128,6 +128,7 @@ def launch_worker(ws: Workspace, file_id: str) -> Dict[str, Any]:
 
 
 def stage_command(module: str, ws: Workspace, wav_path: str) -> List[str]:
+    # sys.executable is the interpreter uv already resolved for this worker; no second `uv run` needed.
     return [sys.executable, "-u", "-m", module, "--workspace", ws.root, "--file", wav_path]
 
 
