@@ -176,6 +176,14 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
         self.assertIn("zebra", reranked[0]["text"].lower())
         self.assertNotEqual([r["start_seconds"] for r in plain], [r["start_seconds"] for r in reranked])
 
+    def test_reranker_ignored_outside_hybrid(self):
+        engine = self.engine(rerankers={"minilm-reranker": KeywordReranker("zebra")})
+        for mode in ("lexical", "dense"):
+            plain = self.run_search("theme plain dark", mode=mode, chunker="B").results
+            with_reranker = self.run_search("theme plain dark", mode=mode, chunker="B", engine=engine, reranker="minilm-reranker")
+            self.assertNotIn("rerank", with_reranker.timings_ms)
+            self.assertEqual(plain, with_reranker.results)
+
     def test_workspace_filter(self):
         response = SearchEngine(self.conn, embedders={"bge-small": HashEmbedder()}).search(
             "sourdough", "hybrid", 5, SearchConfig(), workspaces=("somewhere-else",)

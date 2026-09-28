@@ -8,6 +8,9 @@ Hybrid search over indexed transcripts (docs/PHASE_3_PLAN.md §4).
             fusion (weighted RRF | convex) → optional cross-encoder rerank of the top
             `rerank_depth` → localize each to 1-3 sentences → drop overlapping spans → top_k
 
+The reranker runs in hybrid mode only: lexical and dense are the retrieval ablations the eval gate
+compares against, and a cross-encoder would add a semantic signal to the keyword-only baseline.
+
     uv run python -m src.search.engine "why were arrays added to postgres" [--mode dense] [--top-k 5]
 
 Results follow the eval harness contract: file_id, speaker (human name when labeled, else the
@@ -170,7 +173,7 @@ class SearchEngine:
                 ranked = [(chunks[chunk_id], score) for chunk_id, score in shortlist if chunk_id in chunks]
                 lap("fuse")
 
-                if config.reranker and ranked:
+                if config.reranker and mode == "hybrid" and ranked:
                     scores = self.reranker(config.reranker).score(query, [c["text"] for c, _ in ranked])
                     ranked = sorted(zip([c for c, _ in ranked], scores), key=lambda cs: -cs[1])
                     lap("rerank")

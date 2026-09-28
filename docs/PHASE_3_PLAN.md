@@ -111,7 +111,15 @@ A cross-encoder reads the query and each candidate together and re-orders the fu
 
 Sources: [reranker comparison](https://futureagi.com/blog/best-rerankers-for-rag-2026/), [Qwen3 embedding/reranking](https://qwenlm.github.io/blog/qwen3-embedding/).
 
-- **CPU latency is not measured yet.** It runs on every search (20 query–chunk pairs); measure it the same way as the embedding models before choosing.
+- **CPU latency (step 5b, measured).** Rerank time for the fused top 20 per dev query (14 queries, hybrid, this Mac's CPU), p50 / p95 ms, by chunk length:
+
+  | Reranker | Load | B (~4 s chunks) | A-30s (~22 s) | D (turns, up to 180 s) |
+  | :--- | :---: | :---: | :---: | :---: |
+  | Qwen3-Reranker-0.6B (with its chat template) | 2.6 s | 1,165 / 1,253 | 2,241 / 2,493 | 6,181 / 9,724 |
+  | bge-reranker-v2-m3 | 7.2 s | 288 / 335 | 841 / 958 | 2,855 / 4,466 |
+  | ms-marco-MiniLM-L6-v2 | 0.7 s | 20 / 23 | 44 / 53 | 133 / 134 |
+
+  Placeholder config (A-30s, bge-small+ctx, equal RRF), dev hybrid, micro R@1 / R@5 / macro MRR: none 0.474 / 0.526 / 0.657; MiniLM 0.421 / 0.579 / 0.595; bge 0.474 / 0.632 / 0.679; Qwen3 0.474 / 0.632 / 0.661. Qwen3 scored R@1 0.0 until its model-card prompt template was applied. The reranker runs in hybrid mode only, so the keyword-only and semantic-only ablations stay clean.
 - **Keep rule:** keep the reranker only if it clearly improves dev recall@1 / MRR / near-miss rejection without hurting recall@5, and its latency is acceptable. Otherwise ship fusion alone and report the comparison.
 
 ### Storage
@@ -157,7 +165,7 @@ Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed
 3. ✅ `db` image is `paradedb/paradedb:0.25.10-pg17`; schema in `db/migrations/` applied by `src.db.migrate` (also at app start in Docker).
 4. ✅ Sentence splitter, 6 chunk configs, 3 default embedders (+ Qwen3 registered), incremental indexer `src.search.indexer` (golden set: 1,877 chunks, 3,478 vectors per model, ~2 min for all three models).
 5. ✅ `src/search/engine.py` (retrievers, `fusion.py`, `rerankers.py`, `localize.py`, dedupe, `<mark>` highlights) wired into `evals/search_provider.py`; every grid knob is a `SearchConfig` field, passed through provider config or `evaluate_recall.py --search-config`. Placeholder config (A-30s, bge-small+ctx, equal RRF, no reranker) on dev: hybrid micro R@5 52.6%, lexical 31.6%, dense 36.8%.
-5b. Benchmark reranker candidates' CPU latency (20 pairs per query), as done for the embedding models.
+5b. ✅ Reranker candidates downloaded, CPU latency and a first dev comparison measured (§4 Reranker); real-model smoke tests skip when a model is not downloaded.
 6. Dev-set tuning grid; select the configuration.
 7. Streamlit search page; `indexing` job stage for uploads; label edits sync to `speakers`; model bootstrap for Docker.
 8. One final test-set run; write-up (design, success criteria, results, limitations, coding-agent disclosure).
