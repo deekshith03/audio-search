@@ -1,0 +1,248 @@
+"""
+Indexes canonical transcripts into the search database: files, speakers, sentences, the chunks of
+every config, and their embeddings.
+
+    uv run python -m src.search.indexer                          # golden set, default models
+    uv run python -m src.search.indexer --workspace data --file x.wav
+    uv run python -m src.search.indexer --models none            # chunks only, no embeddings
+    uv run python -m src.search.indexer --models qwen3           # add one model's embeddings
+
+A file is re-chunked only when its canonical transcript or the chunking settings change (or with
+--force); rows are replaced in one transaction, so a crash never leaves a file half indexed.
+Embeddings are added incrementally: only (chunk, model variant) pairs that are missing get
+computed, so adding a model later does not touch the others. Speaker names are re-synced from
+speaker_labels/ on every run.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import sys
+import time
+from typing import Any, Dict, List, Optional, Sequence
+
+from psycopg2 import sql
+from psycopg2.extras import execute_values
+
+from src.db.connection import connect
+from src.pipeline.common import GOLDEN, Workspace, file_base, sha256_file
+from src.pipeline.labels import load_labels
+from src.search import chunkers, sentences
+from src.search.chunkers import CONTEXT_CONFIGS, bge_token_counter, build_chunks, embedding_input
+from src.search.embedders import DEFAULT_MODELS, MODELS, Embedder, variant_key
+from src.search.sentences import split_transcript
+
+INDEXER_VERSION = 1
+CANONICAL_SUFFIX = "_canonical.json"
+
+
+def settings_key() -> str:
+    settings = {"indexer": INDEXER_VERSION, "sentences": sentences.SETTINGS, "chunkers": chunkers.SETTINGS}
+    return hashlib.sha256(json.dumps(settings, sort_keys=True).encode()).hexdigest()
+
+
+def canonical_paths(workspace: Workspace, file_ids: Optional[Sequence[str]] = None) -> List[str]:
+    if file_ids:
+        paths = [workspace.canonical_path(file_base(f)) for f in file_ids]
+        missing = [p for p in paths if not os.path.exists(p)]
+        if missing:
+            raise FileNotFoundError(f"canonical transcript(s) not found: {missing}")
+        return paths
+    if not os.path.isdir(workspace.output_dir):
+        return []
+    return sorted(
+        os.path.join(workspace.output_dir, f) for f in os.listdir(workspace.output_dir) if f.endswith(CANONICAL_SUFFIX)
+    )
+
+
+def vector_literal(vector: Sequence[float]) -> str:
+    return "[" + ",".join(f"{x:.7g}" for x in vector) + "]"
+
+
+def hnsw_index_name(variant: str) -> str:
+    return "chunk_embeddings_hnsw_" + re.sub(r"[^a-z0-9]+", "_", variant.lower())
+
+
+class Indexer:
+    def __init__(self, conn, workspace: Workspace, embedders: Sequence[Any] = (), count_tokens=None):
+        self.conn = conn
+        self.workspace = workspace
+        self.embedders = list(embedders)
+        self._count_tokens = count_tokens
+        self.settings_key = settings_key()
+
+    def count_tokens(self):
+        if self._count_tokens is None:
+            self._count_tokens = bge_token_counter()
+        return self._count_tokens
+
+    def index_all(self, paths: Sequence[str], force: bool = False, prune: bool = False) -> List[Dict[str, Any]]:
+        stats = [self.index_file(p, force=force) for p in paths]
+        if prune:
+            self.prune({s["file_id"] for s in stats})
+        self.ensure_hnsw_indexes()
+        return stats
+
+    def index_file(self, canonical_path: str, force: bool = False) -> Dict[str, Any]:
+        with open(canonical_path, encoding="utf-8") as f:
+            canonical = json.load(f)
+        file_id = canonical["file_id"]
+        digest = sha256_file(canonical_path)
+        stats: Dict[str, Any] = {"file_id": file_id, "rechunked": False, "chunks": 0, "embedded": {}}
+
+        with self.conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, sha256, pipeline_key FROM files WHERE workspace = %s AND file_id = %s",
+                (self.workspace.root, file_id),
+            )
+            row = cur.fetchone()
+            if force or row is None or row[1] != digest or row[2] != self.settings_key:
+                started = time.perf_counter()
+                file_pk = self._rechunk(cur, canonical, digest)
+                stats["rechunked"] = True
+                stats["chunk_seconds"] = round(time.perf_counter() - started, 3)
+            else:
+                file_pk = row[0]
+            self._sync_speakers(cur, file_pk, file_id, canonical.get("speaker_labels", []))
+            cur.execute("SELECT count(*) FROM chunks WHERE file_pk = %s", (file_pk,))
+            stats["chunks"] = cur.fetchone()[0]
+        self.conn.commit()
+
+        for embedder in self.embedders:
+            started = time.perf_counter()
+            count = self._embed_missing(file_pk, embedder)
+            self.conn.commit()
+            stats["embedded"][embedder.model.key] = {"vectors": count, "seconds": round(time.perf_counter() - started, 3)}
+        return stats
+
+    def _rechunk(self, cur, canonical: Dict[str, Any], digest: str) -> int:
+        file_id = canonical["file_id"]
+        sents = split_transcript(canonical)
+        chunks = build_chunks(canonical, sents, count_tokens=self.count_tokens())
+
+        cur.execute("DELETE FROM files WHERE workspace = %s AND file_id = %s", (self.workspace.root, file_id))
+        cur.execute(
+            "INSERT INTO files (workspace, file_id, display_name, duration_s, sha256, pipeline_key)"
+            " VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+            (self.workspace.root, file_id, file_base(file_id), canonical.get("audio_duration_seconds"), digest, self.settings_key),
+        )
+        file_pk = cur.fetchone()[0]
+        sentence_ids = [
+            r[0]
+            for r in execute_values(
+                cur,
+                "INSERT INTO sentences (file_pk, speaker_label, turn_id, start_s, end_s, text) VALUES %s RETURNING id",
+                [(file_pk, s.speaker_label, s.turn_id, s.start_s, s.end_s, s.text) for s in sents],
+                fetch=True,
+                page_size=1000,
+            )
+        ]
+        execute_values(
+            cur,
+            "INSERT INTO chunks (file_pk, chunker, speaker_label, start_s, end_s, text, context_text, sentence_ids) VALUES %s",
+            [
+                (file_pk, c.chunker, c.speaker_label, c.start_s, c.end_s, c.text, c.context_text,
+                 [sentence_ids[i] for i in c.sentence_indexes])
+                for c in chunks
+            ],
+            page_size=1000,
+        )
+        return file_pk
+
+    def _sync_speakers(self, cur, file_pk: int, file_id: str, speaker_labels: Sequence[str]) -> None:
+        labels_doc = load_labels(self.workspace, file_id)
+        names = labels_doc["labels"] if labels_doc else {}
+        execute_values(
+            cur,
+            "INSERT INTO speakers (file_pk, speaker_label, display_name) VALUES %s"
+            " ON CONFLICT (file_pk, speaker_label) DO UPDATE SET display_name = EXCLUDED.display_name",
+            [(file_pk, label, names.get(label)) for label in speaker_labels],
+        )
+
+    def _embed_missing(self, file_pk: int, embedder) -> int:
+        total = 0
+        for with_context in (False, True):
+            variant = variant_key(embedder.model.key, with_context)
+            with self.conn.cursor() as cur:
+                cur.execute(
+                    "SELECT c.id, c.text, c.context_text FROM chunks c"
+                    " WHERE c.file_pk = %s AND (NOT %s OR c.chunker = ANY(%s))"
+                    " AND NOT EXISTS (SELECT 1 FROM chunk_embeddings e WHERE e.chunk_id = c.id AND e.model = %s)"
+                    " ORDER BY c.id",
+                    (file_pk, with_context, sorted(CONTEXT_CONFIGS), variant),
+                )
+                rows = cur.fetchall()
+                if not rows:
+                    continue
+                vectors = embedder.encode_documents([embedding_input(text, ctx, with_context) for _, text, ctx in rows])
+                execute_values(
+                    cur,
+                    "INSERT INTO chunk_embeddings (chunk_id, model, embedding) VALUES %s",
+                    [(chunk_id, variant, vector_literal(v)) for (chunk_id, _, _), v in zip(rows, vectors)],
+                    page_size=500,
+                )
+            total += len(rows)
+        return total
+
+    def ensure_hnsw_indexes(self) -> None:
+        with self.conn.cursor() as cur:
+            cur.execute("SELECT model, max(vector_dims(embedding)) FROM chunk_embeddings GROUP BY model")
+            for variant, dims in cur.fetchall():
+                cur.execute(
+                    sql.SQL(
+                        "CREATE INDEX IF NOT EXISTS {} ON chunk_embeddings"
+                        " USING hnsw ((embedding::vector({})) vector_cosine_ops) WHERE model = {}"
+                    ).format(sql.Identifier(hnsw_index_name(variant)), sql.Literal(dims), sql.Literal(variant))
+                )
+        self.conn.commit()
+
+    def prune(self, keep_file_ids: set) -> int:
+        with self.conn.cursor() as cur:
+            cur.execute(
+                "DELETE FROM files WHERE workspace = %s AND NOT (file_id = ANY(%s))",
+                (self.workspace.root, sorted(keep_file_ids)),
+            )
+            removed = cur.rowcount
+        self.conn.commit()
+        return removed
+
+
+def parse_models(value: str) -> List[str]:
+    if value == "none":
+        return []
+    keys = [k.strip() for k in value.split(",") if k.strip()]
+    unknown = [k for k in keys if k not in MODELS]
+    if unknown:
+        raise argparse.ArgumentTypeError(f"unknown model(s) {unknown}; choose from {sorted(MODELS)} or 'none'")
+    return keys
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description="Index canonical transcripts into the search database.")
+    parser.add_argument("--workspace", default=GOLDEN.root, help="Workspace root (dataset/ or data/).")
+    parser.add_argument("--file", action="append", dest="files", help="file_id or audio path to index (repeatable).")
+    parser.add_argument("--models", type=parse_models, default=list(DEFAULT_MODELS),
+                        help=f"Comma-separated embedding models, or 'none' (default: {','.join(DEFAULT_MODELS)}).")
+    parser.add_argument("--force", action="store_true", help="Re-chunk even if nothing changed.")
+    args = parser.parse_args(argv)
+
+    workspace = Workspace(args.workspace)
+    paths = canonical_paths(workspace, args.files)
+    conn = connect()
+    try:
+        indexer = Indexer(conn, workspace, [Embedder(k) for k in args.models])
+        started = time.perf_counter()
+        for stats in indexer.index_all(paths, force=args.force, prune=not args.files):
+            embedded = ", ".join(f"{k} {v['vectors']} in {v['seconds']}s" for k, v in stats["embedded"].items())
+            action = f"re-chunked in {stats['chunk_seconds']}s" if stats["rechunked"] else "unchanged"
+            print(f"{stats['file_id']}: {stats['chunks']} chunks, {action}" + (f"; embedded {embedded}" if embedded else ""))
+        print(f"indexed {len(paths)} file(s) in {time.perf_counter() - started:.1f}s")
+    finally:
+        conn.close()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

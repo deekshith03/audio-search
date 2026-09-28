@@ -1,13 +1,12 @@
 import os
 import tempfile
 import unittest
-import uuid
 from unittest import mock
 
 import psycopg2
-from psycopg2 import sql
 
 from src.db import connection, migrate
+from tests.db_support import ThrowawayDatabaseTestCase, requires_database
 
 
 def write_files(directory, names):
@@ -48,39 +47,11 @@ class TestDiscoverMigrations(unittest.TestCase):
 
     def test_repository_migrations_are_well_formed(self):
         versions = [m.version for m in migrate.discover_migrations()]
-        self.assertEqual(versions[:2], ["001", "002"])
+        self.assertEqual(versions[:3], ["001", "002", "003"])
 
 
-def server_reachable() -> bool:
-    try:
-        connection.connect(connect_timeout=2).close()
-        return True
-    except psycopg2.OperationalError:
-        return False
-
-
-@unittest.skipUnless(server_reachable(), "PostgreSQL not reachable (docker compose up -d db)")
-class TestMigrationsAgainstDatabase(unittest.TestCase):
-    """Runs in a throwaway database so the real index is never touched."""
-
-    @classmethod
-    def setUpClass(cls):
-        cls.db_name = f"audio_search_test_{uuid.uuid4().hex[:8]}"
-        admin = connection.connect()
-        admin.autocommit = True
-        with admin.cursor() as cur:
-            cur.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(cls.db_name)))
-        admin.close()
-        base = connection.database_url().rsplit("/", 1)[0]
-        cls.url = f"{base}/{cls.db_name}"
-
-    @classmethod
-    def tearDownClass(cls):
-        admin = connection.connect()
-        admin.autocommit = True
-        with admin.cursor() as cur:
-            cur.execute(sql.SQL("DROP DATABASE IF EXISTS {} WITH (FORCE)").format(sql.Identifier(cls.db_name)))
-        admin.close()
+@requires_database
+class TestMigrationsAgainstDatabase(ThrowawayDatabaseTestCase):
 
     def setUp(self):
         self.conn = connection.connect(self.url)

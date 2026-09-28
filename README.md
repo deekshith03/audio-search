@@ -64,8 +64,9 @@ uv run streamlit run app/streamlit_app.py
 
 | Task | Command |
 | :--- | :--- |
-| Unit tests (201; database tests skip unless `db` is up) | `uv run python -m unittest discover` |
+| Unit tests (database tests skip unless `db` is up) | `uv run python -m unittest discover` |
 | Search database (ParadeDB) | `docker compose up -d db`, then `uv run python -m src.db.migrate` (`status` lists applied versions) |
+| Index transcripts for search | `uv run python -m src.search.indexer [--workspace data] [--file x.wav] [--models bge-small,gemma\|none] [--force]` |
 | Pipeline on the golden set | `src/pipeline/run_pipeline.sh [--file dataset/audio/x.wav] [--force]` |
 | Pipeline on uploads | add `--workspace data` to any stage, e.g. `uv run python -m src.pipeline.asr --workspace data` |
 | Reproduce benchmark | `scripts/reproduce.sh [--recompute]` |
@@ -81,6 +82,7 @@ app/streamlit_app.py        upload, progress, speaker labeling UI
 src/pipeline/               ingest, asr, align, diarize, reconcile, evaluate_pipeline,
                             jobs (background worker), labels, speaker_samples, common
 src/db/                     connection, migrate (numbered SQL files in db/migrations/)
+src/search/                 sentences, chunkers, embedders, indexer (Phase 3)
 scripts/                    bootstrap_models, reproduce.sh, build_dataset, tighten_qrels, docker-entrypoint.sh
 evals/                      promptfoo retrieval harness, recall@k scorer, dataset integrity checks
 tests/                      unit + Streamlit AppTest suites

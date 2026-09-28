@@ -72,12 +72,12 @@ file · speaker name · [start–end] · text with <mark>highlights</mark> · �
 
 | | Chunker | Unit searched | Rationale |
 | :--- | :--- | :--- | :--- |
-| A | Single-speaker windows (~30 s, sentence-bounded, 1-sentence overlap) + previous-turn context | window | research findings 2–4 |
+| A | Single-speaker windows (15 / 30 / 45 s, sentence-bounded, 1-sentence overlap) + previous-turn context | window | research findings 2–4 |
 | B | Sentence units + previous-turn context (Gong-style) | sentence | finding 6 |
-| C | Fixed 512-token windows | window | literature default (finding 1) |
+| C | Fixed 512-token windows (bge tokenizer, so identical for every model), 64-token overlap | window | literature default (finding 1) |
 | D | One chunk per speaker turn | turn | simplest conversation-aware baseline |
 
-All four return pinpointed sentence spans, so they are compared on retrieval quality alone.
+All four return pinpointed sentence spans, so they are compared on retrieval quality alone. No chunk crosses a speaker turn. Sentences come from punctuation, then the longest pause (≥ 0.4 s) for pieces over 30 words / 15 s, then fragments under 4 words merge into a neighbour (golden set: 751 sentences, median 4.1 s). Context (A, B) is the last 60 words of the previous turn by the other speaker, embedding input only.
 
 ### Embedding models compared (CPU, this machine, 135 chunks)
 
@@ -88,7 +88,7 @@ All four return pinpointed sentence spans, so they are compared on retrieval qua
 | `EmbeddingGemma-300m` | 308M | 25 ms | 25 ms | 2,048 | gated (terms accepted) |
 | `Qwen3-Embedding-0.6B` | 596M | 537 ms | 221 ms | 32k | open |
 
-Selection rule: the fastest model within ~2 points of the best dev recall@5.
+Selection rule: the fastest model within ~2 points of the best dev recall@5. **Qwen3 is deferred**: the first grid uses the other three; Qwen3 is tried only if those results suggest it could win.
 
 ### Fusion (chosen on dev)
 
@@ -141,7 +141,9 @@ Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed
 - **Keyword category (`short_keyword`)**: one- or two-word queries (e.g. `Neuralink`, `Roger Gracie`). Any listed occurrence counts as a hit and counts as one moment in micro recall. Two of them (`pgMustard` in dev, `Omakub` in test) target words the ASR misspelled ("PG Mustard", "Omacoup"), which exercises fuzzy matching.
 - **No-answer queries were considered and dropped**: scoring them needs a confidence threshold, and with 2–3 such queries per split the metric would be too noisy to tune or gate on. Consequence: search always returns its top results, even for queries unrelated to the corpus (listed as a limitation).
 - Every script defaults to `--split dev`; the test split runs only when asked for explicitly (`bash evals/run_evals.sh --split test --enforce-gate`).
-- Tuned on dev: chunker (A–D), embedding model (4), context on/off, window length (15/30/45 s), fusion method (weighted RRF vs convex combination) and its weights, reranker on/off.
+- Tuned on dev: chunker (A–D), embedding model, context on/off, window length (15/30/45 s), fusion method (weighted RRF vs convex combination) and its weights, reranker on/off.
+- **Grid, scored end to end.** Round 1: 30 candidates = 10 chunk variants (A-15s/A-30s/A-45s/B with and without context, C-512, D) × 3 models, each run through the whole pipeline (hybrid → default RRF → default reranker → localization) on dev. Keyword-only, semantic-only and fused recall@20 are recorded as diagnostics, not used to decide. Round 2: top 2 candidates × fusion method and weights. Round 3: winner × reranker off / 3 candidates. Close results go to the simpler option.
+- **After freezing**, the losing chunkers, models, fusion method and reranker code and their database rows are deleted; only the winner ships, and the grid tables are kept as findings in the write-up.
 - Reported: recall@1/3/5 (micro and macro), MRR, per-category recall, near-miss rejection, RRF vs convex combination (dev and test, report only; the frozen choice is the one gated), p50/p95 search latency, indexing time per file.
 - Gate (from Phase 1, applied to test): hybrid recall@5 ≥ 0.85, recall@1 ≥ 0.60, hybrid strictly better than keyword-only and semantic-only.
 - The match rule is not loosened.
@@ -152,7 +154,7 @@ Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed
 1. ✅ Dev queries drafted and reviewed (12 + 2 keyword), plus 3 keyword queries added to test.
 2. ✅ Split qrels into dev/test files; `--split` in the scorer and eval runner; per-split validation and promptfoo configs; shared speaker resolution in the scorers.
 3. ✅ `db` image is `paradedb/paradedb:0.25.10-pg17`; schema in `db/migrations/` applied by `src.db.migrate` (also at app start in Docker).
-4. Sentence splitter and chunkers A–D; indexer (canonical transcripts → database).
+4. ✅ Sentence splitter, 6 chunk configs, 3 default embedders (+ Qwen3 registered), incremental indexer `src.search.indexer` (golden set: 1,877 chunks, 3,478 vectors per model, ~2 min for all three models).
 5. Keyword, semantic, fusion, reranker, localization, de-duplication; `src/search/engine.search(query, mode, top_k)` wired into `evals/search_provider.py`. Both fusion methods behind a config switch.
 5b. Benchmark reranker candidates' CPU latency (20 pairs per query), as done for the embedding models.
 6. Dev-set tuning grid; select the configuration.
