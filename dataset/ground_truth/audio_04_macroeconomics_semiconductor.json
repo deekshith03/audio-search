@@ -1,0 +1,173 @@
+{
+  "file_id": "audio_04_macroeconomics_semiconductor.wav",
+  "title": "Dwarkesh Podcast: Dylan Patel – Compute Economics, Fab CapEx & Industrial Policy",
+  "domain": "Macroeconomics & Semiconductor Industrial Economics",
+  "provenance": "Official published human transcript from dwarkesh.com/p/dylan-patel-3",
+  "duration_seconds": 541.6,
+  "duration_formatted": "09:01",
+  "speakers": [
+    {
+      "id": "Dwarkesh Patel",
+      "role": "Host / Interviewer"
+    },
+    {
+      "id": "Dylan Patel",
+      "role": "Chief Analyst / Founder of SemiAnalysis"
+    }
+  ],
+  "turns": [
+    {
+      "turn_id": 1,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 0.0,
+      "start_timestamp": "00:00",
+      "end_time": 8.6,
+      "end_timestamp": "00:08",
+      "text": "Okay, I’m back with Dylan Patel, founder of SemiAnalysis. Our version of a family Thanksgiving dinner is a regular yearly podcast. But we’re not actually related."
+    },
+    {
+      "turn_id": 2,
+      "speaker": "Dylan Patel",
+      "start_time": 8.6,
+      "start_timestamp": "00:08",
+      "end_time": 14.7,
+      "end_timestamp": "00:14",
+      "text": "Don’t tell the people this. It will destroy the myth."
+    },
+    {
+      "turn_id": 3,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 14.7,
+      "start_timestamp": "00:14",
+      "end_time": 37.0,
+      "end_timestamp": "00:37",
+      "text": "Basically where the world economy is headed is more and more becoming a function of where lab economics are headed, where the compute market is headed, et cetera. I want to understand where the crazy future ends up within a few years. But let’s start with where we are today. Walk me through lab compute and lab revenue right now, and maybe project out a year or two."
+    },
+    {
+      "turn_id": 4,
+      "speaker": "Dylan Patel",
+      "start_time": 37.0,
+      "start_timestamp": "00:37",
+      "end_time": 203.7,
+      "end_timestamp": "03:23",
+      "text": "When we go back to last year, even at the end of the year, most of GDP growth in America was just AI infrastructure. As we look towards this year, about a third of the compute coming online is for the labs, for OpenAI and Anthropic. It may be built by others and then rented to them, but at the end customer, it’s them.As we go forward into the future, the numbers for compute are ballooning. We’re at a little bit over a trillion dollars of CapEx this year. As we go out into ’28, it’s going to be more than $2 trillion. The labs are also taking an increasing percentage of this. So ultimately, you’ve got a very interesting situation where the labs are going from companies that spend tens of billions of dollars a year to hundreds of billions of dollars a year, to forecasting to spend trillions of dollars a year even towards the end of the decade. This is at least some of the contracts they’ve begun signing with their partners.This requires a big reshaping of what happens with their economics. Up until now, they have been companies that mostly lost money. Anthropic started turning a profit in Q2. It’s believed at some point in Q3, OpenAI could start turning a profit even, with the bigger rise of Codex and 5.6 and all this. But if we go back a year ago, all the money they had was venture-funded losses. If we go back to even the beginning of this year, it was venture-funded losses. They’ve now turned the corner and are actually starting to profit.That doesn’t mean they’re not taking in new capital. The new capital is still coming in to accelerate the growth further. But ultimately, more and more of their business is being funded off of their own revenue rather than capital injections into them. Over the last year and a half, their margins have really skyrocketed. The base cost of compute tends to be around $10 or $13 or $15 million per megawatt.The most interesting aspect about what’s happening now is this: Before, if they served a model — GPT-4 being served on Nvidia Hopper GPUs — it was generating negative gross margin for OpenAI. But now, when OpenAI serves GPT-5.6 or Anthropic serves Opus 5 or Fable 5, their revenue generation has passed well beyond the incremental $10-15 million per megawatt. In the case of Anthropic, the revenue has gone as high as $50 million per megawatt. What that now enables them to do is: “Hey, if I spend 10 bucks on inference capacity, I actually generate 50 bucks of revenue, and then I can turn around and incrementally spend all of that profit on training.”"
+    },
+    {
+      "turn_id": 5,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 203.7,
+      "start_timestamp": "03:23",
+      "end_time": 230.6,
+      "end_timestamp": "03:50",
+      "text": "One thing I’m very interested in understanding is how you see the centralization of compute happening at the labs, or the relative ratio of compute that goes to the world versus the labs. If you say right now a third of marginal compute is going to the labs, by when is over half of the incremental compute in the world going to the labs? By what point do the labs have basically a vast majority of the world’s compute?"
+    },
+    {
+      "turn_id": 6,
+      "speaker": "Dylan Patel",
+      "start_time": 230.6,
+      "start_timestamp": "03:50",
+      "end_time": 309.5,
+      "end_timestamp": "05:09",
+      "text": "At the beginning of this year, OpenAI started at 2 gigawatts and Anthropic at less than 2. End of this year, they’re both above 5. So they’ve 3-4x’d compute as a whole. When you look at the incremental compute added, that’s about 30% of the compute added this year.As we step forward to next year, given what’s already been signed and penned and inked, you’ve got something even more dramatic. Anthropic and OpenAI are taking as much as 40% to 50% of compute next year. This centralization doesn’t look like it’s slowing down or stopping. In fact, it looks like it’s only accelerating.Who’s building that compute for them will change. Next year, a big new entrant is, for example, SpaceX, which is building a ton of compute. They’re actively going to lease quite a bit of it to Anthropic and OpenAI, most likely, because they’re the ones who have the marginal capability to pay the highest price. In addition, OpenAI and Anthropic are also starting to build their own compute — OpenAI with their own chips, Anthropic with TPUs that they’re purchasing from Google and deploying with Fluidstack.So you ask, “Hey, when does half of the world’s incremental new compute go to just OpenAI and Anthropic?” It’s really by the end of next year when half of the incremental compute is already going to Anthropic and OpenAI."
+    },
+    {
+      "turn_id": 7,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 309.5,
+      "start_timestamp": "05:09",
+      "end_time": 352.3,
+      "end_timestamp": "05:52",
+      "text": "Because compute is growing so fast, incremental compute is going to be basically most of compute. So it’s very soon — you’re saying maybe within a year and a half or two years — that most of the world’s compute is owned by two labs, or at least is serving the demand from two labs.There’s this trend where maybe world compute in gigawatts doubles every year, but the compute at the frontier labs triples every single year. If you keep the current trend going, it goes from 2 at the beginning of this year to close to 6 at the end of this year. Just multiplying out by 3. It’s 18 by the end of 2027, 54 by the end of 2028. Are you like, “Okay, at that point, they simply can’t continue tripling given the amount of world compute”? How do you see the world compute situation over the next few years?"
+    },
+    {
+      "turn_id": 8,
+      "speaker": "Dylan Patel",
+      "start_time": 352.3,
+      "start_timestamp": "05:52",
+      "end_time": 421.3,
+      "end_timestamp": "07:01",
+      "text": "If the incremental compute this year adds 30 gigawatts, next year 50 gigawatts, and the year after that roughly 70, you end up with this really interesting phenomenon. A new watt deployed this year is significantly more efficient than the watts deployed two years ago. A humongous percentage of the world’s compute was deployed this year. Even though it didn’t double the number of watts deployed, I’m deploying GB300s and TPUv7s and Trainium3s, which are way, way, way more efficient. They’re 3-5x more performance per watt than the prior-generation chips.So ultimately you’ve got a huge ladder here. If Anthropic and OpenAI take on 45% of compute next year, you’ve got them in, let’s say, December ’27 having taken on half of the world’s incremental new compute. But that half of the world’s new incremental compute is actually at a higher performance than everything else before it. So you’ve got another multiplier on that. By the time you’re towards the end of 2028 — if this trend continues, and I see nothing that’s stopping it — you’ve got them just controlling most of the usable flops in the world on their own."
+    },
+    {
+      "turn_id": 9,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 421.3,
+      "start_timestamp": "07:01",
+      "end_time": 431.0,
+      "end_timestamp": "07:11",
+      "text": "The thing I’m confused about is why you think we only add 80 gigawatts in 2028 if we enter a world in which the value of compute increases so much."
+    },
+    {
+      "turn_id": 10,
+      "speaker": "Dylan Patel",
+      "start_time": 431.0,
+      "start_timestamp": "07:11",
+      "end_time": 435.5,
+      "end_timestamp": "07:15",
+      "text": "That’s the upper bound, by the way. That’s the like, “I’m so fucking bullish.”"
+    },
+    {
+      "turn_id": 11,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 435.5,
+      "start_timestamp": "07:15",
+      "end_time": 454.5,
+      "end_timestamp": "07:34",
+      "text": "Okay, let’s do some chain of thought here. When I interviewed you a few months ago, you said that in order to make a gigawatt of, I think, Vera Rubins, you need 55,000 N3 wafers, 6K N5 wafers, and 170K DRAM wafers. I know if those numbers might have changed."
+    },
+    {
+      "turn_id": 12,
+      "speaker": "Dylan Patel",
+      "start_time": 454.5,
+      "start_timestamp": "07:34",
+      "end_time": 460.0,
+      "end_timestamp": "07:40",
+      "text": "I’m going to troll you, but the way you said wafers was so fucking Indian. Vafers."
+    },
+    {
+      "turn_id": 13,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 460.0,
+      "start_timestamp": "07:40",
+      "end_time": 465.3,
+      "end_timestamp": "07:45",
+      "text": "By the way, when we first moved to the US, I had the v/w thing pretty bad, and I was a vegetarian."
+    },
+    {
+      "turn_id": 14,
+      "speaker": "Dylan Patel",
+      "start_time": 465.3,
+      "start_timestamp": "07:45",
+      "end_time": 468.8,
+      "end_timestamp": "07:48",
+      "text": "I remember you told me about this."
+    },
+    {
+      "turn_id": 15,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 468.8,
+      "start_timestamp": "07:48",
+      "end_time": 473.5,
+      "end_timestamp": "07:53",
+      "text": "In North Dakota, I was in elementary school, and I’d be like—"
+    },
+    {
+      "turn_id": 16,
+      "speaker": "Dylan Patel",
+      "start_time": 473.5,
+      "start_timestamp": "07:53",
+      "end_time": 475.0,
+      "end_timestamp": "07:55",
+      "text": "Can I get a “wedgie”?"
+    },
+    {
+      "turn_id": 17,
+      "speaker": "Dwarkesh Patel",
+      "start_time": 475.0,
+      "start_timestamp": "07:55",
+      "end_time": 541.6,
+      "end_timestamp": "09:01",
+      "text": "Can I get some “wedgies”?Anyways, so that’s for one gigawatt. I had an LLM run your wafer fab equipment model and figure out how much the tooling costs to produce a gigawatt of compute basically every single year. It said $3-4 billion. Now suppose you add in cleanrooms and shell and everything else at the fab. So $6 billion of fab CapEx produces a gigawatt every single year. A gigawatt produces right now $100 billion of revenue.But also that $6 billion in CapEx is producing a gigawatt every single year, and that gigawatt is producing $100 billion every single year. So over the course of five years, the first gigawatt has generated five years of profits, the second gigawatt the fab has produced has generated four years of profits, and so on. $6 billion of CapEx at the fab level will have generated over a trillion dollars of end AI revenue."
+    }
+  ]
+}

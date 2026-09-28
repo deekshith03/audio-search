@@ -1,0 +1,227 @@
+{
+  "file_id": "audio_01_lex_dhh_omarchy.wav",
+  "title": "Lex Fridman Podcast #501 with DHH - Building Omarchy Linux Distro",
+  "domain": "Software Architecture (Systems & OS Engineering)",
+  "provenance": "Official human-generated transcript from lexfridman.com/dhh-2-transcript",
+  "duration_seconds": 584.0,
+  "duration_formatted": "09:44",
+  "speakers": [
+    {
+      "id": "Lex Fridman",
+      "role": "Host"
+    },
+    {
+      "id": "DHH",
+      "role": "Guest / Systems Architect & CTO"
+    }
+  ],
+  "turns": [
+    {
+      "turn_id": 1,
+      "speaker": "Lex Fridman",
+      "start_time": 0.0,
+      "start_timestamp": "00:00",
+      "text": "So some people listening to you right now will say DHH is suffering from the old case of AI psychosis. Can you steel man the case that you are in fact experiencing in a state of delusion, like One Flew Over the Cuckoo’s Nest, and can you argue against it?",
+      "end_time": 16.0,
+      "end_timestamp": "00:16"
+    },
+    {
+      "turn_id": 2,
+      "speaker": "DHH",
+      "start_time": 16.0,
+      "start_timestamp": "00:16",
+      "text": "I’m in a state of delirium. That’s the state I’m in. Because I have been working with computers for 40 years, and I’ve never seen the things that I’ve seen in just the last two months.",
+      "end_time": 33.0,
+      "end_timestamp": "00:33"
+    },
+    {
+      "turn_id": 3,
+      "speaker": "DHH",
+      "start_time": 33.0,
+      "start_timestamp": "00:33",
+      "text": "A whole career, a whole life dedicating to the love of computers as my main focus for the working hours and then some, suddenly completely upended, suddenly completely rewritten. Of course I’m delirious. Who looking at this reality is not? If you are not delirious or at the very least very excited… Actually, I guess that’s not even true. If you’re not recognizing the gravity of the moment, that’s the delusion. That’s the psychosis. The psychosis is believing that the world is barely different. We just have some electronic parrots reciting things to us. Now, in my opinion, the reason this argument is actually brought up is because people are not able to see the fruits of the progress. That goes to your point earlier. Where is the amazing software?",
+      "end_time": 88.0,
+      "end_timestamp": "01:28"
+    },
+    {
+      "turn_id": 4,
+      "speaker": "DHH",
+      "start_time": 88.0,
+      "start_timestamp": "01:28",
+      "text": "Why isn’t American GDP running at 12% year over year? First of all, give it a minute. It hasn’t even been a year, goddammit. But second of all, I feel on my own account, I have actually brought the pudding. Omarchy Quattro launched on Friday. It’s been downloaded by tens of thousands of people. And they like it. They like it a lot.",
+      "end_time": 116.0,
+      "end_timestamp": "01:56"
+    },
+    {
+      "turn_id": 5,
+      "speaker": "Lex Fridman",
+      "start_time": 116.0,
+      "start_timestamp": "01:56",
+      "text": "We should mention that going to Perplexity here, Omarchy is a highly opinionated Arch Linux-based desktop distribution centered on the Hyprland Wayland tiling compositor. It was created by David Heinemeier Hansson, DHH, as a polished developer workstation set up with a cohesive visual style and many everyday tools already configured.",
+      "end_time": 138.0,
+      "end_timestamp": "02:18"
+    },
+    {
+      "turn_id": 6,
+      "speaker": "DHH",
+      "start_time": 138.0,
+      "start_timestamp": "02:18",
+      "text": "Let me put it. Omarchy is a beautiful, modern, and opinionated Linux system. It’s an alternative operating system to macOS and Windows, and it’s freaking amazing.",
+      "end_time": 149.0,
+      "end_timestamp": "02:29"
+    },
+    {
+      "turn_id": 7,
+      "speaker": "Lex Fridman",
+      "start_time": 149.0,
+      "start_timestamp": "02:29",
+      "text": "And the Quattro thing is you’re pushing towards the age of agents.",
+      "end_time": 153.0,
+      "end_timestamp": "02:33"
+    },
+    {
+      "turn_id": 8,
+      "speaker": "DHH",
+      "start_time": 153.0,
+      "start_timestamp": "02:33",
+      "text": "That’s right. That’s the latest version that we just dropped out, which is also funny. The Omarchy project is only a year old and a little bit. I started it last summer in between sessions at the 24 Hours of Le Mans-",
+      "end_time": 167.0,
+      "end_timestamp": "02:47"
+    },
+    {
+      "turn_id": 9,
+      "speaker": "DHH",
+      "start_time": 167.0,
+      "start_timestamp": "02:47",
+      "text": "… where I had watched one too many YouTube videos on Linux Ricing and got bitten by that bug. Started working on this second iteration of my attempt at creating a better Linux operating system. The first iteration we talked about last time was called Omakub, was built on top of an existing system called Ubuntu, and it was fine. But the ambition I was able to pour into the new version, Omarchy, because I started seven layers deeper down the stack, was completely different. But it was still done in a pre-agentic world. I wrote all those bash scripts by hand in the beginning, and then I got to see the midway point where things changed over.",
+      "end_time": 211.0,
+      "end_timestamp": "03:31"
+    },
+    {
+      "turn_id": 10,
+      "speaker": "DHH",
+      "start_time": 211.0,
+      "start_timestamp": "03:31",
+      "text": "I did a couple of versions of Omarchy that had partial agent acceleration, and then three months ago, it was full throttle, 100%, everything is written by agents but steered by me. And that just ended up being a very different experience and a very different operating system because I was suddenly granted a limitless ceiling on my ambition. I could look at any feature in Windows, on Mac, on other Linux systems and say, “I want that,” and the agents would deliver. So everything I wanted was suddenly within reach, which meant that I got a little delirious. Who would not get delirious if suddenly a genie pops out of the bottle and says, “You can have whatever you want. Every feature you’ve ever dreamed of in an operating system-",
+      "end_time": 266.0,
+      "end_timestamp": "04:26"
+    },
+    {
+      "turn_id": 11,
+      "speaker": "DHH",
+      "start_time": 266.0,
+      "start_timestamp": "04:26",
+      "text": "… I can deliver them to you, most of them in five minutes, a few in 20, and if we really go hog wild, it’s gonna take me two hours.”",
+      "end_time": 273.0,
+      "end_timestamp": "04:33"
+    },
+    {
+      "turn_id": 12,
+      "speaker": "Lex Fridman",
+      "start_time": 273.0,
+      "start_timestamp": "04:33",
+      "text": "Mm-hmm. Have you seen Requiem for a Dream, the movie? So there’s a drug-like effect here. I find it personally– We’ll talk about many levels of this, but it is overwhelming how much power is placed in our hands so suddenly, and it’s very hard to know, it’s like with “The Hobbit” or something, what to do with it, and I find myself truly overwhelmed with the multitasking on the verge of almost burnt out. Super excited about so many things, but ultimately looking back, you want to focus on one thing and really ship.",
+      "end_time": 310.0,
+      "end_timestamp": "05:10"
+    },
+    {
+      "turn_id": 13,
+      "speaker": "DHH",
+      "start_time": 310.0,
+      "start_timestamp": "05:10",
+      "text": "I don’t have that sense. I don’t have the sense of overwhelm. I don’t have the sense of dread. I don’t have the sense of distortion because I have a mission. I’m going somewhere, and therefore, I can channel all this new power towards-",
+      "end_time": 326.5,
+      "end_timestamp": "05:26"
+    },
+    {
+      "turn_id": 14,
+      "speaker": "Lex Fridman",
+      "start_time": 326.5,
+      "start_timestamp": "05:26",
+      "text": "Yeah, it’s wonderful.",
+      "end_time": 327.8,
+      "end_timestamp": "05:27"
+    },
+    {
+      "turn_id": 15,
+      "speaker": "DHH",
+      "start_time": 327.8,
+      "start_timestamp": "05:27",
+      "text": "a singular goal and outcome, creating the perfect computer. And therefore, all my investigations with AI are focused towards that end. Now, I also have a day job. And we also use agents there, and that’s also targeted towards sort of specific outcomes. But with the Omarchy experience, I got to tap in straight in the back of my head and increase the bandwidth between ideas arriving in my brain and software emerging on the screen. It was like going from dial-up- … to fiber. I think on your podcast, Elon talked about the actual human bandwidth-",
+      "end_time": 374.0,
+      "end_timestamp": "06:14"
+    },
+    {
+      "turn_id": 16,
+      "speaker": "DHH",
+      "start_time": 374.0,
+      "start_timestamp": "06:14",
+      "text": "… that Neuralink and other projects are trying to accelerate. Like, the bandwidth we’re communicating over right now is quite low because we’re limited by our cognition. We’re limited by the rate of speech. You’re not limited by those things when you’re working with a swarm of agents. Now, let me caveat this by saying, if I’d heard myself talk like this-",
+      "end_time": 402.0,
+      "end_timestamp": "06:42"
+    },
+    {
+      "turn_id": 17,
+      "speaker": "DHH",
+      "start_time": 402.0,
+      "start_timestamp": "06:42",
+      "text": "nine months ago, I would probably have used the label AI psychosis. I think it would be fitting because nine months ago when people were talking like this, they weren’t shipping, and I think that’s the ultimate difference, that there were people who saw this early. I was not actually that early. As we’ve talked about, I was rather skeptical, and I was using AI in certain ways, but I was not the first person who downloaded Claude Code. I think Boris released that in end of February. I don’t think I installed Claude Code until September. So there was about six months there where pioneers saw these glimmers of what the future was gonna look like. It wasn’t there yet because the intelligence wasn’t there. The harnesses weren’t there, but they could see the glimmers. I couldn’t.",
+      "end_time": 447.0,
+      "end_timestamp": "07:27"
+    },
+    {
+      "turn_id": 18,
+      "speaker": "DHH",
+      "start_time": 447.0,
+      "start_timestamp": "07:27",
+      "text": "Tobi, Tobi Lutke, the CEO of Shopify and now my partner in crime on this Omarchy project in part, he’s gotten pilled with Omarchy as well. He saw these things very early, and he tried to tell me, and I wasn’t seeing it. I was not seeing what he was seeing.",
+      "end_time": 466.0,
+      "end_timestamp": "07:46"
+    },
+    {
+      "turn_id": 19,
+      "speaker": "Lex Fridman",
+      "start_time": 466.0,
+      "start_timestamp": "07:46",
+      "text": "You were a hater.",
+      "end_time": 467.0,
+      "end_timestamp": "07:47"
+    },
+    {
+      "turn_id": 20,
+      "speaker": "DHH",
+      "start_time": 467.0,
+      "start_timestamp": "07:47",
+      "text": "Yes. I was still on Earth. And he was… He had already boarded the rocket and was heading towards space. I remember actually reading his memo to the company, the AI memo, and thinking, “Ah, seems a little much.” Like, you’re making a big deal out of something that I cannot yet feel is a tangible thing.",
+      "end_time": 491.0,
+      "end_timestamp": "08:11"
+    },
+    {
+      "turn_id": 21,
+      "speaker": "DHH",
+      "start_time": 491.0,
+      "start_timestamp": "08:11",
+      "text": "Because where’s the output of this? I try using it. It writes code I don’t like. It wants to interrupt me all the time. Where are you getting this from? So I get it. I totally get it. If you’ve not seen what the current quality of intelligence can produce, of course you’re gonna look at someone and go like, “They sound a little nutty,” because all your experience up until this point would tell you that they are nutty. Because if you look at the history of computer programming, for the last 40, 50 years, people have been promising that regular people could write code just by talking. We’re gonna have fourth generation languages.",
+      "end_time": 531.0,
+      "end_timestamp": "08:51"
+    },
+    {
+      "turn_id": 22,
+      "speaker": "DHH",
+      "start_time": 531.0,
+      "start_timestamp": "08:51",
+      "text": "Lisp was once upon a time presented, Smalltalk was presented as these environments that would let regular people write their own applications, and none of it came true in the sense beyond, like, Microsoft Access databases or Excel spreadsheets. Those are end user programming environments, but it’s nothing like what we’re able to do now. And then, I mean, I’m not even talking about end user. I’m talking as me, someone who’s been programming for 25 years, seeing the output and the acceleration and the quality and then shipping it, and I think that’s what’s gonna change the entire conversation quite quickly.",
+      "end_time": 568.0,
+      "end_timestamp": "09:28"
+    },
+    {
+      "turn_id": 23,
+      "speaker": "DHH",
+      "start_time": 568.0,
+      "start_timestamp": "09:28",
+      "text": "The few laggards who are still on the fence about whether this is actually useful, who are still trapped in a meme from early ’25 about mechanical parrots, they’re simply going to be overwhelmed by the evidence that’s about to flood over them.",
+      "end_time": 584.0,
+      "end_timestamp": "09:44"
+    }
+  ]
+}

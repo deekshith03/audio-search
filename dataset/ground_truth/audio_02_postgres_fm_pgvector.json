@@ -1,0 +1,137 @@
+{
+  "file_id": "audio_02_postgres_fm_pgvector.wav",
+  "title": "Postgres FM - pgvector (Episode 74)",
+  "domain": "Software Architecture (Database Internals & Vector Search)",
+  "provenance": "Official published human transcript from postgres.fm/episodes/pgvector/transcript",
+  "duration_seconds": 559.0,
+  "duration_formatted": "09:19",
+  "speakers": [
+    {
+      "id": "Michael",
+      "role": "Host / pgMustard founder"
+    },
+    {
+      "id": "Jonathan",
+      "role": "Guest / Postgres Core Team & pgvector contributor"
+    }
+  ],
+  "turns": [
+    {
+      "turn_id": 1,
+      "speaker": "Michael",
+      "start_time": 0.0,
+      "start_timestamp": "00:00",
+      "end_time": 17.5,
+      "end_timestamp": "00:17",
+      "text": "Hello and welcome to Postgres FM, a weekly show about all things PostgreSQL. I am Michael, founder of pgMustard, and today I am delighted to be joined by Jonathan Katz, Postgres Core Team member amongst other things, Principal Product Manager at AWS and contributor to pgvector. Welcome to the show, Jonathan."
+    },
+    {
+      "turn_id": 2,
+      "speaker": "Jonathan",
+      "start_time": 17.5,
+      "start_timestamp": "00:17",
+      "end_time": 23.3,
+      "end_timestamp": "00:23",
+      "text": "Thank you, Michael. Happy to be here. I'm definitely a huge fan of your work. I'm very excited for our conversation today."
+    },
+    {
+      "turn_id": 3,
+      "speaker": "Michael",
+      "start_time": 23.3,
+      "start_timestamp": "00:23",
+      "end_time": 56.9,
+      "end_timestamp": "00:56",
+      "text": "Kind of, you'd say the same to me. So I reached out to you about this topic because it's about time we did an episode on pgvector. How could we not have given the last year? But neither of us knew it well. Both Nikolay and myself haven't used it until recently. Nikolay has been using it. So we wanted to make sure we covered it. And who better to well, Andrew Kane was unavailable and you are definitely the next best person. So we really appreciated all the content you've been putting out, the talks you've been giving on this. So yeah, thanks for joining."
+    },
+    {
+      "turn_id": 4,
+      "speaker": "Jonathan",
+      "start_time": 56.9,
+      "start_timestamp": "00:56",
+      "end_time": 65.3,
+      "end_timestamp": "01:05",
+      "text": "Yeah, happy to be here. I mean, and by the way, when you say next best person, it's like well below Andrew Kane. Andrew has done phenomenal work on pgvector over the past several years."
+    },
+    {
+      "turn_id": 5,
+      "speaker": "Michael",
+      "start_time": 65.3,
+      "start_timestamp": "01:05",
+      "end_time": 78.3,
+      "end_timestamp": "01:18",
+      "text": "Yeah, right. And it has been. It definitely predates the ChatGPT hype, right? It was a couple of years beforehand. Do you want to give us a little bit of an introduction as to what it is and how you came to become involved with it?"
+    },
+    {
+      "turn_id": 6,
+      "speaker": "Jonathan",
+      "start_time": 78.3,
+      "start_timestamp": "01:18",
+      "end_time": 227.8,
+      "end_timestamp": "03:47",
+      "text": "Yeah, so pgvector, at the surface sounds very simple. It's a Postgres extension that allows you to store and search vectors. And I mean, I'll talk a little bit about how I got involved in it, but really to understand how this all came to be, it actually helps to look back in the history of Postgres. Postgres has actually always been able to support vectors back since the Berkeley days, and it comes down to the array data type. So I mean, quite simply, a vector is, you know, it's an array with certain properties. It has a certain amount of dimensionality. There are certain things that each dimension must meet. And there's all sorts of math around it. I mean, there's over a century of what a vector is. But the reason why it was added to Postgres was not because of any mathematical properties. It was actually as a shortcut to be able to look up ACL rules. So instead of having to do a join to another catalog table to get the ACL rules, it was just embedded within a single column as an array. Oh, really? Yeah, yeah. No, it's actually pretty cool. And then fast forward to the early 2000s, Postgres added the cube data type, which allowed you to index up to a hundred dimensional vectors, ultimately using the GiST index, but it added also two distance operations, which are the mathematical operations you need for a vector, which, you know, we can talk a little bit more about that as soon as we get into this. But this is to say, Postgres has actually supported vectors and vector lookups for a while, but certainly there's been a more, a more pressing need for it. And, you know, in terms of a little bit how I got involved, perhaps my secret in the Postgres community was, I originally wanted to go into machine learning when I was in college. And while I was studying it, I was like, oh, it's really fascinating, but to do anything with it, you're going to need a PhD and everything's ad hoc. And I had a very entrepreneurial spirit. I think I got a patent. And of course, I didn't have the foresight to see like, oh, this will be commoditized. And it'll be very simple to access machine learning algorithms through simple API. So credit where credit is due. Some very smart people identified that and have been really building towards that. But again, working with machine learning systems in college, the fundamental data type was the vector. And back then, a high dimensional vector was something considered to be like 20 dimensions. And think about it, Michael, what's a 20 dimensional vector? I can understand 3, 3 is like points in space. I can understand 4, points in space moving around. What's 5?"
+    },
+    {
+      "turn_id": 7,
+      "speaker": "Michael",
+      "start_time": 227.8,
+      "start_timestamp": "03:47",
+      "end_time": 229.2,
+      "end_timestamp": "03:49",
+      "text": "Plus time, right? Yeah."
+    },
+    {
+      "turn_id": 8,
+      "speaker": "Jonathan",
+      "start_time": 229.2,
+      "start_timestamp": "03:49",
+      "end_time": 230.2,
+      "end_timestamp": "03:50",
+      "text": "Yeah."
+    },
+    {
+      "turn_id": 9,
+      "speaker": "Michael",
+      "start_time": 230.2,
+      "start_timestamp": "03:50",
+      "end_time": 247.0,
+      "end_timestamp": "04:07",
+      "text": "I studied, I don't know if you know, but I studied maths at university and did pretty much just pure. I did, I did a tiny bit of stats, a tiny bit of mechanics, but I was best at the pure stuff. And yeah, 5 dimensions hurts my head to think about it, or to try and conceptualize it in any way."
+    },
+    {
+      "turn_id": 10,
+      "speaker": "Jonathan",
+      "start_time": 247.0,
+      "start_timestamp": "04:07",
+      "end_time": 427.2,
+      "end_timestamp": "07:07",
+      "text": "Yeah, it's funny that you say that. I studied math too, though. I would say I was much stronger on the computer science side. But real analysis was one of my favorite classes, because you were proving everything in n-dimensional space. And again, everything's a vector or a matrix. You basically spend a semester just studying vector spaces and all their properties. And to me, like, that was fun. And maybe it was telling, you know, fast forwarding, you know, 20 years later. But, you know, my journey back to vectors came probably a little bit later than some folks. The pgvector project started in 2021. Andrew had the foresight to see that a lot of data was going to be generated around machine learning and AI systems. And Postgres didn't really have support for the types of vector lookups that we needed. So let's back up a second. So I said that Postgres had support for vectors all along, but it did and it didn't. One thing about relational databases, and Postgres in particular, is that you look for exact results. You say, hey, I want to find the 10, well, let's say I want to look up Michael or Jonathan in a database. I'm going to write a select query with a where, where name equals Michael, right? And you expect to get the results for like, Michael, all the Michaels in the database. Same thing when you're looking up points, Postgres has the ability to index things by k-nearest neighbor or find all the points that are around me. And again, if I say like, hey, go in and find like the 10 closest coffee shops to me. You're going to find exactly the 10 closest coffee shops. And these things work in 3 dimensions, 4 dimensions, which is typically where Postgres operates. If you take the PostGIS extension, which adds geospatial support to Postgres, you can index 3 and 4 dimensional points, and you can do it quite well. The GiST and the SP-GiST indexes provide the ability to write these indexes. But as you start adding dimensions, you go from, you know, even like 8 to 10 to a hundred, which is the limit of the cube extension, it's going to start getting very exhaustive. First, in terms of placing the vector or the... I mean, it's not really a point anymore, but think about it as a point. You're trying to place this in space and try to figure out, I have 100 dimensions and I have to situate somewhere in my graph where that is. It's going to be, you know, very exhaustive. And then even if you are doing some kind of exact nearest neighbor search or some index search, there's going to be a lot of cost to it. Yeah. And this is where Postgres, you know, started falling over in a ways, you know, Because a lot of these vectors we're seeing, if you look at some of the popular embedding systems, they're 1,536 dimensions, which again, mind-blowing number. Like I still don't even know what a five-dimensional vector is, and here we're talking about 1,500 dimensional vectors. To do an exact nearest neighbor search, as they call it, or the k nearest neighbor, you have to compare against every single vector that you store in a database. So you have a million vectors that are 1,500 dimensions, you're doing a million times 1,500 computations on them. And that's really expensive. I can tell you it's very expensive because I've had to, you know, I've been personally, you know, benchmarking this for quite a bit."
+    },
+    {
+      "turn_id": 11,
+      "speaker": "Michael",
+      "start_time": 427.2,
+      "start_timestamp": "07:07",
+      "end_time": 442.2,
+      "end_timestamp": "07:22",
+      "text": "And it makes sense, right? It's at minimum, a sequential scan of the entire table, plus all of the CPU of doing those calculations 100 times per, well, 1,500 times per row."
+    },
+    {
+      "turn_id": 12,
+      "speaker": "Jonathan",
+      "start_time": 442.2,
+      "start_timestamp": "07:22",
+      "end_time": 533.8,
+      "end_timestamp": "08:53",
+      "text": "If you have 1,500 times, yeah. And we can talk about in terms of like all the, you know, all sorts of the optimizations that are in place there. But this is where like that exact nearest neighbor problem gets hard. And again, Postgres didn't have the indexing mechanisms to handle it. Probably we'll further dive into that as we talk more. But actually, I'll say 1 of the big ones is just in terms of just storing the data, storing the data within the index, that you have to fit your index value for a single row within an 8 kilobyte limit within the page. So that's already going to start creating some constraints. Now, what's also happened over the past 20 years, since the cube type was added in Postgres, was a whole field of modern vector research, as I like to call it. And starting to this idea of approximate nearest neighbor. And the deal with approximate nearest neighbor is that you're trying to find your nearest neighbors, but with a best fit, which is you're not going to search every single vector in a particular table or database, you can search a subset of it, and you're hoping that you're seeing the representative set of the data you want to return. Now again, for us relational database folks, that's mind blowing. It's like, wait a second, I'm not returning the exact answers. I'm returning an approximate subset. And I'll tell you, the first time I used pgvector, and I was playing around with it, and I was not getting the results I expected, at first I'm like, oh, this is broken, this doesn't work, this doesn't make sense. And that was the app developer in me, the DBA in me that started diving deeper and trying to understand like, oh, wow, there's like a whole science around this that we kind of have to relearn when using a database."
+    },
+    {
+      "turn_id": 13,
+      "speaker": "Michael",
+      "start_time": 533.8,
+      "start_timestamp": "08:53",
+      "end_time": 559.0,
+      "end_timestamp": "09:19",
+      "text": "Yeah, well, I often say to people, you can run a database without adding any indexes and you can run any query you want and get the results back. It's just faster to use an index. Your query result will not change as a result of you having an index. And that sentence is no longer true if we include these approximate nearest neighbor type indexes. So I have to stop saying that or"
+    }
+  ]
+}

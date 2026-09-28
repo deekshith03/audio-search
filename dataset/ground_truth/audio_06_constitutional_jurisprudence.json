@@ -1,0 +1,200 @@
+{
+  "file_id": "audio_06_constitutional_jurisprudence.wav",
+  "title": "Conversations with Tyler: Cass Sunstein on Constitutional Jurisprudence & Rights",
+  "domain": "Constitutional Jurisprudence & Legal Philosophy",
+  "provenance": "Official published human transcript from conversationswithtyler.com/episodes/cass-sunstein-2/",
+  "duration_seconds": 506.0,
+  "duration_formatted": "08:26",
+  "speakers": [
+    {
+      "id": "Tyler Cowen",
+      "role": "Host / George Mason Economics Professor"
+    },
+    {
+      "id": "Cass Sunstein",
+      "role": "Guest / Harvard Law School Professor"
+    }
+  ],
+  "turns": [
+    {
+      "turn_id": 1,
+      "speaker": "Tyler Cowen",
+      "start_time": 0.0,
+      "start_timestamp": "00:00",
+      "end_time": 39.3,
+      "end_timestamp": "00:39",
+      "text": "Hello, everyone, and welcome back to Conversations with Tyler. Today, I’m sitting at Harvard Law School, talking with Cass Sunstein. Cass is the most widely cited legal scholar of all time, among his other achievements. Congratulations for that. This year, he has, I believe, five — maybe more — books out. Some of them he’s been working on for a long time, so it’s a little misleading, but he has On Liberalism: In Defense of Freedom, which, if anything, will be our focus, a new book on manipulation, a book called Imperfect Oracle on the strengths and limits of AI, a co-authored book, Algorithmic Harm, and also Climate Justice. Have I left anything out?"
+    },
+    {
+      "turn_id": 2,
+      "speaker": "Cass Sunstein",
+      "start_time": 39.3,
+      "start_timestamp": "00:39",
+      "end_time": 42.0,
+      "end_timestamp": "00:42",
+      "text": "I really hope that’s the entire list."
+    },
+    {
+      "turn_id": 3,
+      "speaker": "Tyler Cowen",
+      "start_time": 42.0,
+      "start_timestamp": "00:42",
+      "end_time": 46.6,
+      "end_timestamp": "00:46",
+      "text": "In February, there’s one coming on Separation of Powers. Cass Sunstein, welcome."
+    },
+    {
+      "turn_id": 4,
+      "speaker": "Cass Sunstein",
+      "start_time": 46.6,
+      "start_timestamp": "00:46",
+      "end_time": 48.9,
+      "end_timestamp": "00:48",
+      "text": "A pleasure and an honor to be here."
+    },
+    {
+      "turn_id": 5,
+      "speaker": "Tyler Cowen",
+      "start_time": 48.9,
+      "start_timestamp": "00:48",
+      "end_time": 60.9,
+      "end_timestamp": "01:00",
+      "text": "Now, your new book on liberalism is primarily a defense of the liberal concept, but if someone asks you, what’s the most likely scenario for liberalism being self-undermining, what’s your worry?"
+    },
+    {
+      "turn_id": 6,
+      "speaker": "Cass Sunstein",
+      "start_time": 60.9,
+      "start_timestamp": "01:00",
+      "end_time": 106.0,
+      "end_timestamp": "01:46",
+      "text": "Low probability. The likelihood is that we’ll be undermined by anti-liberal and illiberal forces, not self-undermining. I think it’s fair to say or to worry that liberalism doesn’t create the conditions for its own self-perpetuation, so it’s not as if it’s self-undermining, but it doesn’t necessarily maintain itself. The reason is that a society that is flourishing needs a lot of stuff in it, including norms of cooperation, norms of charity, norms of mutual support. Liberalism, in my view, doesn’t undermine those things, but other forces can undermine them, and it’s not clear liberalism has the resources to respond."
+    },
+    {
+      "turn_id": 7,
+      "speaker": "Tyler Cowen",
+      "start_time": 106.0,
+      "start_timestamp": "01:46",
+      "end_time": 113.3,
+      "end_timestamp": "01:53",
+      "text": "When you say other forces, do you mean hostile foreign powers? Or there’s something illiberal in societies that is not sufficiently driven out by liberalism?"
+    },
+    {
+      "turn_id": 8,
+      "speaker": "Cass Sunstein",
+      "start_time": 113.3,
+      "start_timestamp": "01:53",
+      "end_time": 176.6,
+      "end_timestamp": "02:56",
+      "text": "I think there’s something illiberal in the human heart. I recently reread Orwell’s 1984, and what staggered me about it is that Orwell’s of two minds, and that’s the power of the book. Reading it the first three times I did, I thought this is a liberal book about the horrors of illiberal tyranny, but Orwell is into illiberal tyranny. He almost has an erotic connection to it, and that comes through in the book. That’s part of the power of the book. In the human soul, the idea of cruelty or suppression — or maybe, in gentler form, an insistence on order — that’s just there, and it occasionally triumphs. Liberalism is struggling. You can say the better angels of our nature. That’s probably a little too simple, but certainly, the forces of freedom are combating other forces, which sometimes involve fear, sometimes involve security, and these can override liberal commitments."
+    },
+    {
+      "turn_id": 9,
+      "speaker": "Tyler Cowen",
+      "start_time": 176.6,
+      "start_timestamp": "02:56",
+      "end_time": 186.5,
+      "end_timestamp": "03:06",
+      "text": "Is there anything in your view to the Freudian critique of liberalism, that repression is inevitable, and it comes out in illiberal ways, and it’s hard to avoid and keep civilization?"
+    },
+    {
+      "turn_id": 10,
+      "speaker": "Cass Sunstein",
+      "start_time": 186.5,
+      "start_timestamp": "03:06",
+      "end_time": 220.6,
+      "end_timestamp": "03:40",
+      "text": "I have on my door a quotation from Danny Kahneman, who, in an interview, kept saying, “I don’t know.” The interviewer started getting frustrated and said, “Well, when you say, “I don’t know,” what do you think?” Kahneman finally said, “It’s an empirical question, and I don’t have the evidence. It’s not a matter of thinking.” So, on the Freudian — I think Freud was a great kind of novelist. He had a great literary sensibility. Whether this is an empirical truth about repression, let’s say the three beautiful words: “I don’t know.”"
+    },
+    {
+      "turn_id": 11,
+      "speaker": "Tyler Cowen",
+      "start_time": 220.6,
+      "start_timestamp": "03:40",
+      "end_time": 226.3,
+      "end_timestamp": "03:46",
+      "text": "You may say those words again, but do you worry about the fertility crisis within the context of liberalism? What if we just all disappear?"
+    },
+    {
+      "turn_id": 12,
+      "speaker": "Cass Sunstein",
+      "start_time": 226.3,
+      "start_timestamp": "03:46",
+      "end_time": 236.5,
+      "end_timestamp": "03:56",
+      "text": "Yes, I do worry about that. That’s a problem for things other than liberalism, but one of the things it’s a problem for is liberalism, so I do worry about fertility."
+    },
+    {
+      "turn_id": 13,
+      "speaker": "Tyler Cowen",
+      "start_time": 236.5,
+      "start_timestamp": "03:56",
+      "end_time": 239.7,
+      "end_timestamp": "03:59",
+      "text": "Maybe it just means everything is self-undermining, right?"
+    },
+    {
+      "turn_id": 14,
+      "speaker": "Cass Sunstein",
+      "start_time": 239.7,
+      "start_timestamp": "03:59",
+      "end_time": 252.1,
+      "end_timestamp": "04:12",
+      "text": "Might be. I do feel optimistic about long-term. That’s a character trait, so fertility — I think it’s going to be okay, but that’s more an article of faith than an empirical certainty. ## On liberal tensions around immigration"
+    },
+    {
+      "turn_id": 15,
+      "speaker": "Tyler Cowen",
+      "start_time": 252.1,
+      "start_timestamp": "04:12",
+      "end_time": 261.5,
+      "end_timestamp": "04:21",
+      "text": "Some of my friends on the right think that Islamic immigration is a major threat to European freedoms, and that is the result of a fairly liberal immigration policy. Do you agree, disagree?"
+    },
+    {
+      "turn_id": 16,
+      "speaker": "Cass Sunstein",
+      "start_time": 261.5,
+      "start_timestamp": "04:21",
+      "end_time": 321.1,
+      "end_timestamp": "05:21",
+      "text": "I don’t agree. I do think that whether immigration is, broadly speaking, an excellent thing or a risk is something that it’s reasonable to have divergent views about. Some liberals are very open to immigration. That tends to be the liberal tendency, but some people who believe in freedom and in the rule of law and in pluralism worry that excessive immigration can start undermining those things, partly because it might make pluralism not self-sustaining. Some liberals worry partly because it might mean there are illiberal forces in society. Partly it might mean that people are just really mad at each other, and that’s ultimately going to undermine freedom. I think the risk of being concerned about certain kinds of immigration is that it’s inflected by, let’s say, forces of hostility and stereotyping, and that liberals aren’t excited about those forces."
+    },
+    {
+      "turn_id": 17,
+      "speaker": "Tyler Cowen",
+      "start_time": 321.1,
+      "start_timestamp": "05:21",
+      "end_time": 348.4,
+      "end_timestamp": "05:48",
+      "text": "But say some of the stereotypes are true. There is a lot of cousin marriage in England, for instance. Sharia law can mean different things, but to some extent, that’s in England as well. There’re anecdotes about rape, which seems to be somewhat widespread within Pakistani, Muslim, Bangladeshi communities. Those individuals seem to exercise some power through the vote, influencing Labour on Middle Eastern policy. Aren’t those real worries?"
+    },
+    {
+      "turn_id": 18,
+      "speaker": "Cass Sunstein",
+      "start_time": 348.4,
+      "start_timestamp": "05:48",
+      "end_time": 412.2,
+      "end_timestamp": "06:52",
+      "text": "They could be. Now, there are cultures in which horrible things are happening, whether those are rightly attributed to anything other than an assortment of current forces, and whether they’re rightly attributed to something intrinsic to the culture. The liberal suspicion is the former, not the latter. To allow people in who are producing terrible things is not a good idea, and so, screens on immigration — those are a good idea. Whether the screen should be defined in terms of individual characteristics or of nation or religion, I would favor individual characteristics, but it can’t be the case that the widespread concerns currently in Europe and the United States about immigration are rightly dismissed as a product of hostility or bad nationalism. There’s clearly something that’s fair in those concerns."
+    },
+    {
+      "turn_id": 19,
+      "speaker": "Tyler Cowen",
+      "start_time": 412.2,
+      "start_timestamp": "06:52",
+      "end_time": 460.5,
+      "end_timestamp": "07:40",
+      "text": "If I think about how immigration restrictions are enforced, I sometimes worry that liberal societies ultimately, at some margin, have to use illiberal means to keep out or deport immigrants. I’m for more immigration — high-skilled, low-skilled. I’m very pro-immigration, but I’m not for open borders altogether. It seems there’s always some margin where, really, a lot of people want to come to the US, the UK, a lot of other countries, and you’re keeping them out, ultimately using violence, or you’re pushing them back out again in ways where you’re dealing with actual human bodies. It’s not just regulatory. You’re physically doing something to real people. It can be children. It can be babies. Typically, a lot will be vulnerable people. What does that look like under liberalism?"
+    },
+    {
+      "turn_id": 20,
+      "speaker": "Cass Sunstein",
+      "start_time": 460.5,
+      "start_timestamp": "07:40",
+      "end_time": 506.0,
+      "end_timestamp": "08:26",
+      "text": "There’s Kantian liberalism, which says people should be treated as ends, not as means, and that everyone has dignity. That’s bedrock. What it specifically entails for immigration policy is to be determined, but that’s a central liberal foundation. Then there’s Mill’s more, let’s say, romanticized utilitarian form of liberalism. That doesn’t have the Kantian bedrock, but the well-being of the people who are, let’s say, being deported is something that is not a matter of indifference. These abstract foundations for liberalism don’t entail concrete policies, so maybe I’ll tell a "
+    }
+  ]
+}

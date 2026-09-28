@@ -1,0 +1,493 @@
+{
+  "version": "1.1.0",
+  "benchmark_name": "Conversational Audio Hybrid Search Benchmark (Cross-File Qrels)",
+  "total_queries": 18,
+  "query_breakdown": {
+    "single_file_queries": 6,
+    "multi_file_queries": 6,
+    "near_miss_queries": 6
+  },
+  "corpus_files": [
+    "audio_01_lex_dhh_omarchy.wav",
+    "audio_02_postgres_fm_pgvector.wav",
+    "audio_03_brain_science_psychology.wav",
+    "audio_04_macroeconomics_semiconductor.wav",
+    "audio_05_sports_tactics_debate.wav",
+    "audio_06_constitutional_jurisprudence.wav",
+    "audio_07_investigative_history_cafe.wav"
+  ],
+  "queries": [
+    {
+      "query_id": "SF-01",
+      "category": "single_file",
+      "archetype": "lexical_exact",
+      "query": "Which Linux developer workstation distribution uses the Hyprland Wayland tiling compositor?",
+      "description": "Tests exact technical entity retrieval (Hyprland, Wayland, Omarchy). Answer is strictly in audio_01.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 5,
+          "speaker": "Lex Fridman",
+          "start_seconds": 116.0,
+          "end_seconds": 138.0,
+          "matched_text": "Omarchy is a highly opinionated Arch Linux-based desktop distribution centered on the Hyprland Wayland tiling compositor."
+        }
+      ]
+    },
+    {
+      "query_id": "SF-02",
+      "category": "single_file",
+      "archetype": "lexical_exact",
+      "query": "What is the PostgreSQL page size limit that index values for a single row must fit within?",
+      "description": "Tests exact database architectural limit (8 kilobyte limit within the page). Answer is strictly in audio_02.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 12,
+          "speaker": "Jonathan",
+          "start_seconds": 442.2,
+          "end_seconds": 533.8,
+          "matched_text": "storing the data within the index, that you have to fit your index value for a single row within an 8 kilobyte limit within the page."
+        }
+      ]
+    },
+    {
+      "query_id": "SF-03",
+      "category": "single_file",
+      "archetype": "semantic_metaphor",
+      "query": "Why does the speaker use The Little Mermaid story of a fork called a dinglehopper to explain functional struggle?",
+      "description": "Tests retrieval of a specific psychological metaphor for misapplying coping mechanisms. Answer is strictly in audio_03.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 19,
+          "speaker": "Dr. Mireille B. Reece",
+          "start_seconds": 469.9,
+          "end_seconds": 503.7,
+          "matched_text": "So obviously she's going to struggle, in a certain way, if she continues to think that that's what it's used for."
+        }
+      ]
+    },
+    {
+      "query_id": "SF-04",
+      "category": "single_file",
+      "archetype": "lexical_exact",
+      "query": "How many N3, N5, and DRAM wafers are required to manufacture one gigawatt of compute?",
+      "description": "Tests precise semiconductor manufacturing numbers. Answer is strictly in audio_04.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 11,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 435.5,
+          "end_seconds": 454.5,
+          "matched_text": "in order to make a gigawatt of, I think, Vera Rubins, you need 55,000 N3 wafers, 6K N5 wafers, and 170K DRAM wafers."
+        }
+      ]
+    },
+    {
+      "query_id": "SF-05",
+      "category": "single_file",
+      "archetype": "speaker_attributed",
+      "query": "Which historic boxing match did the UFC champion cite where world leaders Roosevelt and Hitler were politically involved?",
+      "description": "Tests speaker-attributed historical sports analysis. Answer is strictly in audio_05.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 32,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 487.0,
+          "end_seconds": 532.0,
+          "matched_text": "Hitler stood behind Schmeling, and Roosevelt stood behind Louis."
+        }
+      ]
+    },
+    {
+      "query_id": "SF-06",
+      "category": "single_file",
+      "archetype": "semantic_concept",
+      "query": "How does Kantian philosophy argue that human beings must be treated as ends rather than means in state policy?",
+      "description": "Tests legal philosophy and moral rights framework. Answer is strictly in audio_06.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 20,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 460.5,
+          "end_seconds": 506.0,
+          "matched_text": "There’s Kantian liberalism, which says people should be treated as ends, not as means, and that everyone has dignity. That’s bedrock."
+        }
+      ]
+    },
+    {
+      "query_id": "MF-01",
+      "category": "multi_file",
+      "archetype": "semantic_concept",
+      "query": "How is the rapid rise of modern AI models reshaping computing infrastructure and developer workflows?",
+      "description": "Tests cross-file recall across Systems (audio_01), Databases (audio_02), and Macroeconomics (audio_04).",
+      "target_file_count": 3,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 10,
+          "speaker": "DHH",
+          "start_seconds": 211.0,
+          "end_seconds": 266.0,
+          "matched_text": "I could look at any feature in Windows, on Mac, on other Linux systems and say, “I want that,” and the agents would deliver."
+        },
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 10,
+          "speaker": "Jonathan",
+          "start_seconds": 247.0,
+          "end_seconds": 427.2,
+          "matched_text": "The pgvector project started in 2021. Andrew had the foresight to see that a lot of data was going to be generated around machine learning and AI systems. And Postgres didn't really have support for the types of vector lookups that we needed."
+        },
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 4,
+          "speaker": "Dylan Patel",
+          "start_seconds": 37.0,
+          "end_seconds": 203.7,
+          "matched_text": "most of GDP growth in America was just AI infrastructure. As we look towards this year, about a third of the compute coming online is for the labs, for OpenAI and Anthropic."
+        }
+      ]
+    },
+    {
+      "query_id": "MF-02",
+      "category": "multi_file",
+      "archetype": "semantic_concept",
+      "query": "How do speakers describe feeling overwhelmed, self-doubt, or navigating personal adversity and setbacks?",
+      "description": "Tests psychological themes of struggle and self-doubt across Systems (audio_01), Psychology (audio_03), Sports (audio_05), and History (audio_07).",
+      "target_file_count": 4,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 12,
+          "speaker": "Lex Fridman",
+          "start_seconds": 273.0,
+          "end_seconds": 310.0,
+          "matched_text": "and I find myself truly overwhelmed with the multitasking on the verge of almost burnt out. Super excited about so many things, but ultimately looking back, you want to focus on one thing and really ship."
+        },
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 17,
+          "speaker": "Dr. Mireille B. Reece",
+          "start_seconds": 402.0,
+          "end_seconds": 466.5,
+          "matched_text": "Right, and I think that's really a significant lie, when we do struggle... That we're like \"Oh my word, nobody's ever struggled like this. I'm all alone in this, and now I can't find a way out.\""
+        },
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 4,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 5.0,
+          "end_seconds": 69.0,
+          "matched_text": "Yes, I had a coach for a father, and how many, how many trainers have kids who compete but aren’t successful? And then when I went to the big leagues, you know, I had already fought."
+        },
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 2,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 24.0,
+          "end_seconds": 67.0,
+          "matched_text": "So he’d known a lot of failure, he’d known a lot of setbacks, and his wartime record"
+        }
+      ]
+    },
+    {
+      "query_id": "MF-03",
+      "category": "multi_file",
+      "archetype": "polysemy_cross_file",
+      "query": "Where do speakers discuss the economics and computational costs of running and scaling infrastructure?",
+      "description": "Tests computational and financial scaling cost across database vector operations (audio_02) and datacenter compute hardware (audio_04).",
+      "target_file_count": 2,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 10,
+          "speaker": "Jonathan",
+          "start_seconds": 247.0,
+          "end_seconds": 427.2,
+          "matched_text": "To do an exact nearest neighbor search, as they call it, or the k nearest neighbor, you have to compare against every single vector that you store in a database. So you have a million vectors that are 1,500 dimensions, you're doing a million times 1,500 computations on them. And that's really expensive."
+        },
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 4,
+          "speaker": "Dylan Patel",
+          "start_seconds": 37.0,
+          "end_seconds": 203.7,
+          "matched_text": "The base cost of compute tends to be around $10 or $13 or $15 million per megawatt."
+        }
+      ]
+    },
+    {
+      "query_id": "MF-04",
+      "category": "multi_file",
+      "archetype": "semantic_concept",
+      "query": "Where do speakers discuss wartime political leaders backing military commanders or national champions?",
+      "description": "Tests wartime leadership across Sports history (audio_05 Roosevelt/Hitler) and Civil War history (audio_07 Lincoln).",
+      "target_file_count": 2,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 32,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 487.0,
+          "end_seconds": 532.0,
+          "matched_text": "Hitler stood behind Schmeling, and Roosevelt stood behind Louis. For those who don’t know this story, I just watched it recently."
+        },
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 4,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 76.0,
+          "end_seconds": 121.0,
+          "matched_text": "He was the perfect person to end up heading the Union armies, and he and Lincoln– And Lincoln realized that, and he proved indispensable."
+        }
+      ]
+    },
+    {
+      "query_id": "MF-05",
+      "category": "multi_file",
+      "archetype": "polysemy_cross_file",
+      "query": "Where do speakers discuss American GDP growth and economic output driven by technological breakthroughs?",
+      "description": "Tests cross-file recall on GDP growth driven by technology across Systems (audio_01) and Macroeconomics (audio_04).",
+      "target_file_count": 2,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 4,
+          "speaker": "DHH",
+          "start_seconds": 88.0,
+          "end_seconds": 116.0,
+          "matched_text": "Why isn’t American GDP running at 12% year over year? First of all, give it a minute. It hasn’t even been a year, goddammit. But second of all, I feel on my own account, I have actually brought the pudding. Omarchy Quattro launched on Friday. It’s been downloaded by tens of thousands of people. And they like it. They like it a lot."
+        },
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 4,
+          "speaker": "Dylan Patel",
+          "start_seconds": 37.0,
+          "end_seconds": 203.7,
+          "matched_text": "When we go back to last year, even at the end of the year, most of GDP growth in America was just AI infrastructure."
+        }
+      ]
+    },
+    {
+      "query_id": "MF-06",
+      "category": "multi_file",
+      "archetype": "semantic_concept",
+      "query": "How do state enforcement mechanisms, legal boundaries, and physical coercion impact individuals in society?",
+      "description": "Tests state coercion and enforcement across Legal philosophy (audio_06) and Prison psychology (audio_03).",
+      "target_file_count": 2,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 19,
+          "speaker": "Tyler Cowen",
+          "start_seconds": 412.2,
+          "end_seconds": 460.5,
+          "matched_text": "how immigration restrictions are enforced, I sometimes worry that liberal societies ultimately, at some margin, have to use illiberal means"
+        },
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 5,
+          "speaker": "Dr. Mireille B. Reece",
+          "start_seconds": 70.2,
+          "end_seconds": 137.5,
+          "matched_text": "Think about it within the context of the prison system - why is it that the punishment for prisoners when they don't fall in line is isolation?"
+        }
+      ]
+    },
+    {
+      "query_id": "NM-01",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Why did an engineer initially assume that a newly adopted system was broken because the results did not match expectations?",
+      "description": "Tests semantic precision: Jonathan Katz explaining approximate nearest neighbors in audio_02 vs DHH explaining early AI tools breaking test suites in audio_01.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 12,
+          "speaker": "Jonathan",
+          "start_seconds": 442.2,
+          "end_seconds": 533.8,
+          "matched_text": "And I'll tell you, the first time I used pgvector, and I was playing around with it, and I was not getting the results I expected, at first I'm like, oh, this is broken, this doesn't work, this doesn't make sense."
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 21,
+          "speaker": "DHH",
+          "start_seconds": 491.0,
+          "end_seconds": 531.0,
+          "reason": "DHH complains that early AI models write code he does not like and break tests, but this is about AI code generation, not database approximate nearest neighbor results."
+        }
+      ]
+    },
+    {
+      "query_id": "NM-02",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Where does a speaker share a personal memory from elementary school about struggling with a learning disability?",
+      "description": "Tests semantic precision: Dr. Reece describing her twin brother diagnosed with ADHD/learning disability in audio_03 vs Dwarkesh Patel describing elementary school in North Dakota with an accent in audio_04.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 15,
+          "speaker": "Dr. Mireille B. Reece",
+          "start_seconds": 267.7,
+          "end_seconds": 360.1,
+          "matched_text": "Struggle - an example I think of is like my brother and I; so I'm a twin, and when we were in elementary school, he was diagnosed with both ADHD and a learning disability. In school, he just struggled all the time."
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 15,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 468.8,
+          "end_seconds": 473.5,
+          "reason": "Dwarkesh mentions being in elementary school in North Dakota and having pronunciation issues, but it was cultural language assimilation, not an ADHD clinical diagnosis."
+        }
+      ]
+    },
+    {
+      "query_id": "NM-03",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "How does an athlete explain deliberately pacing the fight to squeeze the energy and stamina out of an opponent?",
+      "description": "Tests combat sports energy exhaustion in audio_05 vs psychological emotional struggle in audio_03.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 6,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 128.0,
+          "end_seconds": 139.0,
+          "matched_text": "I was, let’s say, like squeezing this energy out of them, and I was getting better and better minute by minute."
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 9,
+          "speaker": "Dr. Mireille B. Reece",
+          "start_seconds": 154.3,
+          "end_seconds": 184.2,
+          "reason": "Dr. Reece discusses helping friends hold emotional weight and struggle, but it is psychological empathy, not athletic combat pacing."
+        }
+      ]
+    },
+    {
+      "query_id": "NM-04",
+      "category": "near_miss",
+      "archetype": "polysemy_cross_file",
+      "query": "Where is a database index compared to executing a query without any index at all?",
+      "description": "Tests database index definition in audio_02 vs economic market index / semiconductor data in audio_04.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 13,
+          "speaker": "Michael",
+          "start_seconds": 533.8,
+          "end_seconds": 559.0,
+          "matched_text": "you can run a database without adding any indexes and you can run any query you want and get the results back. It's just faster to use an index. Your query result will not change as a result of you having an index."
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 8,
+          "speaker": "Dylan Patel",
+          "start_seconds": 352.3,
+          "end_seconds": 421.3,
+          "reason": "Dylan discusses hardware multipliers and compute indexing metrics, but not database relational index scans."
+        }
+      ]
+    },
+    {
+      "query_id": "NM-05",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Why was General Grant accused of being a butcher during military campaigns?",
+      "description": "Tests historical military casualties during the Overland Campaign in audio_07 vs sports combat violence in audio_05.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 4,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 76.0,
+          "end_seconds": 121.0,
+          "matched_text": "he has this reputation as a butcher, Grant the Butcher. That’s something that former Confederates and some Democrats in the North fastened on him. His preferred way of fighting wasn’t just kind of slug it out."
+        },
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 5,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 121.0,
+          "end_seconds": 168.0,
+          "matched_text": "Grant’s casualties get high when he runs into Robert E. Lee, just like everybody else. So the butcher tag is completely unfair about Grant."
+        },
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 9,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 232.0,
+          "end_seconds": 233.0,
+          "matched_text": "It is from the Overland Campaign"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 30,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 471.0,
+          "end_seconds": 486.0,
+          "reason": "Khabib discusses violent exchanges in MMA fighting, but this is sports combat, not 19th-century military generalship."
+        }
+      ]
+    },
+    {
+      "query_id": "NM-06",
+      "category": "near_miss",
+      "archetype": "speaker_attributed",
+      "query": "What did the guest argue about legal and constitutional foundations regarding people being treated as ends rather than means in state enforcement?",
+      "description": "Tests Cass Sunstein explaining Kantian liberalism and dignity in audio_06 vs Dwarkesh discussing immigration.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 20,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 460.5,
+          "end_seconds": 506.0,
+          "matched_text": "There’s Kantian liberalism, which says people should be treated as ends, not as means, and that everyone has dignity. That’s bedrock. What it specifically entails for immigration policy is to be determined"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 17,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 475.0,
+          "end_seconds": 541.6,
+          "reason": "Dwarkesh mentions immigration to North Dakota as a child, but not constitutional jurisprudence or Kantian dignity."
+        }
+      ]
+    }
+  ]
+}

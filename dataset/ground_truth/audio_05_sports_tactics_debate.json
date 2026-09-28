@@ -1,0 +1,344 @@
+{
+  "file_id": "audio_05_sports_tactics_debate.wav",
+  "title": "Lex Fridman Podcast #500: Khabib Nurmagomedov – Combat Strategy, Top Pressure & Fight Tactics",
+  "domain": "Sports Tactics & Combat Debate",
+  "provenance": "Official human-generated transcript from lexfridman.com/khabib-nurmagomedov-transcript",
+  "duration_seconds": 540.0,
+  "duration_formatted": "09:00",
+  "speakers": [
+    {
+      "id": "Lex Fridman",
+      "role": "Host / Black Belt"
+    },
+    {
+      "id": "Khabib Nurmagomedov",
+      "role": "UFC Undefeated World Champion / MMA Coach & Strategist"
+    }
+  ],
+  "turns": [
+    {
+      "turn_id": 1,
+      "speaker": "Lex Fridman",
+      "start_time": 0.0,
+      "start_timestamp": "00:00",
+      "text": "Were you confident that you would win?",
+      "end_time": 2.0,
+      "end_timestamp": "00:02"
+    },
+    {
+      "turn_id": 2,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 2.0,
+      "start_timestamp": "00:02",
+      "text": "In my youth? No.",
+      "end_time": 4.0,
+      "end_timestamp": "00:04"
+    },
+    {
+      "turn_id": 3,
+      "speaker": "Lex Fridman",
+      "start_time": 4.0,
+      "start_timestamp": "00:04",
+      "text": "Were you afraid to lose?",
+      "end_time": 5.0,
+      "end_timestamp": "00:05"
+    },
+    {
+      "turn_id": 4,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 5.0,
+      "start_timestamp": "00:05",
+      "text": "Yeah, in my youth, I wasn’t always so sure. I just wasn’t. Because I never stood out. Yes, I had a coach for a father, and how many, how many trainers have kids who compete but aren’t successful? And then when I went to the big leagues, you know, I had already fought. I had done sixteen professional fights across the post-Soviet space. Later, when I was already signed to the UFC, there I already had this feeling. You know, with each fight, I was getting mentally stronger. My mind was becoming more and more solid, like concrete. When I went out there, I knew, yes, these are fights. Yes, you can take a hit. Yes, anything can happen when knees, elbows, fists are flying, when you can get caught in a choke, you know? But I thought, “If they don’t knock me out, how will they beat me?",
+      "end_time": 69.0,
+      "end_timestamp": "01:09"
+    },
+    {
+      "turn_id": 5,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 69.0,
+      "start_timestamp": "01:09",
+      "text": "I have fifteen minutes. Fifteen minutes is enough to make a person tired.” I’m like, “Okay, if you wanna stop me, come here. I’ll give you that chance. Let’s get in the octagon.” I had this impatience during fight week. I wanted to go in there and feel my opponent. I just wanted to be inside the cage for them to close us in, for the referee to say, “Ready? Ready. Fight.” And here I wanted to feel, to grapple with him and feel his strength, his skills, his energy, and for it not to stop. And with any opponent I felt from the beginning, and I didn’t actually have superhuman strength. But from the beginning, when I grabbed them in the first minute and then in the sixth or seventh minute, I could feel them fading.",
+      "end_time": 128.0,
+      "end_timestamp": "02:08"
+    },
+    {
+      "turn_id": 6,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 128.0,
+      "start_timestamp": "02:08",
+      "text": "I was, let’s say, like squeezing this energy out of them, and I was getting better and better minute by minute.",
+      "end_time": 139.0,
+      "end_timestamp": "02:19"
+    },
+    {
+      "turn_id": 7,
+      "speaker": "Lex Fridman",
+      "start_time": 139.0,
+      "start_timestamp": "02:19",
+      "text": "Can you break down the technical details of your top pressure? That pressure you put on in wrestling, on the ground, all of it. How does it work? Can you explain the philosophy behind it?",
+      "end_time": 153.0,
+      "end_timestamp": "02:33"
+    },
+    {
+      "turn_id": 8,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 153.0,
+      "start_timestamp": "02:33",
+      "text": "Over the years, I’ve learned to use my strength properly. There’s this sport called aikido. I don’t like it much, but I like their philosophy, where your strength might work against you. I think for a lot of listeners, this is gonna be a brand-new sport. But there is this sport called aikido, and the whole philosophy behind it is using your opponent’s force against them. That’s what I learned to do. And I have learned to force an opponent into positions where they have to escape, wasting their energy. Like when we were sparring yesterday.",
+      "end_time": 191.0,
+      "end_timestamp": "03:11"
+    },
+    {
+      "turn_id": 9,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 191.0,
+      "start_timestamp": "03:11",
+      "text": "That’s exactly what I wanted. I wanted you to feel that energy, that heavy top pressure. We could have just played around. I could have gone easy on you, but I wanted you to feel the real heavy pressure. And of course, please don’t think it was a sign of disrespect. It’s quite the opposite.",
+      "end_time": 209.0,
+      "end_timestamp": "03:29"
+    },
+    {
+      "turn_id": 10,
+      "speaker": "Lex Fridman",
+      "start_time": 209.0,
+      "start_timestamp": "03:29",
+      "text": "No, it was respect.",
+      "end_time": 210.0,
+      "end_timestamp": "03:30"
+    },
+    {
+      "turn_id": 11,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 210.0,
+      "start_timestamp": "03:30",
+      "text": "I just wanted you to feel that, you know, how exhausting it can be. I think you felt it yourself that it was a bit different from the kind of grappling you’ve dealt with before. I’m sure of it.",
+      "end_time": 224.0,
+      "end_timestamp": "03:44"
+    },
+    {
+      "turn_id": 12,
+      "speaker": "Lex Fridman",
+      "start_time": 224.0,
+      "start_timestamp": "03:44",
+      "text": "The only one who’s even close to that is, I mean, you’re the absolute number one. But the only thing is, when I trained with Roger Gracie in a different sport, you get that same feeling with him. Like, the guy is just insanely heavy.",
+      "end_time": 234.0,
+      "end_timestamp": "03:54"
+    },
+    {
+      "turn_id": 13,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 234.0,
+      "start_timestamp": "03:54",
+      "text": "Mm-hmm. Pressure. Pressure. Well, Roger, he’s the greatest, too. He’s the greatest in his own sport. What makes a person unique is his style, his style and his approach to his work. I always approach my craft very professionally, you know, respectfully. I believe that if you’re gonna be in this game, in this sport, you have to completely dedicate yourself to it.",
+      "end_time": 264.0,
+      "end_timestamp": "04:24"
+    },
+    {
+      "turn_id": 14,
+      "speaker": "Lex Fridman",
+      "start_time": 264.0,
+      "start_timestamp": "04:24",
+      "text": "But I think you had a deep understanding of how to break an opponent, both physically and psychologically, just looking at your style.",
+      "end_time": 272.0,
+      "end_timestamp": "04:32"
+    },
+    {
+      "turn_id": 15,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 272.0,
+      "start_timestamp": "04:32",
+      "text": "I’ve always been right there, always fighting for position. I always– Look, I mean that I just always had this thought in my head. My grandfather always told me, “A dog that latches onto that one weak spot always wins.” It’s the same with a fighter. When you’re fighting on pure instinct, you feel your opponent’s weakness. You know where they’re weak, and you have to keep pressing right there. For example, let’s say I’m fighting Conor, right? His strengths are his striking, his timing and his speed, his boxing. Why would I stand and strike with him? What am I supposed to do? I have to put pressure on his weak spot. So that’s what separates the fighters who reach success, the highest level of success, and become the best of the best.",
+      "end_time": 331.0,
+      "end_timestamp": "05:31"
+    },
+    {
+      "turn_id": 16,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 331.0,
+      "start_timestamp": "05:31",
+      "text": "They know how to find an opponent’s weakness, and they pressure it relentlessly. So it all comes down to having the right strategy here.",
+      "end_time": 344.0,
+      "end_timestamp": "05:44"
+    },
+    {
+      "turn_id": 17,
+      "speaker": "Lex Fridman",
+      "start_time": 344.0,
+      "start_timestamp": "05:44",
+      "text": "Your fight with Conor, I think, was the biggest fight in UFC history. That’s for sure. Well, actually, in all of sports. Do you think there will ever be another fight of that magnitude in the UFC? Is it even possible?",
+      "end_time": 359.0,
+      "end_timestamp": "05:59"
+    },
+    {
+      "turn_id": 18,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 359.0,
+      "start_timestamp": "05:59",
+      "text": "Well, let’s look at the history here. I mean, our sport is still very young, say thirty-five years old, starting from the ’90s. Put it this way. Take, for example, the sport most similar to MMA, which is, well, let’s say boxing. How old is boxing? A hundred and fifty years? Like, when you think boxing, what pops into your head? Thrilla in Manila?",
+      "end_time": 388.0,
+      "end_timestamp": "06:28"
+    },
+    {
+      "turn_id": 19,
+      "speaker": "Lex Fridman",
+      "start_time": 388.0,
+      "start_timestamp": "06:28",
+      "text": "Yeah, yeah. Well, I love Mike Tyson a lot too, so.",
+      "end_time": 391.0,
+      "end_timestamp": "06:31"
+    },
+    {
+      "turn_id": 20,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 391.0,
+      "start_timestamp": "06:31",
+      "text": "Well, Tyson had big fights, but Mike Tyson never had that signature rival like Muhammad Ali had in Joe Frazier. Yeah, he just didn’t have one. I mean, who do we have? Evander Holyfield? Look, Holyfield-Tyson is no Muhammad Ali. Take Ali and Frazier, Thrilla in Manila, right? People called it the greatest rivalry, and it still is. In the 20th century, there was nothing that could compare. In the 21st century, the only thing you could compare to it, purely based on the numbers, is Pacquiao and Mayweather. Yes, there was public interest, but there wasn’t the energy that there was with Muhammad Ali and Joe Frazier.",
+      "end_time": 435.0,
+      "end_timestamp": "07:15"
+    },
+    {
+      "turn_id": 21,
+      "speaker": "Lex Fridman",
+      "start_time": 435.0,
+      "start_timestamp": "07:15",
+      "text": "Yeah, if I can just pause for a second, I’ll check on Perplexity. List the biggest boxing fights of all time. It’s Ali and Frazier, like you said.",
+      "end_time": 443.0,
+      "end_timestamp": "07:23"
+    },
+    {
+      "turn_id": 22,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 443.0,
+      "start_timestamp": "07:23",
+      "text": "Yeah, yeah.",
+      "end_time": 444.0,
+      "end_timestamp": "07:24"
+    },
+    {
+      "turn_id": 23,
+      "speaker": "Lex Fridman",
+      "start_time": 444.0,
+      "start_timestamp": "07:24",
+      "text": "The first, the third.",
+      "end_time": 446.0,
+      "end_timestamp": "07:26"
+    },
+    {
+      "turn_id": 24,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 446.0,
+      "start_timestamp": "07:26",
+      "text": "Well, when he lost, and then the third fight, the Thrilla in Manila.",
+      "end_time": 449.0,
+      "end_timestamp": "07:29"
+    },
+    {
+      "turn_id": 25,
+      "speaker": "Lex Fridman",
+      "start_time": 449.0,
+      "start_timestamp": "07:29",
+      "text": "And Foreman, I must say Ali versus Foreman.",
+      "end_time": 452.0,
+      "end_timestamp": "07:32"
+    },
+    {
+      "turn_id": 26,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 452.0,
+      "start_timestamp": "07:32",
+      "text": "Well, Foreman, that was the year, I think, ’74, right?",
+      "end_time": 455.0,
+      "end_timestamp": "07:35"
+    },
+    {
+      "turn_id": 27,
+      "speaker": "Lex Fridman",
+      "start_time": 455.0,
+      "start_timestamp": "07:35",
+      "text": "The fight was watched by up to a billion people worldwide.",
+      "end_time": 458.0,
+      "end_timestamp": "07:38"
+    },
+    {
+      "turn_id": 28,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 458.0,
+      "start_timestamp": "07:38",
+      "text": "Yeah, yeah, yeah. It was one of those things. Politics got mixed into it too. Well, it was actually a very big fight.",
+      "end_time": 465.0,
+      "end_timestamp": "07:45"
+    },
+    {
+      "turn_id": 29,
+      "speaker": "Lex Fridman",
+      "start_time": 465.0,
+      "start_timestamp": "07:45",
+      "text": "Sugar Ray Leonard, Duran, Sugar Ray Leonard versus Thomas Hearns, Hagler versus Hearns.",
+      "end_time": 471.0,
+      "end_timestamp": "07:51"
+    },
+    {
+      "turn_id": 30,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 471.0,
+      "start_timestamp": "07:51",
+      "text": "Well, Hagler. Hagler and Duran in Montreal. Sugar Ray Leonard and Duran in Montreal when they fought, when he admitted after the fight that he lost the mental game and broke down before the fight. But then Sugar Ray beat him later.",
+      "end_time": 486.0,
+      "end_timestamp": "08:06"
+    },
+    {
+      "turn_id": 31,
+      "speaker": "Lex Fridman",
+      "start_time": 486.0,
+      "start_timestamp": "08:06",
+      "text": "Yeah, he came back and won.",
+      "end_time": 487.0,
+      "end_timestamp": "08:07"
+    },
+    {
+      "turn_id": 32,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 487.0,
+      "start_timestamp": "08:07",
+      "text": "Yeah. Well, if you look at it out of everything that stands out, I think you can mention Frazier and Muhammad Ali. And there was also Joe Louis against German Max Schmeling. Hitler stood behind Schmeling, and Roosevelt stood behind Louis. For those who don’t know this story, I just watched it recently. It was something incomparable. They were so big. They were two of the most famous athletes of their time. Roosevelt was promoting Joe Louis, you know? At that moment for America, it was like something incredible that a white president was promoting a Black world champion. And on the other hand, Hitler stood behind Schmeling.",
+      "end_time": 532.0,
+      "end_timestamp": "08:52"
+    },
+    {
+      "turn_id": 33,
+      "speaker": "Lex Fridman",
+      "start_time": 532.0,
+      "start_timestamp": "08:52",
+      "text": "It was what? Nineteen thirty-six, nineteen thirty-eight. They had-",
+      "end_time": 536.0,
+      "end_timestamp": "08:56"
+    },
+    {
+      "turn_id": 34,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 536.0,
+      "start_timestamp": "08:56",
+      "text": "They fought twice?",
+      "end_time": 537.0,
+      "end_timestamp": "08:57"
+    },
+    {
+      "turn_id": 35,
+      "speaker": "Lex Fridman",
+      "start_time": 537.0,
+      "start_timestamp": "08:57",
+      "text": "Twice.",
+      "end_time": 538.0,
+      "end_timestamp": "08:58"
+    },
+    {
+      "turn_id": 36,
+      "speaker": "Khabib Nurmagomedov",
+      "start_time": 538.0,
+      "start_timestamp": "08:58",
+      "text": "Yeah, yeah, yeah, yeah. They fought two times.",
+      "end_time": 540.0,
+      "end_timestamp": "09:00"
+    }
+  ]
+}

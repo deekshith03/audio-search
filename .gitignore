@@ -1,0 +1,8 @@
+__pycache__/
+.cache/
+.env
+.env.*
+.venv/
+*.pyc
+dataset/noise_profiles/*.wav
+dataset/raw_source/*.wav

@@ -1,0 +1,13 @@
+{
+  "name": "audio-search",
+  "version": "1.0.0",
+  "description": "Conversational Audio Hybrid Search with pgvector & Promptfoo Evals",
+  "private": true,
+  "scripts": {
+    "eval": "bash evals/run_evals.sh",
+    "eval:view": "promptfoo view"
+  },
+  "devDependencies": {
+    "promptfoo": "0.123.1"
+  }
+}

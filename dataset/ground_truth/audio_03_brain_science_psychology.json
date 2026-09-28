@@ -1,0 +1,209 @@
+{
+  "file_id": "audio_03_brain_science_psychology.wav",
+  "title": "Brain Science Episode 1: Being Human & Emotional Regulation",
+  "domain": "Psychology, Cognitive Neuroscience & Mental Health",
+  "provenance": "Official open-source human transcript from github.com/thechangelog/transcripts (brainscience/brain-science-1.md)",
+  "duration_seconds": 540.0,
+  "duration_formatted": "09:00",
+  "speakers": [
+    {
+      "id": "Adam Stacoviak",
+      "role": "Host / Changelog Media"
+    },
+    {
+      "id": "Dr. Mireille B. Reece",
+      "role": "Clinical Psychologist & Neuropsychologist"
+    }
+  ],
+  "turns": [
+    {
+      "turn_id": 1,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 0.0,
+      "start_timestamp": "00:00",
+      "end_time": 50.5,
+      "end_timestamp": "00:50",
+      "text": "It's interesting having worked with people over so many years, because I think there's some common things or threads that start to emerge... One of those things is really just what it means to be human, and I would contend that there's these fundamentals that all people struggle with; and that part of when they come in to see me, where they're at is that they don't know how to reconcile some of these things. Either they've learned maladaptive coping skills or strategies, or they just sort of are trying to not have things be true that are in fact true. One of those, I would say, would be fundamentally we're designed to feel... And it's ironic, because people actually have feelings about feelings."
+    },
+    {
+      "turn_id": 2,
+      "speaker": "Adam Stacoviak",
+      "start_time": 50.5,
+      "start_timestamp": "00:50",
+      "end_time": 51.8,
+      "end_timestamp": "00:51",
+      "text": "I'd agree with that..."
+    },
+    {
+      "turn_id": 3,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 51.8,
+      "start_timestamp": "00:51",
+      "end_time": 69.0,
+      "end_timestamp": "01:09",
+      "text": "Right...? I think about it with crying, and going \"I don't want to cry anymore, because that's an indicator of weakness.\" And if we're sitting with a friend, we'll be like \"No, no... That's not weakness.\"But if you're sitting in front of your boss, you're like \"Yeah, that's weakness...\", right?"
+    },
+    {
+      "turn_id": 4,
+      "speaker": "Adam Stacoviak",
+      "start_time": 69.0,
+      "start_timestamp": "01:09",
+      "end_time": 70.2,
+      "end_timestamp": "01:10",
+      "text": "Right."
+    },
+    {
+      "turn_id": 5,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 70.2,
+      "start_timestamp": "01:10",
+      "end_time": 137.5,
+      "end_timestamp": "02:17",
+      "text": "For whatever reason, there's feelings about the feelings, but the bottom line is nobody gets to actually opt out of feeling. So with that, we're also all designed to be in relationship. We are fundamentally hard-wired to have social groups, and this sense of attachment. And because I'm sort of a geek when it comes to research, what researchers have found is that attachment - which that's what we label how we relate and connect with others - is 100% learned... Which means our genetics don't actually contribute to how we learn to stay in proximity with other people... And with that, that we all develop ways to manage the threat of the loss of a relationship, but nobody gets to opt out of going \"I need to be in relationship with others.\" Think about it within the context of the prison system - why is it that the punishment for prisoners when they don't fall in line is isolation?"
+    },
+    {
+      "turn_id": 6,
+      "speaker": "Adam Stacoviak",
+      "start_time": 137.5,
+      "start_timestamp": "02:17",
+      "end_time": 138.6,
+      "end_timestamp": "02:18",
+      "text": "Yeah, it's true."
+    },
+    {
+      "turn_id": 7,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 138.6,
+      "start_timestamp": "02:18",
+      "end_time": 143.9,
+      "end_timestamp": "02:23",
+      "text": "Right? That wouldn't be significant if in some way that doesn't actually harm our brain."
+    },
+    {
+      "turn_id": 8,
+      "speaker": "Adam Stacoviak",
+      "start_time": 143.9,
+      "start_timestamp": "02:23",
+      "end_time": 154.3,
+      "end_timestamp": "02:34",
+      "text": "It's almost like we need to have that echo from another human being to let us know that we're there, we're alive... Or just some sort of feedback loop. I'm not really sure how to describe that."
+    },
+    {
+      "turn_id": 9,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 154.3,
+      "start_timestamp": "02:34",
+      "end_time": 184.2,
+      "end_timestamp": "03:04",
+      "text": "Well, it really is this sense of being \"with.\" I can't fight battles on my friends' behalves, or on my kids' behalves. But the simple fact that I know of what's going on makes the difference, because I would contend it sort of like - I help them hold that weight emotionally. That actually leads me into the third thing... The third thing that I would say in regards to the fundamentals of being human is that we all struggle."
+    },
+    {
+      "turn_id": 10,
+      "speaker": "Adam Stacoviak",
+      "start_time": 184.2,
+      "start_timestamp": "03:04",
+      "end_time": 184.7,
+      "end_timestamp": "03:04",
+      "text": "Oh, yes."
+    },
+    {
+      "turn_id": 11,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 184.7,
+      "start_timestamp": "03:04",
+      "end_time": 185.5,
+      "end_timestamp": "03:05",
+      "text": "Right...?"
+    },
+    {
+      "turn_id": 12,
+      "speaker": "Adam Stacoviak",
+      "start_time": 185.5,
+      "start_timestamp": "03:05",
+      "end_time": 187.0,
+      "end_timestamp": "03:07",
+      "text": "Big-time."
+    },
+    {
+      "turn_id": 13,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 187.0,
+      "start_timestamp": "03:07",
+      "end_time": 230.3,
+      "end_timestamp": "03:50",
+      "text": "And we don't always get to pick the way in which we struggle, but we all struggle. So some of it I would say we actually participate in the choosing of that, and going, you know, if it's how I spend my money, or if I'm abusing this thing or that, that there's a way in which I participate in it. But some things we don't. I wouldn't say that we participate in the struggle of grief sometimes. Bad things happen to good people all the time, and it doesn't mean that somebody did something, or you did something per se to cause that grief, but... Struggle."
+    },
+    {
+      "turn_id": 14,
+      "speaker": "Adam Stacoviak",
+      "start_time": 230.3,
+      "start_timestamp": "03:50",
+      "end_time": 267.7,
+      "end_timestamp": "04:27",
+      "text": "Yeah. I see that in humans, and I don't really see that anywhere else. I don't look at my fish tank and see my fish struggling; I don't look at my dog or my cat, or the squirrel outside struggling. It seems very akin to being human, right? I didn't really consider how much people struggle, but you struggle in many different ways; not only do you struggle physically, but emotionally and mentally with learning new things, or with dealing with relationships, or being in a relationship, or like you had mentioned before, the grief of losing somebody, being broken up with, or losing a loved one."
+    },
+    {
+      "turn_id": 15,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 267.7,
+      "start_timestamp": "04:27",
+      "end_time": 360.1,
+      "end_timestamp": "06:00",
+      "text": "Yeah, and I think about it in terms of - while other life (animals and sorts) would \"struggle\" to stay alive, that's much more based on survival, and not struggle, in the same way. Struggle - an example I think of is like my brother and I; so I'm a twin, and when we were in elementary school, he was diagnosed with both ADHD and a learning disability. In school, he just struggled all the time. Everything was harder for him... Whereas I can't read enough, and love to read, and that's my idea of vacation, just reading more, by myself - that would never be what he would select, because it's just hard for him. His brain doesn't work in that same way, so now he has other obstacles all throughout his life as a result of that learning disability. So for somebody else, the struggle could be totally different. It might be that in their family history it's a substance abuse problem, or loss. You've just lost a lot of people and you're struggling with how to navigate that... Or it might be health - their health, your individual health, or someone you love. I think, honestly, trying to navigate one's health overall is a significant struggle."
+    },
+    {
+      "turn_id": 16,
+      "speaker": "Adam Stacoviak",
+      "start_time": 360.1,
+      "start_timestamp": "06:00",
+      "end_time": 402.0,
+      "end_timestamp": "06:42",
+      "text": "It's also like you're trying to comprehend life. The struggle really is a comprehension problem. You're trying to make sense of what you think is happening, what your truth is, in a sense; what's true to you, what's really happening. And the struggle is that comprehension process. But I also think of it like - as we approach these different topics of being designed to feel, designed to connect, or the fact that we all struggle, it's almost like we're enabling those that would listen to this show the ability to know truths about being human, and then therefore being able to enable or offer empathy to others, because of these truths."
+    },
+    {
+      "turn_id": 17,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 402.0,
+      "start_timestamp": "06:42",
+      "end_time": 467.5,
+      "end_timestamp": "07:47",
+      "text": "Right, and I think that's really a significant lie, when we do struggle... That we're like \"Oh my word, nobody's ever struggled like this. I'm all alone in this, and now I can't find a way out.\" That actually isn't gonna help us do that struggle any better, and that's why even looking at these things and going \"You know, I do feel the way that I do and I have these emotions around this situation or experience, but also where are my people, who do I walk alongside me in life in order to navigate this struggle?\" Fundamentally, we're all gonna struggle more when we don't know. This is why being able to name things really makes a difference. In the field of neuroscience we sort of say \"Name it to tame it.\" What I mean by that is when we're able to put words to our experiences, it changes the way in which we navigate it. This might be a weird example, but I always think of The Little Mermaid; and if you haven't seen it..."
+    },
+    {
+      "turn_id": 18,
+      "speaker": "Adam Stacoviak",
+      "start_time": 467.5,
+      "start_timestamp": "07:47",
+      "end_time": 469.9,
+      "end_timestamp": "07:50",
+      "text": "It's been a while."
+    },
+    {
+      "turn_id": 19,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 469.9,
+      "start_timestamp": "07:50",
+      "end_time": 503.7,
+      "end_timestamp": "08:23",
+      "text": "...I'll remind you. There's a scene in it when Ariel, as a mermaid, is eating, or goes to eat with humans... And she picks up the fork and she's like \"Oh look, it's a dinglehopper!\" And then she proceeds to use it to brush her hair... Which we all know a fork is not designed to brush your hair, nor is it named a dinglehopper. It's a fork, and it's an utensil we use in order to feed ourselves. So obviously she's going to struggle, in a certain way, if she continues to think that that's what it's used for."
+    },
+    {
+      "turn_id": 20,
+      "speaker": "Adam Stacoviak",
+      "start_time": 503.7,
+      "start_timestamp": "08:23",
+      "end_time": 504.6,
+      "end_timestamp": "08:24",
+      "text": "Right."
+    },
+    {
+      "turn_id": 21,
+      "speaker": "Dr. Mireille B. Reece",
+      "start_time": 504.6,
+      "start_timestamp": "08:24",
+      "end_time": 540.0,
+      "end_timestamp": "09:00",
+      "text": "And so, in our lives, if we can say, for example with emotions, \"Look, crying in and of itself doesn't mean that I'm weak. I can not like it, but emotions - it's a reflection of sadness. So I'm sad.\" And I can take it further and go \"I'm sad because I lost a loved one\" or \"I'm sad because things aren't going my way, or I'm frustrated and I continue to try to make progress "
+    }
+  ]
+}
