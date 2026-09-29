@@ -31,7 +31,7 @@ MODELS: Dict[str, EmbeddingModel] = {
         EmbeddingModel("qwen3", "Qwen/Qwen3-Embedding-0.6B", 1024, 32768),
     )
 }
-DEFAULT_MODELS = ("bge-small", "bge-base", "gemma")
+DEFAULT_MODELS = ("gemma",)
 CONTEXT_SUFFIX = "+ctx"
 BATCH_SIZE = 32
 

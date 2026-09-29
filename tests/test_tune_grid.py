@@ -89,6 +89,17 @@ class TestSpanLeaders(unittest.TestCase):
         self.assertEqual(tune_grid.span_leaders(joint, MARGIN), [winner["config"]])
 
 
+class TestSubsetMetrics(unittest.TestCase):
+
+    def test_micro_weights_by_moments_and_macro_mrr(self):
+        r = {"hybrid": {"per_query": {"A": {"r1": 1.0, "r5": 1.0, "mrr": 1.0}, "B": {"r1": 0.0, "r5": 0.5, "mrr": 0.25}}}}
+        m = tune_grid.subset_metrics(r, ["A", "B", "missing"], {"A": 1, "B": 2})
+        self.assertEqual(m["n"], 2)
+        self.assertAlmostEqual(m["micro_r1"], 1 / 3)
+        self.assertAlmostEqual(m["micro_r5"], 2 / 3)
+        self.assertAlmostEqual(m["mrr"], 0.625)
+
+
 class TestJointResume(unittest.TestCase):
 
     def test_skips_configs_already_saved(self):

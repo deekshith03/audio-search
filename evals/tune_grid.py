@@ -39,6 +39,12 @@ GRID_MODEL = "gemma"
 DEFAULT_RERANKER = "bge-reranker"
 FAMILIES = ("A-15s", "A-15s+ctx", "A-30s", "A-30s+ctx", "A-45s", "A-45s+ctx", "B", "B+ctx", "B-prev+ctx", "C-512", "D")
 JOINT_FAMILIES = ("A-15s", "A-30s", "A-30s+ctx", "B", "B-prev+ctx", "C-512")
+FINALIST_FAMILIES = ("A-30s", "B-prev+ctx")
+FINALIST_SPAN_OPTIONS = tuple(
+    {"span_extend_ratio": r, "span_min_seconds": 4.0, "dedupe_gap_seconds": g} for r in (0.8, 1.0) for g in (0.0, 2.0)
+)
+ORIGINAL_DEV_IDS = {"DSF-01", "DSF-02", "DSF-03", "DSF-04", "DMF-01", "DMF-02", "DMF-03", "DMF-04",
+                    "DNM-01", "DNM-02", "DNM-03", "DNM-04", "DKW-01", "DKW-02"}
 RERANKER_OPTIONS = (None, "bge-reranker")
 FUSION_WEIGHTS = ((1.0, 1.0, 1.0), (1.0, 1.0, 2.0), (1.0, 1.0, 3.0), (2.0, 2.0, 1.0), (1.0, 0.5, 1.0))
 FUSIONS = tuple((fusion, w) for fusion in ("rrf", "convex") for w in FUSION_WEIGHTS)
@@ -118,6 +124,7 @@ def run_mode(config: Dict[str, Any], mode: str, split: str = SPLIT) -> Dict[str,
         "near_miss_reject": summary["near_miss_rejection_rate"],
         "by_category_r5": {cat: v["recall@5"] for cat, v in summary["by_category"].items()},
         "misses": [q["query_id"] for q in summary["queries"] if q["recall@5"] < 1.0],
+        "per_query": {q["query_id"]: {"r1": q["recall@1"], "r5": q["recall@5"], "mrr": q["mrr"]} for q in summary["queries"]},
         "latency_p50_ms": round(statistics.median(latencies), 1) if latencies else None,
         "latency_p95_ms": round(latencies[int(0.95 * (len(latencies) - 1))], 1) if latencies else None,
     }
@@ -276,6 +283,38 @@ def span_leaders(joint: Dict[str, Any], margin: float) -> List[Dict[str, Any]]:
     return [winner] + ([rank_rows(others, margin)[0]["config"]] if others else [])
 
 
+def subset_metrics(row: Dict[str, Any], query_ids: Sequence[str], moments: Dict[str, int]) -> Dict[str, float]:
+    """Micro R@1/R@5 (weighted by target moments) and macro MRR over a subset of queries."""
+    per_query = row["hybrid"]["per_query"]
+    ids = [q for q in query_ids if q in per_query]
+    total = sum(moments[q] for q in ids) or 1
+    return {
+        "n": len(ids),
+        "micro_r1": sum(per_query[q]["r1"] * moments[q] for q in ids) / total,
+        "micro_r5": sum(per_query[q]["r5"] * moments[q] for q in ids) / total,
+        "mrr": sum(per_query[q]["mrr"] for q in ids) / (len(ids) or 1),
+    }
+
+
+def breakdown_table(rows: Sequence[Dict[str, Any]]) -> str:
+    queries = load_qrels(SPLIT)["queries"]
+    moments = {q["query_id"]: 1 if q["category"] in ANY_OF_CATEGORIES else len(q["relevant_moments"]) for q in queries}
+    subsets = {"all": [q["query_id"] for q in queries],
+               "old 14": [q["query_id"] for q in queries if q["query_id"] in ORIGINAL_DEV_IDS],
+               "new 36": [q["query_id"] for q in queries if q["query_id"] not in ORIGINAL_DEV_IDS]}
+    for style in ("exact", "semantic", "question", "keyword"):
+        subsets[style] = [q["query_id"] for q in queries if q.get("style") == style]
+    head = "| Candidate | " + " | ".join(f"{k} (n={len(v)}) R@5 / R@1" for k, v in subsets.items()) + " |"
+    lines = [head, "| :--- |" + " ---: |" * len(subsets)]
+    for r in rows:
+        cells = []
+        for ids in subsets.values():
+            m = subset_metrics(r, ids, moments)
+            cells.append(f"{m['micro_r5']:.3f} / {m['micro_r1']:.3f}")
+        lines.append(f"| {r['label']} | " + " | ".join(cells) + " |")
+    return "\n".join(lines)
+
+
 def evict_reranker(key: Optional[str]) -> None:
     from src.search.engine import default_engine
 
@@ -332,8 +371,40 @@ def run_round(round_name: str, families: Optional[Sequence[str]] = None) -> List
         print(f"Best per leader:\n{markdown_table(best_per_family(rows, margin), False)}\n")
         print(f"selected: {selected[0]['label'] if selected else 'none eligible'}")
 
+    elif round_name == "finalists":
+        configs = [
+            {**family_config(f), "fusion": fusion, "bm25_weight": w[0], "trigram_weight": w[1], "dense_weight": w[2], "reranker": rr}
+            for rr in RERANKER_OPTIONS for f in FINALIST_FAMILIES for fusion, w in FUSIONS
+        ]
+        print(f"Round finalists: {len(configs)} configs on {SPLIT} (tie margin {margin:.3f})", flush=True)
+        rows = []
+        current_reranker = None
+        for config in configs:
+            if config["reranker"] != current_reranker:
+                evict_reranker(current_reranker)
+                current_reranker = config["reranker"]
+            rows.append(evaluate(config, False, lexical_cache))
+        best = [rank_rows([r for r in rows if family_of(r["config"]) == f and is_eligible(r)], margin)[0] for f in FINALIST_FAMILIES]
+        for leader in best:
+            for span in FINALIST_SPAN_OPTIONS:
+                config = {**leader["config"], **span}
+                if config["reranker"] != current_reranker:
+                    evict_reranker(current_reranker)
+                    current_reranker = config["reranker"]
+                rows.append(evaluate(config, False, lexical_cache))
+        evict_reranker(current_reranker)
+        winner, note = select_joint(rows, margin)
+        ordered = rank_rows(rows, margin)
+        save_round(round_name, ordered, [winner], note)
+        per_family = best_per_family(rows, margin)
+        print(f"\nTop 15:\n{markdown_table(ordered[:15], False)}\n")
+        print(f"Best per family:\n{markdown_table(per_family, False)}\n")
+        print(f"Breakdown of the best per family:\n{breakdown_table(per_family)}\n")
+        print(f"selected: {winner['label']}  ({note})")
+        rows = ordered
+
     else:
-        raise SystemExit("--round must be families, joint or span")
+        raise SystemExit("--round must be families, joint, span or finalists")
 
     print(f"round {round_name} took {time.perf_counter() - started:.0f}s; saved {results_path(round_name)}")
     return rows
@@ -341,7 +412,7 @@ def run_round(round_name: str, families: Optional[Sequence[str]] = None) -> List
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Dev-set tuning grid.")
-    parser.add_argument("--round", required=True, choices=["families", "joint", "span"])
+    parser.add_argument("--round", required=True, choices=["families", "joint", "span", "finalists"])
     parser.add_argument("--families", help=f"Comma-separated families for the joint round (default {','.join(JOINT_FAMILIES)}).")
     args = parser.parse_args(argv)
     run_round(args.round, args.families.split(",") if args.families else None)

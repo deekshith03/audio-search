@@ -124,8 +124,11 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
     def engine(self, embedder=None, rerankers=None):
         return SearchEngine(self.conn, embedders={"bge-small": embedder or HashEmbedder()}, rerankers=rerankers)
 
+    # The fixture index is built with a fake bge-small embedder; pin the pre-freeze knobs these tests exercise.
+    BASE = {"model": "bge-small", "context": True, "fusion": "rrf", "dense_weight": 1.0, "dedupe_gap_seconds": 2.0}
+
     def run_search(self, query, mode="hybrid", top_k=5, engine=None, **config):
-        return (engine or self.engine()).search(query, mode, top_k, SearchConfig(**config), workspaces=(self.tmp,))
+        return (engine or self.engine()).search(query, mode, top_k, SearchConfig(**{**self.BASE, **config}), workspaces=(self.tmp,))
 
     def test_result_contract(self):
         (top, *_) = self.run_search("tiling window compositor").results
@@ -233,7 +236,7 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
 
     def test_workspace_filter(self):
         response = SearchEngine(self.conn, embedders={"bge-small": HashEmbedder()}).search(
-            "sourdough", "hybrid", 5, SearchConfig(), workspaces=("somewhere-else",)
+            "sourdough", "hybrid", 5, SearchConfig(**self.BASE), workspaces=("somewhere-else",)
         )
         self.assertEqual(response.results, [])
 
@@ -255,11 +258,18 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
 
 class TestSearchConfig(unittest.TestCase):
 
+    def test_frozen_defaults(self):
+        config = SearchConfig()
+        self.assertEqual((config.chunker, config.model, config.context, config.fusion, config.reranker),
+                         ("A-30s", "gemma", False, "convex", None))
+        self.assertEqual(config.weights, {"bm25": 1.0, "trigram": 1.0, "dense": 2.0})
+        self.assertEqual((config.embedding_variant, config.dedupe_gap_seconds), ("gemma", 0.0))
+
     def test_embedding_variant(self):
-        self.assertEqual(SearchConfig(chunker="A-30s").embedding_variant, "bge-small+ctx")
-        self.assertEqual(SearchConfig(chunker="B-prev", model="gemma").embedding_variant, "gemma+ctx")
+        self.assertEqual(SearchConfig(chunker="A-30s", model="bge-small", context=True).embedding_variant, "bge-small+ctx")
+        self.assertEqual(SearchConfig(chunker="B-prev", model="gemma", context=True).embedding_variant, "gemma+ctx")
         self.assertFalse(SearchConfig(chunker="C-512", context=True).uses_context)
-        self.assertEqual(SearchConfig(chunker="A-30s", context=False).embedding_variant, "bge-small")
+        self.assertEqual(SearchConfig(chunker="A-30s", model="bge-small", context=False).embedding_variant, "bge-small")
         self.assertEqual(SearchConfig(chunker="D", model="gemma").embedding_variant, "gemma")
 
     def test_validation(self):

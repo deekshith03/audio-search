@@ -185,7 +185,7 @@
       "query_id": "DSF-08",
       "category": "single_file",
       "archetype": "semantic_numeric",
-      "query": "lab compute growth projection for 2028",
+      "query": "18 gigawatts by 2027 and 54 by 2028",
       "description": "Dwarkesh's tripling projection: 18 GW by end of 2027, 54 by end of 2028.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -202,7 +202,7 @@
         }
       ],
       "hard_negatives": [],
-      "style": "semantic"
+      "style": "exact"
     },
     {
       "query_id": "DSF-10",
@@ -309,8 +309,8 @@
           "turn_id": 18,
           "speaker": "Khabib Nurmagomedov",
           "start_seconds": 365.03,
-          "end_seconds": 370.92,
-          "matched_text": "our sport is still very young, say thirty-five years old, starting from the ’90s.",
+          "end_seconds": 382.97,
+          "matched_text": "our sport is still very young, say thirty-five years old, starting from the ’90s. Put it this way. Take, for example, the sport most similar to MMA, which is, well, let’s say boxing. How old is boxing? A hundred and fifty years?",
           "turn_start_seconds": 359.0,
           "turn_end_seconds": 388.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
@@ -426,7 +426,7 @@
       "query_id": "DSF-21",
       "category": "single_file",
       "archetype": "semantic_paraphrase",
-      "query": "unprecedented change after decades of programming",
+      "query": "40 years with computers, never seen anything like the last two months",
       "description": "DHH: 40 years with computers and never seen anything like the last two months; a career suddenly upended.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -440,21 +440,10 @@
           "turn_start_seconds": 16.0,
           "turn_end_seconds": 33.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
-        },
-        {
-          "file_id": "audio_01_lex_dhh_omarchy.wav",
-          "turn_id": 3,
-          "speaker": "DHH",
-          "start_seconds": 44.97,
-          "end_seconds": 48.21,
-          "matched_text": "suddenly completely upended, suddenly completely rewritten.",
-          "turn_start_seconds": 33.0,
-          "turn_end_seconds": 88.0,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
       "hard_negatives": [],
-      "style": "semantic"
+      "style": "exact"
     },
     {
       "query_id": "DMF-01",
@@ -650,8 +639,8 @@
           "turn_id": 1,
           "speaker": "Michael",
           "start_seconds": 0.0,
-          "end_seconds": 3.47,
-          "matched_text": "Hello and welcome to Postgres FM, a weekly show about all things PostgreSQL.",
+          "end_seconds": 8.5,
+          "matched_text": "Hello and welcome to Postgres FM, a weekly show about all things PostgreSQL. I am Michael, founder of pgMustard, and today I am delighted to be joined by Jonathan Katz",
           "turn_start_seconds": 0.0,
           "turn_end_seconds": 17.5,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
@@ -1103,8 +1092,8 @@
           "turn_id": 16,
           "speaker": "Cass Sunstein",
           "start_seconds": 261.5,
-          "end_seconds": 274.45,
-          "matched_text": "I don’t agree. I do think that whether immigration is, broadly speaking, an excellent thing or a risk is something that it’s reasonable to have divergent views about.",
+          "end_seconds": 277.51,
+          "matched_text": "I don’t agree. I do think that whether immigration is, broadly speaking, an excellent thing or a risk is something that it’s reasonable to have divergent views about. Some liberals are very open to immigration.",
           "turn_start_seconds": 261.5,
           "turn_end_seconds": 321.1,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
@@ -1203,17 +1192,6 @@
           "matched_text": "In April 1861, Lee was offered command of the Union Army-",
           "turn_start_seconds": 272.0,
           "turn_end_seconds": 279.0,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
-        },
-        {
-          "file_id": "audio_07_investigative_history_cafe.wav",
-          "turn_id": 16,
-          "speaker": "Lex Fridman",
-          "start_seconds": 280.04,
-          "end_seconds": 282.0,
-          "matched_text": "and chose Virginia instead.",
-          "turn_start_seconds": 280.0,
-          "turn_end_seconds": 282.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],

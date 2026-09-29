@@ -180,7 +180,10 @@ Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed
    - ✅ Engine changes above; index rebuilt with gemma only.
    - ✅ Family round (11 families, gemma, bge reranker, equal RRF; `grid_families.json`): A-30s R@5 0.789 / R@1 0.579 (was 0.684 / 0.526 before the engine changes); C-512 0.684 / 0.632 (≡ D); A-45s below A-30s; B+ctx last.
    - ⏳ Joint round: A-15s, A-30s, A-30s+ctx, B, B-prev+ctx, C-512 × 10 fusion settings × 4 rerankers (240 configs); eligible if search p50 ≤ 1.6 s; the reranker must beat its no-reranker twin.
-   - Span round: winner × span settings × dedupe gap (12 configs).
+   - ✅ Joint round (240 configs): A-30s + gemma + RRF + bge-reranker led on the question-style dev set; Qwen3 no better at 2.5–7 s, MiniLM hurt R@1 (both removed). Span round: current span settings best.
+   - ✅ Query sets rewritten as search queries (the brief asks for term search): exact / semantic / keyword styles plus 2 questions per category; dev expanded to 50 queries (63 moments) on unused turns; test (21) reworded with labels kept, plus 3 label corrections from an eval audit (pooling, speaker reachability, answers in test-only turns).
+   - ✅ Finalists round on the new dev set (A-30s vs B-prev+ctx × 10 fusion × {none, bge} + span variants): the bge reranker now hurts (keyword R@5 1.00 → 0.78: it demotes exact matches for 1–2 word searches). Error check of the 12 misses: 6 query/label problems (corrected by transcript, not by score), 2 span-too-wide, 3 real retrieval misses, 1 diarization.
+   - ✅ **Frozen: A-30s · EmbeddingGemma (no context) · convex fusion (BM25 1, trigram 1, dense 2) · no reranker · span 0.8 / 4 s · no adjacent merge.** Final dev (one run): hybrid micro R@5 0.806, R@1 0.677, MRR 0.878; lexical 0.565, dense 0.758 micro R@5; exact 0.929, semantic 0.625, question 0.556, keyword 1.00 R@5; search p50 65 ms / p95 107 ms.
 7. Streamlit search page (with optional speaker and recording filters; `speaker_label` and `file_pk` are already on every chunk); `indexing` job stage for uploads; label edits sync to `speakers`; model bootstrap for Docker.
 8. One final test-set run; write-up (design, success criteria, results, limitations, coding-agent disclosure).
 

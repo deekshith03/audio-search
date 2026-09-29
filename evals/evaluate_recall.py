@@ -115,7 +115,7 @@ def run_benchmark(
     return summary_report
 
 
-MODE_LABELS = {"hybrid": "HYBRID (RRF)", "lexical": "LEXICAL (BM25)", "dense": "DENSE (VEC)"}
+MODE_LABELS = {"hybrid": "HYBRID", "lexical": "LEXICAL (BM25)", "dense": "DENSE (VEC)"}
 CATEGORY_LABELS = {"single_file": "Single-File", "multi_file": "Multi-File", "near_miss": "Near-Miss", "short_keyword": "Keyword"}
 
 

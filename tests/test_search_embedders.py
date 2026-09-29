@@ -7,7 +7,7 @@ class TestEmbedderRegistry(unittest.TestCase):
 
     def test_qwen3_registered_but_not_default(self):
         self.assertIn("qwen3", MODELS)
-        self.assertEqual(DEFAULT_MODELS, ("bge-small", "bge-base", "gemma"))
+        self.assertEqual(DEFAULT_MODELS, ("gemma",))
 
     def test_dimensions(self):
         self.assertEqual({k: m.dimensions for k, m in MODELS.items()},

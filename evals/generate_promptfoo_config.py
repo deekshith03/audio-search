@@ -25,7 +25,7 @@ def generate_config(split):
     providers = [
         {
             "id": "python:evals/search_provider.py",
-            "label": "Hybrid (RRF)",
+            "label": "Hybrid",
             "config": {
                 "mode": "hybrid",
                 "top_k": 5

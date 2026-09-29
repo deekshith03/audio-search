@@ -45,16 +45,16 @@ WORD_PATTERN = re.compile(r"\w+")
 
 @dataclass(frozen=True)
 class SearchConfig:
-    """Everything the dev grid varies, plus fixed knobs with defaults. The defaults are a
-    placeholder until the grid (step 6) picks the configuration."""
+    """Defaults are the configuration frozen on the dev set (docs/PHASE_3_PLAN.md §6): A-30s windows,
+    EmbeddingGemma without context, convex fusion weighting dense 2x, no reranker, no adjacent merge."""
 
     chunker: str = "A-30s"
-    model: str = "bge-small"
-    context: bool = True
-    fusion: str = "rrf"
+    model: str = "gemma"
+    context: bool = False
+    fusion: str = "convex"
     bm25_weight: float = 1.0
     trigram_weight: float = 1.0
-    dense_weight: float = 1.0
+    dense_weight: float = 2.0
     reranker: Optional[str] = None
     candidates: int = 50
     rerank_depth: int = 20
@@ -67,7 +67,7 @@ class SearchConfig:
     span_min_seconds: float = 4.0
     span_extend_ratio: float = 0.8
     keyword_span_padding_seconds: float = 2.0
-    dedupe_gap_seconds: float = 2.0
+    dedupe_gap_seconds: float = 0.0
 
     def __post_init__(self):
         if self.chunker not in CHUNK_CONFIGS:
