@@ -1,0 +1,698 @@
+{
+  "hybrid": {
+    "split": "test",
+    "macro_overall": {
+      "recall@1": 0.5277777777777778,
+      "recall@3": 0.6468253968253969,
+      "recall@5": 0.6468253968253969,
+      "mrr": 0.6904761904761905
+    },
+    "micro_moments": {
+      "recall@1": 0.37142857142857144,
+      "recall@3": 0.5714285714285714,
+      "recall@5": 0.5714285714285714
+    },
+    "by_category": {
+      "single_file": {
+        "recall@1": 0.8333333333333334,
+        "recall@3": 0.8333333333333334,
+        "recall@5": 0.8333333333333334,
+        "mrr": 0.8333333333333334
+      },
+      "multi_file": {
+        "recall@1": 0.13888888888888887,
+        "recall@3": 0.47222222222222227,
+        "recall@5": 0.47222222222222227,
+        "mrr": 0.5833333333333334
+      },
+      "near_miss": {
+        "recall@1": 0.375,
+        "recall@3": 0.4583333333333333,
+        "recall@5": 0.4583333333333333,
+        "mrr": 0.5
+      },
+      "short_keyword": {
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "mrr": 1.0
+      }
+    },
+    "near_miss_rejection_rate": 0.5,
+    "queries": [
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-01",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-02",
+        "category": "single_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "SF-03",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-04",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-05",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-06",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.3333333333333333,
+        "recall@3": 0.3333333333333333,
+        "recall@5": 0.3333333333333333,
+        "avoided_hard_negative": true,
+        "query_id": "MF-01",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.5,
+        "recall@1": 0.0,
+        "recall@3": 0.5,
+        "recall@5": 0.5,
+        "avoided_hard_negative": true,
+        "query_id": "MF-02",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.5,
+        "recall@1": 0.0,
+        "recall@3": 0.5,
+        "recall@5": 0.5,
+        "avoided_hard_negative": true,
+        "query_id": "MF-03",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "MF-04",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.5,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "MF-05",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.5,
+        "recall@1": 0.0,
+        "recall@3": 0.5,
+        "recall@5": 0.5,
+        "avoided_hard_negative": true,
+        "query_id": "MF-06",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "NM-01",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "NM-02",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "NM-03",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "NM-04",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.25,
+        "recall@3": 0.75,
+        "recall@5": 0.75,
+        "avoided_hard_negative": true,
+        "query_id": "NM-05",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "NM-06",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-01",
+        "category": "short_keyword"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-02",
+        "category": "short_keyword"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-03",
+        "category": "short_keyword"
+      }
+    ]
+  },
+  "lexical": {
+    "split": "test",
+    "macro_overall": {
+      "recall@1": 0.4444444444444445,
+      "recall@3": 0.5158730158730159,
+      "recall@5": 0.5515873015873016,
+      "mrr": 0.5992063492063492
+    },
+    "micro_moments": {
+      "recall@1": 0.34285714285714286,
+      "recall@3": 0.4,
+      "recall@5": 0.45714285714285713
+    },
+    "by_category": {
+      "single_file": {
+        "recall@1": 0.5,
+        "recall@3": 0.5,
+        "recall@5": 0.5,
+        "mrr": 0.5
+      },
+      "multi_file": {
+        "recall@1": 0.18055555555555555,
+        "recall@3": 0.2638888888888889,
+        "recall@5": 0.34722222222222227,
+        "mrr": 0.5416666666666666
+      },
+      "near_miss": {
+        "recall@1": 0.375,
+        "recall@3": 0.5416666666666666,
+        "recall@5": 0.5833333333333334,
+        "mrr": 0.5555555555555556
+      },
+      "short_keyword": {
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "mrr": 1.0
+      }
+    },
+    "near_miss_rejection_rate": 0.6666666666666666,
+    "queries": [
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-01",
+        "category": "single_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "SF-02",
+        "category": "single_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "SF-03",
+        "category": "single_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "SF-04",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-05",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-06",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.3333333333333333,
+        "recall@3": 0.3333333333333333,
+        "recall@5": 0.3333333333333333,
+        "avoided_hard_negative": true,
+        "query_id": "MF-01",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.25,
+        "recall@3": 0.25,
+        "recall@5": 0.25,
+        "avoided_hard_negative": true,
+        "query_id": "MF-02",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.25,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.5,
+        "avoided_hard_negative": true,
+        "query_id": "MF-03",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "MF-04",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.5,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "MF-05",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "MF-06",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "NM-01",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 0.3333333333333333,
+        "recall@1": 0.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "NM-02",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "NM-03",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "NM-04",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.25,
+        "recall@3": 0.25,
+        "recall@5": 0.5,
+        "avoided_hard_negative": true,
+        "query_id": "NM-05",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "NM-06",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-01",
+        "category": "short_keyword"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-02",
+        "category": "short_keyword"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-03",
+        "category": "short_keyword"
+      }
+    ]
+  },
+  "dense": {
+    "split": "test",
+    "macro_overall": {
+      "recall@1": 0.5634920634920635,
+      "recall@3": 0.634920634920635,
+      "recall@5": 0.6587301587301587,
+      "mrr": 0.7396825396825397
+    },
+    "micro_moments": {
+      "recall@1": 0.42857142857142855,
+      "recall@3": 0.5428571428571428,
+      "recall@5": 0.5714285714285714
+    },
+    "by_category": {
+      "single_file": {
+        "recall@1": 0.8333333333333334,
+        "recall@3": 0.8333333333333334,
+        "recall@5": 0.8333333333333334,
+        "mrr": 0.8333333333333334
+      },
+      "multi_file": {
+        "recall@1": 0.2638888888888889,
+        "recall@3": 0.4305555555555556,
+        "recall@5": 0.513888888888889,
+        "mrr": 0.7555555555555555
+      },
+      "near_miss": {
+        "recall@1": 0.375,
+        "recall@3": 0.4583333333333333,
+        "recall@5": 0.4583333333333333,
+        "mrr": 0.5
+      },
+      "short_keyword": {
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "mrr": 1.0
+      }
+    },
+    "near_miss_rejection_rate": 0.5,
+    "queries": [
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-01",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-02",
+        "category": "single_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "SF-03",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-04",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-05",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "SF-06",
+        "category": "single_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.3333333333333333,
+        "recall@3": 0.3333333333333333,
+        "recall@5": 0.3333333333333333,
+        "avoided_hard_negative": true,
+        "query_id": "MF-01",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.25,
+        "recall@3": 0.25,
+        "recall@5": 0.25,
+        "avoided_hard_negative": true,
+        "query_id": "MF-02",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.5,
+        "recall@3": 0.5,
+        "recall@5": 0.5,
+        "avoided_hard_negative": true,
+        "query_id": "MF-03",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.2,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.5,
+        "avoided_hard_negative": true,
+        "query_id": "MF-04",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.5,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "MF-05",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.3333333333333333,
+        "recall@1": 0.0,
+        "recall@3": 0.5,
+        "recall@5": 0.5,
+        "avoided_hard_negative": true,
+        "query_id": "MF-06",
+        "category": "multi_file"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "NM-01",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "NM-02",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "NM-03",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "NM-04",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 0.25,
+        "recall@3": 0.75,
+        "recall@5": 0.75,
+        "avoided_hard_negative": true,
+        "query_id": "NM-05",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 0.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "avoided_hard_negative": false,
+        "query_id": "NM-06",
+        "category": "near_miss"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-01",
+        "category": "short_keyword"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-02",
+        "category": "short_keyword"
+      },
+      {
+        "mrr": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "avoided_hard_negative": true,
+        "query_id": "KW-03",
+        "category": "short_keyword"
+      }
+    ]
+  }
+}
