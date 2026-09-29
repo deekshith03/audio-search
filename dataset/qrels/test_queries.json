@@ -24,7 +24,7 @@
       "query_id": "SF-01",
       "category": "single_file",
       "archetype": "lexical_exact",
-      "query": "Which Linux developer workstation distribution uses the Hyprland Wayland tiling compositor?",
+      "query": "Hyprland Wayland tiling compositor",
       "description": "Tests exact technical entity retrieval (Hyprland, Wayland, Omarchy). Answer is strictly in audio_01.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -39,13 +39,14 @@
           "turn_end_seconds": 138.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "SF-02",
       "category": "single_file",
       "archetype": "lexical_exact",
-      "query": "What is the PostgreSQL page size limit that index values for a single row must fit within?",
+      "query": "What is the size limit for a single index entry in Postgres?",
       "description": "Tests exact database architectural limit (8 kilobyte limit within the page). Answer is strictly in audio_02.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -60,13 +61,14 @@
           "turn_end_seconds": 533.8,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "question"
     },
     {
       "query_id": "SF-03",
       "category": "single_file",
       "archetype": "semantic_metaphor",
-      "query": "Why does the speaker use The Little Mermaid story of a fork called a dinglehopper to explain functional struggle?",
+      "query": "Why does the speaker tell the Little Mermaid fork story?",
       "description": "Tests retrieval of a specific psychological metaphor for misapplying coping mechanisms. Answer is strictly in audio_03.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -81,13 +83,14 @@
           "turn_end_seconds": 503.7,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "question"
     },
     {
       "query_id": "SF-04",
       "category": "single_file",
       "archetype": "lexical_exact",
-      "query": "How many N3, N5, and DRAM wafers are required to manufacture one gigawatt of compute?",
+      "query": "N3 N5 DRAM wafers per gigawatt",
       "description": "Tests precise semiconductor manufacturing numbers. Answer is strictly in audio_04.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -102,13 +105,14 @@
           "turn_end_seconds": 454.5,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "SF-05",
       "category": "single_file",
       "archetype": "speaker_attributed",
-      "query": "Which historic boxing match did the UFC champion cite where world leaders Roosevelt and Hitler were politically involved?",
+      "query": "Hitler Schmeling Roosevelt Louis",
       "description": "Tests speaker-attributed historical sports analysis. Answer is strictly in audio_05.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -123,13 +127,14 @@
           "turn_end_seconds": 532.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "SF-06",
       "category": "single_file",
       "archetype": "semantic_concept",
-      "query": "How does Kantian philosophy argue that human beings must be treated as ends rather than means in state policy?",
+      "query": "Kantian liberalism ends not means",
       "description": "Tests legal philosophy and moral rights framework. Answer is strictly in audio_06.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -144,13 +149,14 @@
           "turn_end_seconds": 506.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "MF-01",
       "category": "multi_file",
       "archetype": "semantic_concept",
-      "query": "How is the rapid rise of modern AI models reshaping computing infrastructure and developer workflows?",
+      "query": "impact of AI on software and computing infrastructure",
       "description": "Tests cross-file recall across Systems (audio_01), Databases (audio_02), and Macroeconomics (audio_04).",
       "target_file_count": 3,
       "relevant_moments": [
@@ -187,13 +193,14 @@
           "turn_end_seconds": 203.7,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "semantic"
     },
     {
       "query_id": "MF-02",
       "category": "multi_file",
       "archetype": "semantic_concept",
-      "query": "How do speakers describe feeling overwhelmed, self-doubt, or navigating personal adversity and setbacks?",
+      "query": "How do speakers cope with setbacks and self-doubt?",
       "description": "Tests psychological themes of struggle and self-doubt across Systems (audio_01), Psychology (audio_03), Sports (audio_05), and History (audio_07).",
       "target_file_count": 4,
       "relevant_moments": [
@@ -241,13 +248,14 @@
           "turn_end_seconds": 67.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "question"
     },
     {
       "query_id": "MF-03",
       "category": "multi_file",
       "archetype": "polysemy_cross_file",
-      "query": "Where do speakers discuss the economics and computational costs of running and scaling infrastructure?",
+      "query": "cost of computation at scale",
       "description": "Tests computational and financial scaling cost across database vector operations (audio_02) and datacenter compute hardware (audio_04).",
       "target_file_count": 2,
       "relevant_moments": [
@@ -273,13 +281,14 @@
           "turn_end_seconds": 203.7,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "semantic"
     },
     {
       "query_id": "MF-04",
       "category": "multi_file",
       "archetype": "semantic_concept",
-      "query": "Where do speakers discuss wartime political leaders backing military commanders or national champions?",
+      "query": "political leaders backing their champions",
       "description": "Tests wartime leadership across Sports history (audio_05 Roosevelt/Hitler) and Civil War history (audio_07 Lincoln).",
       "target_file_count": 2,
       "relevant_moments": [
@@ -305,13 +314,14 @@
           "turn_end_seconds": 121.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "semantic"
     },
     {
       "query_id": "MF-05",
       "category": "multi_file",
       "archetype": "polysemy_cross_file",
-      "query": "Where do speakers discuss American GDP growth and economic output driven by technological breakthroughs?",
+      "query": "American GDP growth",
       "description": "Tests cross-file recall on GDP growth driven by technology across Systems (audio_01) and Macroeconomics (audio_04).",
       "target_file_count": 2,
       "relevant_moments": [
@@ -337,13 +347,14 @@
           "turn_end_seconds": 203.7,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "MF-06",
       "category": "multi_file",
       "archetype": "semantic_concept",
-      "query": "How do state enforcement mechanisms, legal boundaries, and physical coercion impact individuals in society?",
+      "query": "How does the state use coercion or punishment against individuals?",
       "description": "Tests state coercion and enforcement across Legal philosophy (audio_06) and Prison psychology (audio_03).",
       "target_file_count": 2,
       "relevant_moments": [
@@ -369,13 +380,14 @@
           "turn_end_seconds": 137.5,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
-      ]
+      ],
+      "style": "question"
     },
     {
       "query_id": "NM-01",
       "category": "near_miss",
       "archetype": "semantic_precision",
-      "query": "Why did an engineer initially assume that a newly adopted system was broken because the results did not match expectations?",
+      "query": "assumed the new tool had a bug",
       "description": "Tests semantic precision: Jonathan Katz explaining approximate nearest neighbors in audio_02 vs DHH explaining early AI tools breaking test suites in audio_01.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -400,13 +412,14 @@
           "end_seconds": 531.0,
           "reason": "DHH complains that early AI models write code he does not like and break tests, but this is about AI code generation, not database approximate nearest neighbor results."
         }
-      ]
+      ],
+      "style": "semantic"
     },
     {
       "query_id": "NM-02",
       "category": "near_miss",
       "archetype": "semantic_precision",
-      "query": "Where does a speaker share a personal memory from elementary school about struggling with a learning disability?",
+      "query": "elementary school learning disability",
       "description": "Tests semantic precision: Dr. Reece describing her twin brother diagnosed with ADHD/learning disability in audio_03 vs Dwarkesh Patel describing elementary school in North Dakota with an accent in audio_04.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -431,13 +444,14 @@
           "end_seconds": 473.5,
           "reason": "Dwarkesh mentions being in elementary school in North Dakota and having pronunciation issues, but it was cultural language assimilation, not an ADHD clinical diagnosis."
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "NM-03",
       "category": "near_miss",
       "archetype": "semantic_precision",
-      "query": "How does an athlete explain deliberately pacing the fight to squeeze the energy and stamina out of an opponent?",
+      "query": "How does a fighter wear an opponent down over a fight?",
       "description": "Tests combat sports energy exhaustion in audio_05 vs psychological emotional struggle in audio_03.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -451,6 +465,28 @@
           "turn_start_seconds": 128.0,
           "turn_end_seconds": 139.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 5,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 70.94,
+          "end_seconds": 74.12,
+          "matched_text": "Fifteen minutes is enough to make a person tired.",
+          "turn_start_seconds": 69.0,
+          "turn_end_seconds": 128.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 11,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 215.22,
+          "end_seconds": 216.64,
+          "matched_text": "how exhausting it can be",
+          "turn_start_seconds": 210.0,
+          "turn_end_seconds": 224.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
       "hard_negatives": [
@@ -462,13 +498,14 @@
           "end_seconds": 184.2,
           "reason": "Dr. Reece discusses helping friends hold emotional weight and struggle, but it is psychological empathy, not athletic combat pacing."
         }
-      ]
+      ],
+      "style": "question"
     },
     {
       "query_id": "NM-04",
       "category": "near_miss",
       "archetype": "polysemy_cross_file",
-      "query": "Where is a database index compared to executing a query without any index at all?",
+      "query": "run a query without adding any indexes",
       "description": "Tests database index definition in audio_02 vs economic market index / semiconductor data in audio_04.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -493,13 +530,14 @@
           "end_seconds": 421.3,
           "reason": "Dylan discusses hardware multipliers and compute indexing metrics, but not database relational index scans."
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "NM-05",
       "category": "near_miss",
       "archetype": "semantic_precision",
-      "query": "Why was General Grant accused of being a butcher during military campaigns?",
+      "query": "Why was Grant called a butcher?",
       "description": "Tests historical military casualties during the Overland Campaign in audio_07 vs sports combat violence in audio_05.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -535,6 +573,17 @@
           "turn_start_seconds": 232.0,
           "turn_end_seconds": 233.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 8,
+          "speaker": "Lex Fridman",
+          "start_seconds": 228.33,
+          "end_seconds": 231.56,
+          "matched_text": "the Grant the Butcher label was from the Overland Campaign",
+          "turn_start_seconds": 227.0,
+          "turn_end_seconds": 232.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
       "hard_negatives": [
@@ -546,13 +595,14 @@
           "end_seconds": 486.0,
           "reason": "Khabib discusses violent exchanges in MMA fighting, but this is sports combat, not 19th-century military generalship."
         }
-      ]
+      ],
+      "style": "question"
     },
     {
       "query_id": "NM-06",
       "category": "near_miss",
       "archetype": "speaker_attributed",
-      "query": "What did the guest argue about legal and constitutional foundations regarding people being treated as ends rather than means in state enforcement?",
+      "query": "treated as ends not means in immigration",
       "description": "Tests Cass Sunstein explaining Kantian liberalism and dignity in audio_06 vs Dwarkesh discussing immigration.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -577,7 +627,8 @@
           "end_seconds": 541.6,
           "reason": "Dwarkesh mentions immigration to North Dakota as a child, but not constitutional jurisprudence or Kantian dignity."
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "KW-01",
@@ -599,7 +650,8 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "keyword"
     },
     {
       "query_id": "KW-02",
@@ -632,7 +684,8 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "keyword"
     },
     {
       "query_id": "KW-03",
@@ -654,7 +707,8 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "keyword"
     }
   ]
 }

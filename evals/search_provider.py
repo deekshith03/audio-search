@@ -7,7 +7,7 @@ Calls `src.search.engine` in one of three retrieval modes:
 3. 'dense':   pgvector cosine similarity only
 
 Provider config keys other than `mode`, `top_k`, `workspaces` (and promptfoo's `basePath`) are `SearchConfig` overrides
-(e.g. {"chunker": "B", "model": "gemma", "reranker": "minilm-reranker"}), which is how the dev
+(e.g. {"chunker": "B", "model": "gemma", "reranker": "bge-reranker"}), which is how the dev
 grid varies the pipeline. Fails closed: any engine or database error is returned as an error,
 never as an empty result list, unless EVAL_MOCK_MODE=1 asks for the empty baseline.
 """

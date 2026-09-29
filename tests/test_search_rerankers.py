@@ -20,32 +20,20 @@ class TestRerankerRegistry(unittest.TestCase):
     def test_candidates(self):
         self.assertEqual(
             {k: m.repo for k, m in RERANKERS.items()},
-            {
-                "qwen3-reranker": "tomaarsen/Qwen3-Reranker-0.6B-seq-cls",
-                "bge-reranker": "BAAI/bge-reranker-v2-m3",
-                "minilm-reranker": "cross-encoder/ms-marco-MiniLM-L6-v2",
-            },
+            {"bge-reranker": "BAAI/bge-reranker-v2-m3"},
         )
 
     def test_lazy_and_empty_input(self):
-        reranker = Reranker("minilm-reranker")
+        reranker = Reranker("bge-reranker")
         self.assertIsNone(reranker._ce)
         self.assertEqual(reranker.score("q", []), [])
         self.assertIsNone(reranker._ce)
 
-    def test_qwen3_uses_its_chat_template_and_others_raw_text(self):
-        qwen = RERANKERS["qwen3-reranker"]
-        self.assertTrue(qwen.query_template.format(text="q").endswith("<Query>: q\n"))
-        self.assertTrue(qwen.document_template.format(text="d").startswith("<Document>: d<|im_end|>"))
-        self.assertEqual(RERANKERS["bge-reranker"].query_template.format(text="q"), "q")
-
-    def test_score_formats_pairs(self):
-        reranker = Reranker("qwen3-reranker")
-        reranker._ce = mock.Mock(predict=mock.Mock(return_value=[0.5]))
-        self.assertEqual(reranker.score("q", ["d"]), [0.5])
-        (query, doc), = reranker._ce.predict.call_args.args[0]
-        self.assertIn("<Query>: q", query)
-        self.assertIn("<Document>: d", doc)
+    def test_score_pairs_query_with_each_passage(self):
+        reranker = Reranker("bge-reranker")
+        reranker._ce = mock.Mock(predict=mock.Mock(return_value=[0.5, 0.1]))
+        self.assertEqual(reranker.score("q", ["d1", "d2"]), [0.5, 0.1])
+        self.assertEqual(reranker._ce.predict.call_args.args[0], [("q", "d1"), ("q", "d2")])
 
     def test_unknown_key(self):
         with self.assertRaises(KeyError):

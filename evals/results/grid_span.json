@@ -1,0 +1,959 @@
+{
+  "round": "span",
+  "split": "dev",
+  "created_at": "2026-09-29T08:58:03+00:00",
+  "complete": true,
+  "tie_margin": 0.05263157894736842,
+  "note": "",
+  "rows": [
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 0.8,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 0.8/4s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7894736842105263,
+        "macro_r1": 0.7142857142857143,
+        "macro_r3": 0.8095238095238095,
+        "macro_r5": 0.8452380952380952,
+        "mrr": 0.8452380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 996.0,
+        "latency_p95_ms": 1052.3
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 0.8,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 0.8/4s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7894736842105263,
+        "macro_r1": 0.7142857142857143,
+        "macro_r3": 0.8095238095238095,
+        "macro_r5": 0.8452380952380952,
+        "mrr": 0.8452380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 990.6,
+        "latency_p95_ms": 1050.6
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 0.8,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 0.8/6s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7894736842105263,
+        "macro_r1": 0.7142857142857143,
+        "macro_r3": 0.8095238095238095,
+        "macro_r5": 0.8452380952380952,
+        "mrr": 0.8452380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 998.2,
+        "latency_p95_ms": 1061.1
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 0.8,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 0.8/6s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7894736842105263,
+        "macro_r1": 0.7142857142857143,
+        "macro_r3": 0.8095238095238095,
+        "macro_r5": 0.8452380952380952,
+        "mrr": 0.8452380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 1000.1,
+        "latency_p95_ms": 1077.1
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 1.0,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 1/4s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.7142857142857143,
+        "macro_r3": 0.7738095238095238,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.8452380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 1054.1,
+        "latency_p95_ms": 1118.9
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 1.0,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 1/4s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.7142857142857143,
+        "macro_r3": 0.7738095238095238,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.8452380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 1003.7,
+        "latency_p95_ms": 1071.5
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 1.0,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 1/6s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7894736842105263,
+        "macro_r1": 0.7142857142857143,
+        "macro_r3": 0.8095238095238095,
+        "macro_r5": 0.8452380952380952,
+        "mrr": 0.8452380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 1007.0,
+        "latency_p95_ms": 1068.1
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 1.0,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 1/6s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7894736842105263,
+        "macro_r1": 0.7142857142857143,
+        "macro_r3": 0.8095238095238095,
+        "macro_r5": 0.8452380952380952,
+        "mrr": 0.8452380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 1026.2,
+        "latency_p95_ms": 1081.1
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 0.8,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 0.8/4s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.6666666666666667,
+        "macro_r3": 0.7738095238095238,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.8392857142857143,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 61.9,
+        "latency_p95_ms": 83.4
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 0.8,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 0.8/6s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.6666666666666667,
+        "macro_r3": 0.7738095238095238,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.8392857142857143,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 63.6,
+        "latency_p95_ms": 85.5
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 1.0,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 1/4s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.6666666666666667,
+        "macro_r3": 0.7738095238095238,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.8392857142857143,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 69.1,
+        "latency_p95_ms": 91.5
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 1.0,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 1/6s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.6666666666666667,
+        "macro_r3": 0.7738095238095238,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.8392857142857143,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 62.5,
+        "latency_p95_ms": 85.7
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 0.6,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 0.6/4s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.6428571428571429,
+        "macro_r3": 0.7380952380952381,
+        "macro_r5": 0.7738095238095238,
+        "mrr": 0.7738095238095238,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.5,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03"
+        ],
+        "latency_p50_ms": 965.4,
+        "latency_p95_ms": 1193.7
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 0.6,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 0.6/4s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.6428571428571429,
+        "macro_r3": 0.7380952380952381,
+        "macro_r5": 0.7738095238095238,
+        "mrr": 0.7738095238095238,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.5,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03"
+        ],
+        "latency_p50_ms": 940.3,
+        "latency_p95_ms": 999.5
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 0.6,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 0.6/6s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.6428571428571429,
+        "macro_r3": 0.7380952380952381,
+        "macro_r5": 0.7738095238095238,
+        "mrr": 0.7738095238095238,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.5,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03"
+        ],
+        "latency_p50_ms": 939.4,
+        "latency_p95_ms": 995.3
+      }
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "fusion": "rrf",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": "bge-reranker",
+        "span_extend_ratio": 0.6,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 rrf(1/1/1) \u00b7 bge-reranker \u00b7 span 0.6/6s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.6428571428571429,
+        "macro_r3": 0.7380952380952381,
+        "macro_r5": 0.7738095238095238,
+        "mrr": 0.7738095238095238,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.5,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03"
+        ],
+        "latency_p50_ms": 977.6,
+        "latency_p95_ms": 1029.4
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 0.6,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 0.6/4s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.5952380952380952,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.7678571428571429,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.5,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03"
+        ],
+        "latency_p50_ms": 64.0,
+        "latency_p95_ms": 79.3
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 0.6,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 2.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 0.6/6s gap 2s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.5952380952380952,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.7678571428571429,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.5,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03"
+        ],
+        "latency_p50_ms": 69.1,
+        "latency_p95_ms": 91.9
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 0.8,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 0.8/4s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.630952380952381,
+        "macro_r3": 0.7380952380952381,
+        "macro_r5": 0.7738095238095238,
+        "mrr": 0.7678571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 63.3,
+        "latency_p95_ms": 80.2
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 0.8,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 0.8/6s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.630952380952381,
+        "macro_r3": 0.7380952380952381,
+        "macro_r5": 0.7738095238095238,
+        "mrr": 0.7678571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 65.2,
+        "latency_p95_ms": 87.5
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 1.0,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 1/4s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.630952380952381,
+        "macro_r3": 0.7380952380952381,
+        "macro_r5": 0.7738095238095238,
+        "mrr": 0.7678571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 63.0,
+        "latency_p95_ms": 81.9
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 1.0,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 1/6s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.630952380952381,
+        "macro_r3": 0.7380952380952381,
+        "macro_r5": 0.7738095238095238,
+        "mrr": 0.7678571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 67.8,
+        "latency_p95_ms": 84.4
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 0.6,
+        "span_min_seconds": 4.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 0.6/4s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.5595238095238095,
+        "macro_r3": 0.6666666666666667,
+        "macro_r5": 0.7023809523809524,
+        "mrr": 0.6964285714285714,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.5,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03"
+        ],
+        "latency_p50_ms": 61.3,
+        "latency_p95_ms": 85.3
+      }
+    },
+    {
+      "config": {
+        "chunker": "B-prev",
+        "model": "gemma",
+        "context": true,
+        "fusion": "convex",
+        "bm25_weight": 1.0,
+        "trigram_weight": 1.0,
+        "dense_weight": 1.0,
+        "reranker": null,
+        "span_extend_ratio": 0.6,
+        "span_min_seconds": 6.0,
+        "dedupe_gap_seconds": 0.0
+      },
+      "label": "B-prev \u00b7 gemma+ctx \u00b7 convex(1/1/1) \u00b7 no-rerank \u00b7 span 0.6/6s gap 0s",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.5595238095238095,
+        "macro_r3": 0.6666666666666667,
+        "macro_r5": 0.7023809523809524,
+        "mrr": 0.6964285714285714,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.5,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03"
+        ],
+        "latency_p50_ms": 63.5,
+        "latency_p95_ms": 88.0
+      }
+    }
+  ],
+  "selected": [
+    {
+      "chunker": "A-30s",
+      "model": "gemma",
+      "context": false,
+      "fusion": "rrf",
+      "bm25_weight": 1.0,
+      "trigram_weight": 1.0,
+      "dense_weight": 1.0,
+      "reranker": "bge-reranker",
+      "span_extend_ratio": 0.8,
+      "span_min_seconds": 4.0,
+      "dedupe_gap_seconds": 0.0
+    }
+  ]
+}

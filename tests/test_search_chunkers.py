@@ -17,7 +17,7 @@ from src.search.chunkers import (
     sentence_windows,
     token_windows,
 )
-from src.search.sentences import Sentence, split_transcript
+from src.search.sentences import MAX_SENTENCE_WORDS, MIN_SENTENCE_WORDS, Sentence, split_transcript
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CANONICAL_PATHS = sorted(glob.glob(os.path.join(REPO_ROOT, "dataset", "pipeline_outputs", "*_canonical.json")))
@@ -122,6 +122,20 @@ class TestBuildChunksOnConversation(unittest.TestCase):
     def test_first_turn_has_no_context(self):
         self.assertIsNone(self.by_config("A-30s")[0].context_text)
 
+    def test_b_prev_context_is_question_then_previous_sentence(self):
+        answer = [c for c in self.by_config("B-prev") if c.turn_id == 2]
+        b = [c for c in self.by_config("B") if c.turn_id == 2]
+        self.assertEqual([c.text for c in answer], [c.text for c in b])
+        self.assertEqual(answer[0].context_text, "Did the project ship on time last year?")
+        self.assertEqual(answer[1].context_text, f"Did the project ship on time last year?\n\n{answer[0].text}")
+
+    def test_b_prev_first_turn_uses_previous_sentence_only(self):
+        canonical = {"file_id": "x.wav", "turns": [{"turn_id": 1, "speaker_label": "SPEAKER_00", "words": [
+            {"word": w, "start_seconds": i, "end_seconds": i + 0.5}
+            for i, w in enumerate("First point is here now. Second point is here too.".split())]}]}
+        chunks = build_chunks(canonical, split_transcript(canonical), configs=["B-prev"])
+        self.assertEqual([c.context_text for c in chunks], [None, "First point is here now."])
+
     def test_context_only_for_a_and_b(self):
         for c in self.chunks:
             if c.chunker not in CONTEXT_CONFIGS:
@@ -196,7 +210,8 @@ class TestGoldenChunkInvariants(unittest.TestCase):
         for _, _, chunks in self.files:
             for c in chunks:
                 if c.context_text:
-                    self.assertLessEqual(len(c.context_text.split()), CONTEXT_MAX_WORDS)
+                    limit = CONTEXT_MAX_WORDS + (MAX_SENTENCE_WORDS + MIN_SENTENCE_WORDS if c.chunker == "B-prev" else 0)
+                    self.assertLessEqual(len(c.context_text.split()), limit)
 
     def test_c_windows_respect_token_limit(self):
         for _, _, chunks in self.files:

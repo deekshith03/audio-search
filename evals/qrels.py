@@ -25,7 +25,7 @@ DEFAULT_SPLIT = "dev"
 CATEGORIES = ("single_file", "multi_file", "near_miss", "short_keyword")
 ANY_OF_CATEGORIES = {"short_keyword"}
 EXPECTED_BREAKDOWN = {
-    "dev": {"single_file": 4, "multi_file": 4, "near_miss": 4, "short_keyword": 2},
+    "dev": {"single_file": 18, "multi_file": 7, "near_miss": 16, "short_keyword": 9},
     "test": {"single_file": 6, "multi_file": 6, "near_miss": 6, "short_keyword": 3},
 }
 MAX_SHORT_KEYWORD_WORDS = 2

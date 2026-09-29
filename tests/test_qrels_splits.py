@@ -15,13 +15,12 @@ class TestQrelsModule(unittest.TestCase):
             self.assertTrue(os.path.exists(path), path)
             self.assertEqual(load_qrels(split)["split"], split)
 
-    def test_breakdown_matches_expected_and_is_60_40(self):
+    def test_breakdown_matches_expected(self):
         for split in SPLIT_PATHS:
             queries = load_qrels(split)["queries"]
             counts = {c: sum(q["category"] == c for q in queries) for c in CATEGORIES}
             self.assertEqual(counts, EXPECTED_BREAKDOWN[split])
-        n_test, n_dev = (sum(EXPECTED_BREAKDOWN[s].values()) for s in ("test", "dev"))
-        self.assertAlmostEqual(n_test / (n_test + n_dev), 0.6, places=2)
+        self.assertEqual({s: sum(EXPECTED_BREAKDOWN[s].values()) for s in ("dev", "test")}, {"dev": 50, "test": 21})
 
     def test_unknown_split_is_rejected(self):
         with self.assertRaises(ValueError):

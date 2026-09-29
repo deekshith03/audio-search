@@ -6,7 +6,8 @@ Hybrid search over indexed transcripts (docs/PHASE_3_PLAN.md §4).
            └─ dense (pgvector HNSW) ┤ semantic: mode "dense"      all three: mode "hybrid"
                                     ▼
             fusion (weighted RRF | convex) → optional cross-encoder rerank of the top
-            `rerank_depth` → localize each to 1-3 sentences → drop overlapping spans → top_k
+            `rerank_depth` → localize each to 1-3 sentences (tightened to the matched words for
+            short keyword queries) → collapse overlapping / adjacent spans → top_k
 
 The reranker runs in hybrid mode only: lexical and dense are the retrieval ablations the eval gate
 compares against, and a cross-encoder would add a semantic signal to the keyword-only baseline.
@@ -34,7 +35,7 @@ from src.search.chunkers import CHUNK_CONFIGS, CONTEXT_CONFIGS
 from src.search.embedders import MODELS, Embedder, variant_key
 from src.search.fusion import FUSIONS, fuse
 from src.search.indexer import vector_literal
-from src.search.localize import ScoredSentence, blend, dedupe, select_span
+from src.search.localize import ScoredSentence, blend, collapse_spans, select_span, tighten_to_keywords
 from src.search.rerankers import RERANKERS, Reranker
 
 MODES = {"lexical": ("bm25", "trigram"), "dense": ("dense",), "hybrid": ("bm25", "trigram", "dense")}
@@ -65,6 +66,8 @@ class SearchConfig:
     span_max_seconds: float = 20.0
     span_min_seconds: float = 4.0
     span_extend_ratio: float = 0.8
+    keyword_span_padding_seconds: float = 2.0
+    dedupe_gap_seconds: float = 2.0
 
     def __post_init__(self):
         if self.chunker not in CHUNK_CONFIGS:
@@ -85,8 +88,12 @@ class SearchConfig:
         return cls(**values)
 
     @property
+    def uses_context(self) -> bool:
+        return self.context and self.chunker in CONTEXT_CONFIGS
+
+    @property
     def embedding_variant(self) -> str:
-        return variant_key(self.model, self.context and self.chunker in CONTEXT_CONFIGS)
+        return variant_key(self.model, self.uses_context)
 
     @property
     def weights(self) -> Dict[str, float]:
@@ -174,13 +181,12 @@ class SearchEngine:
                 lap("fuse")
 
                 if config.reranker and mode == "hybrid" and ranked:
-                    scores = self.reranker(config.reranker).score(query, [c["text"] for c, _ in ranked])
+                    scores = self.reranker(config.reranker).score(query, [self._rerank_input(c, config) for c, _ in ranked])
                     ranked = sorted(zip([c for c, _ in ranked], scores), key=lambda cs: -cs[1])
                     lap("rerank")
 
                 spans = self._localize(cur, query, query_vector, ranked, mode, config)
-                keep = dedupe([(s["file_key"], s["start_seconds"], s["end_seconds"]) for s in spans])[:top_k]
-                results = [spans[i] for i in keep]
+                results = self._collapse(spans, config)[:top_k]
                 self._highlight(cur, query, results)
                 lap("localize")
             self.conn.rollback()
@@ -238,13 +244,14 @@ class SearchEngine:
             return {}
         cur.execute(
             "SELECT c.id, c.file_pk, f.workspace, f.file_id, c.speaker_label, sp.display_name,"
-            " c.start_s, c.end_s, c.text, c.sentence_ids"
+            " c.start_s, c.end_s, c.text, c.sentence_ids, c.context_text"
             " FROM chunks c JOIN files f ON f.id = c.file_pk"
             " LEFT JOIN speakers sp ON sp.file_pk = c.file_pk AND sp.speaker_label = c.speaker_label"
             " WHERE c.id = ANY(%s)",
             (list(chunk_ids),),
         )
-        keys = ("id", "file_pk", "workspace", "file_id", "speaker_label", "display_name", "start_s", "end_s", "text", "sentence_ids")
+        keys = ("id", "file_pk", "workspace", "file_id", "speaker_label", "display_name", "start_s", "end_s", "text",
+                "sentence_ids", "context_text")
         return {r[0]: dict(zip(keys, r)) for r in cur.fetchall()}
 
     def _localize(self, cur, query, query_vector, ranked, mode: str, config: SearchConfig) -> List[Dict[str, Any]]:
@@ -264,7 +271,7 @@ class SearchEngine:
                 "WITH turns AS (SELECT DISTINCT file_pk, turn_id FROM sentences WHERE id = ANY(%(ids)s))"
                 " SELECT s.id, s.file_pk, s.turn_id, s.start_s, s.end_s, s.text, {similarity},"
                 " ts_rank_cd(to_tsvector('english', s.text), plainto_tsquery('english', %(q)s)),"
-                " CASE WHEN %(short)s THEN word_similarity(%(q)s, s.text) END"
+                " CASE WHEN %(short)s THEN word_similarity(%(q)s, s.text) END, s.words"
                 " FROM sentences s JOIN turns USING (file_pk, turn_id)"
                 " LEFT JOIN sentence_embeddings se ON se.sentence_id = s.id AND se.model = %(model)s"
                 " ORDER BY s.file_pk, s.turn_id, s.start_s"
@@ -300,20 +307,51 @@ class SearchEngine:
                 config.span_min_seconds, config.span_extend_ratio,
             )
             span = window[lo:hi + 1]
+            start_s, end_s, text = span[0].start_s, span[-1].end_s, " ".join(s.text for s in span)
+            if use_keyword and short_query and config.keyword_span_padding_seconds > 0:
+                words = [tuple(w) for r in rows[lo:hi + 1] for w in r[9]]
+                tightened = tighten_to_keywords(words, query, config.keyword_span_padding_seconds)
+                if tightened:
+                    w_lo, w_hi = tightened
+                    start_s, end_s = words[w_lo][1], words[w_hi][2]
+                    text = " ".join(w[0] for w in words[w_lo:w_hi + 1])
             results.append({
                 "file_key": (chunk["workspace"], chunk["file_id"]),
                 "file_id": chunk["file_id"],
                 "workspace": chunk["workspace"],
                 "speaker": chunk["display_name"] or chunk["speaker_label"],
                 "speaker_label": chunk["speaker_label"],
-                "start_seconds": round(span[0].start_s, 3),
-                "end_seconds": round(span[-1].end_s, 3),
-                "text": " ".join(s.text for s in span),
+                "start_seconds": round(start_s, 3),
+                "end_seconds": round(end_s, 3),
+                "text": text,
                 "score": round(float(score), 6),
                 "chunk_id": chunk["id"],
                 "chunk_start_seconds": round(chunk["start_s"], 3),
                 "chunk_end_seconds": round(chunk["end_s"], 3),
             })
+        return results
+
+    @staticmethod
+    def _rerank_input(chunk: Dict[str, Any], config: SearchConfig) -> str:
+        if config.uses_context and chunk.get("context_text"):
+            return f"{chunk['context_text']}\n\n{chunk['text']}"
+        return chunk["text"]
+
+    @staticmethod
+    def _collapse(spans: List[Dict[str, Any]], config: SearchConfig) -> List[Dict[str, Any]]:
+        groups = collapse_spans(
+            [(s["file_key"], s["speaker_label"], s["start_seconds"], s["end_seconds"]) for s in spans],
+            config.dedupe_gap_seconds, config.span_max_seconds,
+        )
+        results = []
+        for group in groups:
+            kept = dict(spans[group[0]])
+            if len(group) > 1:
+                members = sorted((spans[i] for i in group), key=lambda s: s["start_seconds"])
+                kept["start_seconds"] = members[0]["start_seconds"]
+                kept["end_seconds"] = max(m["end_seconds"] for m in members)
+                kept["text"] = " ".join(m["text"] for m in members)
+            results.append(kept)
         return results
 
     def _highlight(self, cur, query: str, results: List[Dict[str, Any]]) -> None:
@@ -355,7 +393,7 @@ def main(argv=None) -> int:
     parser.add_argument("--mode", default="hybrid", choices=sorted(MODES))
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--workspace", action="append", dest="workspaces", help="Repeatable; default dataset.")
-    parser.add_argument("--config", default="{}", help='JSON overrides, e.g. \'{"chunker": "B", "reranker": "minilm-reranker"}\'.')
+    parser.add_argument("--config", default="{}", help='JSON overrides, e.g. \'{"chunker": "B", "reranker": "bge-reranker"}\'.')
     args = parser.parse_args(argv)
 
     config = SearchConfig.from_dict(json.loads(args.config))

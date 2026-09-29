@@ -1,0 +1,2673 @@
+{
+  "round": 1,
+  "split": "dev",
+  "created_at": "2026-09-28T19:19:12+00:00",
+  "tie_margin": 0.05263157894736842,
+  "note": "",
+  "rows": [
+    {
+      "config": {
+        "chunker": "C-512",
+        "model": "gemma",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "C-512 \u00b7 gemma \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.6666666666666667,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7023809523809524,
+        "mrr": 0.7857142857142857,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 3156.3,
+        "latency_p95_ms": 3319.3
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 16.1,
+        "latency_p95_ms": 23.2
+      },
+      "dense": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.5714285714285714,
+        "macro_r3": 0.75,
+        "macro_r5": 0.7857142857142857,
+        "mrr": 0.7142857142857143,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 37.4,
+        "latency_p95_ms": 44.8
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "D",
+        "model": "gemma",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "D \u00b7 gemma \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.5789473684210527,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.6666666666666667,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7023809523809524,
+        "mrr": 0.7857142857142857,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 3230.0,
+        "latency_p95_ms": 5113.8
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.0,
+        "latency_p95_ms": 22.4
+      },
+      "dense": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.6428571428571429,
+        "macro_r3": 0.75,
+        "macro_r5": 0.7857142857142857,
+        "mrr": 0.75,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 37.7,
+        "latency_p95_ms": 40.5
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-30s \u00b7 gemma \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.6428571428571429,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.75,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 1081.0,
+        "latency_p95_ms": 1217.6
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 22.6
+      },
+      "dense": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.7894736842105263,
+        "macro_r1": 0.5714285714285714,
+        "macro_r3": 0.7857142857142857,
+        "macro_r5": 0.8452380952380952,
+        "mrr": 0.7404761904761905,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 39.3,
+        "latency_p95_ms": 44.7
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-45s",
+        "model": "gemma",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-45s \u00b7 gemma \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.5952380952380952,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.75,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 1197.0,
+        "latency_p95_ms": 1522.7
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 23.3
+      },
+      "dense": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.5714285714285714,
+        "macro_r3": 0.75,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.7321428571428571,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 37.8,
+        "latency_p95_ms": 40.1
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "gemma",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-30s \u00b7 gemma+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.6428571428571429,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.75,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 919.8,
+        "latency_p95_ms": 961.6
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 22.6
+      },
+      "dense": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.42857142857142855,
+        "macro_r3": 0.7142857142857143,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.6595238095238095,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 36.8,
+        "latency_p95_ms": 38.0
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-45s",
+        "model": "gemma",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-45s \u00b7 gemma+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.5952380952380952,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.75,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 1181.0,
+        "latency_p95_ms": 1539.5
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 23.3
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.35714285714285715,
+        "macro_r3": 0.6785714285714286,
+        "macro_r5": 0.75,
+        "mrr": 0.5654761904761905,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.375,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 38.0,
+        "latency_p95_ms": 41.1
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "bge-small",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-30s \u00b7 bge-small \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.5714285714285714,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.6666666666666667,
+        "mrr": 0.6785714285714286,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 920.1,
+        "latency_p95_ms": 989.0
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 22.6
+      },
+      "dense": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.32142857142857145,
+        "macro_r3": 0.5952380952380952,
+        "macro_r5": 0.5952380952380952,
+        "mrr": 0.5238095238095238,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 16.7,
+        "latency_p95_ms": 19.1
+      },
+      "fused_r20": 0.631578947368421
+    },
+    {
+      "config": {
+        "chunker": "A-45s",
+        "model": "bge-small",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-45s \u00b7 bge-small \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.5238095238095238,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.6666666666666667,
+        "mrr": 0.6785714285714286,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 1168.7,
+        "latency_p95_ms": 1502.0
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 23.3
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.3095238095238095,
+        "macro_r3": 0.4523809523809524,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.5023809523809524,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.5,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.0,
+        "latency_p95_ms": 15.0
+      },
+      "fused_r20": 0.631578947368421
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "bge-small",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-30s \u00b7 bge-small+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.5714285714285714,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.6666666666666667,
+        "mrr": 0.6785714285714286,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 856.0,
+        "latency_p95_ms": 972.6
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 22.6
+      },
+      "dense": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3684210526315789,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.38095238095238093,
+        "macro_r5": 0.38095238095238093,
+        "mrr": 0.40476190476190477,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-02",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.7,
+        "latency_p95_ms": 15.6
+      },
+      "fused_r20": 0.631578947368421
+    },
+    {
+      "config": {
+        "chunker": "A-45s",
+        "model": "bge-small",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-45s \u00b7 bge-small+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.5238095238095238,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.6666666666666667,
+        "mrr": 0.6785714285714286,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 1231.7,
+        "latency_p95_ms": 1540.6
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 23.3
+      },
+      "dense": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.4523809523809524,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.4666666666666667,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.5,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.5,
+        "latency_p95_ms": 15.2
+      },
+      "fused_r20": 0.631578947368421
+    },
+    {
+      "config": {
+        "chunker": "B",
+        "model": "bge-small",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "B \u00b7 bge-small+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.42105263157894735,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.4880952380952381,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.7023809523809524,
+        "mrr": 0.6607142857142857,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 305.8,
+        "latency_p95_ms": 347.9
+      },
+      "lexical": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.4523809523809524,
+        "macro_r3": 0.4880952380952381,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.5357142857142857,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.1,
+        "latency_p95_ms": 24.2
+      },
+      "dense": {
+        "micro_r1": 0.15789473684210525,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.16666666666666669,
+        "macro_r3": 0.38095238095238093,
+        "macro_r5": 0.4880952380952381,
+        "mrr": 0.3535714285714286,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.20833333333333331,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.1,
+        "latency_p95_ms": 14.8
+      },
+      "fused_r20": 0.631578947368421
+    },
+    {
+      "config": {
+        "chunker": "B",
+        "model": "gemma",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "B \u00b7 gemma \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.4642857142857143,
+        "macro_r3": 0.6666666666666667,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.6333333333333334,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 332.6,
+        "latency_p95_ms": 372.7
+      },
+      "lexical": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.4523809523809524,
+        "macro_r3": 0.4880952380952381,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.5357142857142857,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.1,
+        "latency_p95_ms": 24.2
+      },
+      "dense": {
+        "micro_r1": 0.5263157894736842,
+        "micro_r5": 0.7368421052631579,
+        "macro_r1": 0.5952380952380952,
+        "macro_r3": 0.7738095238095238,
+        "macro_r5": 0.8095238095238095,
+        "mrr": 0.8035714285714286,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 39.3,
+        "latency_p95_ms": 41.5
+      },
+      "fused_r20": 0.7368421052631579
+    },
+    {
+      "config": {
+        "chunker": "A-15s",
+        "model": "gemma",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-15s \u00b7 gemma \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.35714285714285715,
+        "macro_r3": 0.6666666666666667,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.5714285714285714,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 503.2,
+        "latency_p95_ms": 555.0
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.34523809523809523,
+        "macro_r5": 0.41666666666666663,
+        "mrr": 0.3988095238095238,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.6,
+        "latency_p95_ms": 22.8
+      },
+      "dense": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.7894736842105263,
+        "macro_r1": 0.4642857142857143,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.8452380952380952,
+        "mrr": 0.6630952380952381,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.7083333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 37.2,
+        "latency_p95_ms": 38.2
+      },
+      "fused_r20": 0.7368421052631579
+    },
+    {
+      "config": {
+        "chunker": "A-15s",
+        "model": "bge-small",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-15s \u00b7 bge-small \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.35714285714285715,
+        "macro_r3": 0.7023809523809524,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.5595238095238095,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 460.9,
+        "latency_p95_ms": 525.3
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.34523809523809523,
+        "macro_r5": 0.41666666666666663,
+        "mrr": 0.3988095238095238,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.6,
+        "latency_p95_ms": 22.8
+      },
+      "dense": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.3095238095238095,
+        "macro_r3": 0.5238095238095238,
+        "macro_r5": 0.5952380952380952,
+        "mrr": 0.5023809523809524,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.5,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 13.7,
+        "latency_p95_ms": 14.6
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-15s",
+        "model": "bge-base",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-15s \u00b7 bge-base \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.6842105263157895,
+        "macro_r1": 0.35714285714285715,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.7380952380952381,
+        "mrr": 0.5595238095238095,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.5833333333333334,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 472.6,
+        "latency_p95_ms": 513.0
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.34523809523809523,
+        "macro_r5": 0.41666666666666663,
+        "mrr": 0.3988095238095238,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.6,
+        "latency_p95_ms": 22.8
+      },
+      "dense": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.7023809523809524,
+        "mrr": 0.55,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 20.1,
+        "latency_p95_ms": 22.1
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "bge-base",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-30s \u00b7 bge-base \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.42105263157894735,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.5357142857142857,
+        "macro_r3": 0.5952380952380952,
+        "macro_r5": 0.630952380952381,
+        "mrr": 0.6428571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 873.7,
+        "latency_p95_ms": 1056.6
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 22.6
+      },
+      "dense": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.41666666666666663,
+        "macro_r3": 0.5595238095238095,
+        "macro_r5": 0.5952380952380952,
+        "mrr": 0.5738095238095238,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 24.9,
+        "latency_p95_ms": 42.3
+      },
+      "fused_r20": 0.5789473684210527
+    },
+    {
+      "config": {
+        "chunker": "A-30s",
+        "model": "bge-base",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-30s \u00b7 bge-base+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.42105263157894735,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.5357142857142857,
+        "macro_r3": 0.5952380952380952,
+        "macro_r5": 0.630952380952381,
+        "mrr": 0.6428571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 861.8,
+        "latency_p95_ms": 979.4
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 22.6
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.34523809523809523,
+        "macro_r3": 0.41666666666666663,
+        "macro_r5": 0.5952380952380952,
+        "mrr": 0.5142857142857143,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 18.2,
+        "latency_p95_ms": 20.7
+      },
+      "fused_r20": 0.5789473684210527
+    },
+    {
+      "config": {
+        "chunker": "A-45s",
+        "model": "bge-base",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-45s \u00b7 bge-base \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.42105263157894735,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.4880952380952381,
+        "macro_r3": 0.5952380952380952,
+        "macro_r5": 0.630952380952381,
+        "mrr": 0.630952380952381,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 1195.4,
+        "latency_p95_ms": 1498.5
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 23.3
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.34523809523809523,
+        "macro_r3": 0.5952380952380952,
+        "macro_r5": 0.619047619047619,
+        "mrr": 0.5357142857142857,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.41666666666666663,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 18.3,
+        "latency_p95_ms": 20.6
+      },
+      "fused_r20": 0.5789473684210527
+    },
+    {
+      "config": {
+        "chunker": "A-45s",
+        "model": "bge-base",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-45s \u00b7 bge-base+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.42105263157894735,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.4880952380952381,
+        "macro_r3": 0.5952380952380952,
+        "macro_r5": 0.630952380952381,
+        "mrr": 0.630952380952381,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 1168.2,
+        "latency_p95_ms": 1514.4
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.7,
+        "latency_p95_ms": 23.3
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.34523809523809523,
+        "macro_r3": 0.41666666666666663,
+        "macro_r5": 0.4880952380952381,
+        "mrr": 0.47023809523809523,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.20833333333333331,
+          "near_miss": 0.5,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 19.1,
+        "latency_p95_ms": 20.2
+      },
+      "fused_r20": 0.5789473684210527
+    },
+    {
+      "config": {
+        "chunker": "B",
+        "model": "bge-base",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "B \u00b7 bge-base+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.4642857142857143,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.6547619047619048,
+        "mrr": 0.5952380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.29166666666666663,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 312.1,
+        "latency_p95_ms": 344.0
+      },
+      "lexical": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.4523809523809524,
+        "macro_r3": 0.4880952380952381,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.5357142857142857,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.1,
+        "latency_p95_ms": 24.2
+      },
+      "dense": {
+        "micro_r1": 0.21052631578947367,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.2380952380952381,
+        "macro_r3": 0.5238095238095238,
+        "macro_r5": 0.619047619047619,
+        "mrr": 0.45833333333333337,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.41666666666666663,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-02",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 20.3,
+        "latency_p95_ms": 21.7
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "B",
+        "model": "gemma",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "B \u00b7 gemma+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.4642857142857143,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.6666666666666667,
+        "mrr": 0.5952380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 310.1,
+        "latency_p95_ms": 368.3
+      },
+      "lexical": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.4523809523809524,
+        "macro_r3": 0.4880952380952381,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.5357142857142857,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.1,
+        "latency_p95_ms": 24.2
+      },
+      "dense": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.32142857142857145,
+        "macro_r3": 0.7142857142857143,
+        "macro_r5": 0.7142857142857143,
+        "mrr": 0.5595238095238095,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.25,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 38.3,
+        "latency_p95_ms": 39.7
+      },
+      "fused_r20": 0.631578947368421
+    },
+    {
+      "config": {
+        "chunker": "A-15s",
+        "model": "gemma",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-15s \u00b7 gemma+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.35714285714285715,
+        "macro_r3": 0.6666666666666667,
+        "macro_r5": 0.7023809523809524,
+        "mrr": 0.5535714285714286,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 513.0,
+        "latency_p95_ms": 665.7
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.34523809523809523,
+        "macro_r5": 0.41666666666666663,
+        "mrr": 0.3988095238095238,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.6,
+        "latency_p95_ms": 22.8
+      },
+      "dense": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.4642857142857143,
+        "macro_r3": 0.7142857142857143,
+        "macro_r5": 0.75,
+        "mrr": 0.619047619047619,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.375,
+          "near_miss": 0.75,
+          "short_keyword": 1.0
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01"
+        ],
+        "latency_p50_ms": 37.2,
+        "latency_p95_ms": 38.6
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-15s",
+        "model": "bge-base",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-15s \u00b7 bge-base+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.35714285714285715,
+        "macro_r3": 0.6666666666666667,
+        "macro_r5": 0.7023809523809524,
+        "mrr": 0.5476190476190477,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 472.4,
+        "latency_p95_ms": 601.9
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.34523809523809523,
+        "macro_r5": 0.41666666666666663,
+        "mrr": 0.3988095238095238,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.6,
+        "latency_p95_ms": 22.8
+      },
+      "dense": {
+        "micro_r1": 0.15789473684210525,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.16666666666666669,
+        "macro_r3": 0.4880952380952381,
+        "macro_r5": 0.5833333333333333,
+        "mrr": 0.3952380952380952,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.29166666666666663,
+          "near_miss": 0.5,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 19.4,
+        "latency_p95_ms": 21.8
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "B",
+        "model": "bge-base",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "B \u00b7 bge-base \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.42857142857142855,
+        "macro_r3": 0.5238095238095238,
+        "macro_r5": 0.6904761904761905,
+        "mrr": 0.5464285714285715,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.41666666666666663,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 307.1,
+        "latency_p95_ms": 349.5
+      },
+      "lexical": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.4523809523809524,
+        "macro_r3": 0.4880952380952381,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.5357142857142857,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.1,
+        "latency_p95_ms": 24.2
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.631578947368421,
+        "macro_r1": 0.38095238095238093,
+        "macro_r3": 0.6666666666666667,
+        "macro_r5": 0.6904761904761905,
+        "mrr": 0.5833333333333333,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.41666666666666663,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 20.4,
+        "latency_p95_ms": 21.8
+      },
+      "fused_r20": 0.7368421052631579
+    },
+    {
+      "config": {
+        "chunker": "C-512",
+        "model": "bge-base",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "C-512 \u00b7 bge-base \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.5595238095238095,
+        "macro_r3": 0.5595238095238095,
+        "macro_r5": 0.5952380952380952,
+        "mrr": 0.6428571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 2999.7,
+        "latency_p95_ms": 3232.1
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 16.1,
+        "latency_p95_ms": 23.2
+      },
+      "dense": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.41666666666666663,
+        "macro_r3": 0.5595238095238095,
+        "macro_r5": 0.5833333333333333,
+        "mrr": 0.5595238095238095,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.29166666666666663,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 19.3,
+        "latency_p95_ms": 21.0
+      },
+      "fused_r20": 0.5263157894736842
+    },
+    {
+      "config": {
+        "chunker": "D",
+        "model": "bge-base",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "D \u00b7 bge-base \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.5595238095238095,
+        "macro_r3": 0.5595238095238095,
+        "macro_r5": 0.5952380952380952,
+        "mrr": 0.6428571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 3232.1,
+        "latency_p95_ms": 4963.2
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.0,
+        "latency_p95_ms": 22.4
+      },
+      "dense": {
+        "micro_r1": 0.42105263157894735,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.4880952380952381,
+        "macro_r3": 0.5595238095238095,
+        "macro_r5": 0.5833333333333333,
+        "mrr": 0.5952380952380952,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.29166666666666663,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 19.7,
+        "latency_p95_ms": 20.9
+      },
+      "fused_r20": 0.5263157894736842
+    },
+    {
+      "config": {
+        "chunker": "B",
+        "model": "bge-small",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "B \u00b7 bge-small \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.42857142857142855,
+        "macro_r3": 0.5238095238095238,
+        "macro_r5": 0.6666666666666667,
+        "mrr": 0.530952380952381,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 297.3,
+        "latency_p95_ms": 341.8
+      },
+      "lexical": {
+        "micro_r1": 0.3684210526315789,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.4523809523809524,
+        "macro_r3": 0.4880952380952381,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.5357142857142857,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.1,
+        "latency_p95_ms": 24.2
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.5263157894736842,
+        "macro_r1": 0.38095238095238093,
+        "macro_r3": 0.5952380952380952,
+        "macro_r5": 0.5952380952380952,
+        "mrr": 0.5595238095238095,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.75,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.6,
+        "latency_p95_ms": 15.4
+      },
+      "fused_r20": 0.6842105263157895
+    },
+    {
+      "config": {
+        "chunker": "A-15s",
+        "model": "bge-small",
+        "context": true,
+        "reranker": "bge-reranker"
+      },
+      "label": "A-15s \u00b7 bge-small+ctx \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.21052631578947367,
+        "micro_r5": 0.5789473684210527,
+        "macro_r1": 0.2857142857142857,
+        "macro_r3": 0.630952380952381,
+        "macro_r5": 0.630952380952381,
+        "mrr": 0.4880952380952381,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.5,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DNM-01",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 486.7,
+        "latency_p95_ms": 527.7
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.34523809523809523,
+        "macro_r5": 0.41666666666666663,
+        "mrr": 0.3988095238095238,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.4583333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DMF-01",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.6,
+        "latency_p95_ms": 22.8
+      },
+      "dense": {
+        "micro_r1": 0.15789473684210525,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.16666666666666669,
+        "macro_r3": 0.38095238095238093,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.3595238095238095,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 1.0,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 13.7,
+        "latency_p95_ms": 14.4
+      },
+      "fused_r20": 0.631578947368421
+    },
+    {
+      "config": {
+        "chunker": "C-512",
+        "model": "bge-small",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "C-512 \u00b7 bge-small \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.5238095238095238,
+        "macro_r3": 0.5238095238095238,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.6428571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 2849.1,
+        "latency_p95_ms": 3084.8
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 16.1,
+        "latency_p95_ms": 23.2
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.34523809523809523,
+        "macro_r3": 0.34523809523809523,
+        "macro_r5": 0.4404761904761905,
+        "mrr": 0.44642857142857145,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.29166666666666663,
+          "near_miss": 0.5,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.5,
+        "latency_p95_ms": 15.3
+      },
+      "fused_r20": 0.5263157894736842
+    },
+    {
+      "config": {
+        "chunker": "D",
+        "model": "bge-small",
+        "context": false,
+        "reranker": "bge-reranker"
+      },
+      "label": "D \u00b7 bge-small \u00b7 bge-reranker",
+      "hybrid": {
+        "micro_r1": 0.47368421052631576,
+        "micro_r5": 0.47368421052631576,
+        "macro_r1": 0.5238095238095238,
+        "macro_r3": 0.5238095238095238,
+        "macro_r5": 0.5238095238095238,
+        "mrr": 0.6428571428571429,
+        "near_miss_reject": 0.75,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.75,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 3131.0,
+        "latency_p95_ms": 4900.8
+      },
+      "lexical": {
+        "micro_r1": 0.2631578947368421,
+        "micro_r5": 0.3157894736842105,
+        "macro_r1": 0.27380952380952384,
+        "macro_r3": 0.3095238095238095,
+        "macro_r5": 0.3095238095238095,
+        "mrr": 0.39285714285714285,
+        "near_miss_reject": 0.25,
+        "by_category_r5": {
+          "single_file": 0.25,
+          "multi_file": 0.3333333333333333,
+          "near_miss": 0.25,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-03",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-03",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 15.0,
+        "latency_p95_ms": 22.4
+      },
+      "dense": {
+        "micro_r1": 0.3157894736842105,
+        "micro_r5": 0.42105263157894735,
+        "macro_r1": 0.34523809523809523,
+        "macro_r3": 0.41666666666666663,
+        "macro_r5": 0.4404761904761905,
+        "mrr": 0.4523809523809524,
+        "near_miss_reject": 0.5,
+        "by_category_r5": {
+          "single_file": 0.5,
+          "multi_file": 0.29166666666666663,
+          "near_miss": 0.5,
+          "short_keyword": 0.5
+        },
+        "misses": [
+          "DSF-01",
+          "DSF-04",
+          "DMF-01",
+          "DMF-02",
+          "DMF-03",
+          "DMF-04",
+          "DNM-01",
+          "DNM-04",
+          "DKW-02"
+        ],
+        "latency_p50_ms": 14.2,
+        "latency_p95_ms": 14.9
+      },
+      "fused_r20": 0.5263157894736842
+    }
+  ],
+  "selected": [
+    {
+      "chunker": "C-512",
+      "model": "gemma",
+      "context": false,
+      "reranker": "bge-reranker"
+    },
+    {
+      "chunker": "D",
+      "model": "gemma",
+      "context": false,
+      "reranker": "bge-reranker"
+    }
+  ]
+}

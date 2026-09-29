@@ -1,13 +1,13 @@
 {
-  "version": "1.1.0",
+  "version": "2.0.0",
   "benchmark_name": "Conversational Audio Hybrid Search Benchmark: dev split",
   "split": "dev",
-  "total_queries": 14,
+  "total_queries": 50,
   "query_breakdown": {
-    "single_file": 4,
-    "multi_file": 4,
-    "near_miss": 4,
-    "short_keyword": 2
+    "single_file": 18,
+    "multi_file": 7,
+    "near_miss": 16,
+    "short_keyword": 9
   },
   "corpus_files": [
     "audio_01_lex_dhh_omarchy.wav",
@@ -40,13 +40,14 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "exact"
     },
     {
       "query_id": "DSF-02",
       "category": "single_file",
       "archetype": "semantic_paraphrase",
-      "query": "Which guest keeps a quote on his door about the value of admitting you don't know something?",
+      "query": "Kahneman quote on his door",
       "description": "Paraphrase of Cass Sunstein's Kahneman quotation; the words 'value' and 'admitting' never appear.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -62,7 +63,8 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "exact"
     },
     {
       "query_id": "DSF-03",
@@ -84,13 +86,14 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "exact"
     },
     {
       "query_id": "DSF-04",
       "category": "single_file",
       "archetype": "semantic_numeric",
-      "query": "How much of next year's new computing capacity will the two leading AI labs take?",
+      "query": "top two labs grabbing half of next year's capacity",
       "description": "Numeric fact phrased differently from the transcript ('taking as much as 40% to 50% of compute').",
       "target_file_count": 1,
       "relevant_moments": [
@@ -106,13 +109,358 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DSF-05",
+      "category": "single_file",
+      "archetype": "semantic_paraphrase",
+      "query": "reaction to Tobi's AI memo",
+      "description": "DHH recalls finding Tobi Lutke's AI memo 'a little much'; the turn never names Tobi.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 20,
+          "speaker": "DHH",
+          "start_seconds": 476.26,
+          "end_seconds": 484.01,
+          "matched_text": "I remember actually reading his memo to the company, the AI memo, and thinking, “Ah, seems a little much.”",
+          "turn_start_seconds": 467.0,
+          "turn_end_seconds": 491.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DSF-06",
+      "category": "single_file",
+      "archetype": "semantic_metaphor",
+      "query": "from dial-up to fiber",
+      "description": "Dial-up to fiber analogy for idea-to-software bandwidth.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 15,
+          "speaker": "DHH",
+          "start_seconds": 364.53,
+          "end_seconds": 368.78,
+          "matched_text": "It was like going from dial-up- … to fiber.",
+          "turn_start_seconds": 327.8,
+          "turn_end_seconds": 374.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "DSF-07",
+      "category": "single_file",
+      "archetype": "semantic_numeric",
+      "query": "calculations 1,500 times per row",
+      "description": "Michael: the calculations run 1,500 times per row (one per dimension).",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 11,
+          "speaker": "Michael",
+          "start_seconds": 433.16,
+          "end_seconds": 442.2,
+          "matched_text": "plus all of the CPU of doing those calculations 100 times per, well, 1,500 times per row.",
+          "turn_start_seconds": 427.2,
+          "turn_end_seconds": 442.2,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "DSF-08",
+      "category": "single_file",
+      "archetype": "semantic_numeric",
+      "query": "lab compute growth projection for 2028",
+      "description": "Dwarkesh's tripling projection: 18 GW by end of 2027, 54 by end of 2028.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 7,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 339.43,
+          "end_seconds": 343.17,
+          "matched_text": "It’s 18 by the end of 2027, 54 by the end of 2028.",
+          "turn_start_seconds": 309.5,
+          "turn_end_seconds": 352.3,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DSF-10",
+      "category": "single_file",
+      "archetype": "speaker_attributed",
+      "query": "I do worry about fertility",
+      "description": "Cass says yes, fertility is a problem, including for liberalism.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 12,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 226.3,
+          "end_seconds": 236.5,
+          "matched_text": "Yes, I do worry about that. That’s a problem for things other than liberalism, but one of the things it’s a problem for is liberalism, so I do worry about fertility.",
+          "turn_start_seconds": 226.3,
+          "turn_end_seconds": 236.5,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "DSF-12",
+      "category": "single_file",
+      "archetype": "speaker_attributed",
+      "query": "Who had trouble pronouncing v and w after moving to the US?",
+      "description": "Dwarkesh recalls his v/w pronunciation after moving to the US.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 13,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 460.38,
+          "end_seconds": 463.63,
+          "matched_text": "when we first moved to the US, I had the v/w thing pretty bad",
+          "turn_start_seconds": 460.0,
+          "turn_end_seconds": 465.3,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "question"
+    },
+    {
+      "query_id": "DSF-13",
+      "category": "single_file",
+      "archetype": "semantic_paraphrase",
+      "query": "Thaddeus Stevens abolitionist equal rights for women",
+      "description": "Abolition and equal rights for women; 'Thaddeus Stevens' also appears in several other audio_07 turns.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 26,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 463.86,
+          "end_seconds": 472.0,
+          "matched_text": "he was an ardent abolitionist and for equal rights for women in many ways and he picked up a number of causes and championed them",
+          "turn_start_seconds": 450.5,
+          "turn_end_seconds": 472.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "DSF-14",
+      "category": "single_file",
+      "archetype": "lexical_exact",
+      "query": "adheres to his seat by his own slime",
+      "description": "Thaddeus Stevens' slime line.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 28,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 493.95,
+          "end_seconds": 499.0,
+          "matched_text": "slinks across the floor of this House and adheres to his seat by his own slime.",
+          "turn_start_seconds": 478.0,
+          "turn_end_seconds": 499.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "DSF-16",
+      "category": "single_file",
+      "archetype": "semantic_paraphrase",
+      "query": "How old is mixed martial arts compared with boxing?",
+      "description": "Khabib: MMA ~35 years old, boxing ~150.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 18,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 365.03,
+          "end_seconds": 370.92,
+          "matched_text": "our sport is still very young, say thirty-five years old, starting from the ’90s.",
+          "turn_start_seconds": 359.0,
+          "turn_end_seconds": 388.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "question"
+    },
+    {
+      "query_id": "DSF-17",
+      "category": "single_file",
+      "archetype": "lexical_exact",
+      "query": "biggest fight in UFC history",
+      "description": "Lex on Khabib vs Conor.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 17,
+          "speaker": "Lex Fridman",
+          "start_seconds": 344.0,
+          "end_seconds": 348.77,
+          "matched_text": "Your fight with Conor, I think, was the biggest fight in UFC history.",
+          "turn_start_seconds": 344.0,
+          "turn_end_seconds": 359.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "DSF-18",
+      "category": "single_file",
+      "archetype": "semantic_paraphrase",
+      "query": "picturing vectors beyond three dimensions",
+      "description": "Jonathan and Michael on imagining 5- or 20-dimensional vectors.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 6,
+          "speaker": "Jonathan",
+          "start_seconds": 218.38,
+          "end_seconds": 224.14,
+          "matched_text": "what's a 20 dimensional vector? I can understand 3, 3 is like points in space.",
+          "turn_start_seconds": 78.3,
+          "turn_end_seconds": 227.8,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 9,
+          "speaker": "Michael",
+          "start_seconds": 242.07,
+          "end_seconds": 247.0,
+          "matched_text": "5 dimensions hurts my head to think about it, or to try and conceptualize it in any way.",
+          "turn_start_seconds": 230.2,
+          "turn_end_seconds": 247.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DSF-19",
+      "category": "single_file",
+      "archetype": "semantic_paraphrase",
+      "query": "praise for pgvector's creator",
+      "description": "Jonathan on Andrew Kane's work.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 4,
+          "speaker": "Jonathan",
+          "start_seconds": 61.8,
+          "end_seconds": 65.3,
+          "matched_text": "Andrew has done phenomenal work on pgvector over the past several years.",
+          "turn_start_seconds": 56.9,
+          "turn_end_seconds": 65.3,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DSF-20",
+      "category": "single_file",
+      "archetype": "lexical_exact",
+      "query": "deliver most of them in five minutes",
+      "description": "DHH on how fast agents deliver requested features.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 11,
+          "speaker": "DHH",
+          "start_seconds": 266.22,
+          "end_seconds": 269.4,
+          "matched_text": "I can deliver them to you, most of them in five minutes",
+          "turn_start_seconds": 266.0,
+          "turn_end_seconds": 273.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "DSF-21",
+      "category": "single_file",
+      "archetype": "semantic_paraphrase",
+      "query": "unprecedented change after decades of programming",
+      "description": "DHH: 40 years with computers and never seen anything like the last two months; a career suddenly upended.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 2,
+          "speaker": "DHH",
+          "start_seconds": 21.31,
+          "end_seconds": 33.0,
+          "matched_text": "I have been working with computers for 40 years, and I’ve never seen the things that I’ve seen in just the last two months.",
+          "turn_start_seconds": 16.0,
+          "turn_end_seconds": 33.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 3,
+          "speaker": "DHH",
+          "start_seconds": 44.97,
+          "end_seconds": 48.21,
+          "matched_text": "suddenly completely upended, suddenly completely rewritten.",
+          "turn_start_seconds": 33.0,
+          "turn_end_seconds": 88.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
     },
     {
       "query_id": "DMF-01",
       "category": "multi_file",
       "archetype": "cross_file_theme",
-      "query": "Speakers explaining why they feel optimistic or bullish rather than anxious about the future",
+      "query": "Why do speakers say they feel optimistic about the future?",
       "description": "Optimism across three unrelated domains: DHH (no dread, has a mission), Cass Sunstein (long-term optimism about fertility), Dylan Patel (bullish upper bound).",
       "target_file_count": 3,
       "relevant_moments": [
@@ -150,13 +498,14 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "question"
     },
     {
       "query_id": "DMF-02",
       "category": "multi_file",
       "archetype": "cross_file_theme",
-      "query": "Comparing two famous rivals and whether the comparison is fair",
+      "query": "Which comparisons do speakers say are not apples to apples?",
       "description": "Khabib on Ali-Frazier as the unmatched rivalry vs Gary Gallagher on why Grant vs Lee is not apples to apples.",
       "target_file_count": 2,
       "relevant_moments": [
@@ -164,9 +513,9 @@
           "file_id": "audio_05_sports_tactics_debate.wav",
           "turn_id": 20,
           "speaker": "Khabib Nurmagomedov",
-          "start_seconds": 408.42,
-          "end_seconds": 417.0,
-          "matched_text": "Take Ali and Frazier, Thrilla in Manila, right? People called it the greatest rivalry, and it still is.",
+          "start_seconds": 404.31,
+          "end_seconds": 406.71,
+          "matched_text": "Look, Holyfield-Tyson is no Muhammad Ali.",
           "turn_start_seconds": 391.0,
           "turn_end_seconds": 435.0,
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
@@ -183,13 +532,14 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "question"
     },
     {
       "query_id": "DMF-03",
       "category": "multi_file",
       "archetype": "cross_file_theme",
-      "query": "What do the speakers say is built into human nature?",
+      "query": "designed to feel and the illiberal human heart",
       "description": "Human-nature claims in psychology (designed to feel) and political philosophy (something illiberal in the human heart).",
       "target_file_count": 2,
       "relevant_moments": [
@@ -216,13 +566,14 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "exact"
     },
     {
       "query_id": "DMF-04",
       "category": "multi_file",
       "archetype": "cross_file_theme",
-      "query": "How a father or grandfather shaped someone's outlook",
+      "query": "lessons from a father or grandfather",
       "description": "Khabib's grandfather's advice vs Robert E. Lee's father and his idolizing of Washington.",
       "target_file_count": 2,
       "relevant_moments": [
@@ -249,13 +600,138 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "DMF-05",
+      "category": "multi_file",
+      "archetype": "cross_file_theme",
+      "query": "dedication to one's craft",
+      "description": "Khabib (dedicate yourself to the sport) and DHH (a whole life dedicated to computers).",
+      "target_file_count": 2,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 13,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 255.91,
+          "end_seconds": 264.0,
+          "matched_text": "I believe that if you’re gonna be in this game, in this sport, you have to completely dedicate yourself to it.",
+          "turn_start_seconds": 234.0,
+          "turn_end_seconds": 264.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 3,
+          "speaker": "DHH",
+          "start_seconds": 33.0,
+          "end_seconds": 44.09,
+          "matched_text": "A whole career, a whole life dedicating to the love of computers as my main focus for the working hours and then some",
+          "turn_start_seconds": 33.0,
+          "turn_end_seconds": 88.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DMF-08",
+      "category": "multi_file",
+      "archetype": "cross_file_theme",
+      "query": "podcast host introducing the guest",
+      "description": "Show openings: Postgres FM, Dwarkesh with Dylan Patel, Conversations with Tyler.",
+      "target_file_count": 3,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 1,
+          "speaker": "Michael",
+          "start_seconds": 0.0,
+          "end_seconds": 3.47,
+          "matched_text": "Hello and welcome to Postgres FM, a weekly show about all things PostgreSQL.",
+          "turn_start_seconds": 0.0,
+          "turn_end_seconds": 17.5,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 1,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 0.0,
+          "end_seconds": 2.23,
+          "matched_text": "Okay, I’m back with Dylan Patel, founder of SemiAnalysis.",
+          "turn_start_seconds": 0.0,
+          "turn_end_seconds": 8.6,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 1,
+          "speaker": "Tyler Cowen",
+          "start_seconds": 0.0,
+          "end_seconds": 3.84,
+          "matched_text": "Hello, everyone, and welcome back to Conversations with Tyler.",
+          "turn_start_seconds": 0.0,
+          "turn_end_seconds": 39.3,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 3,
+          "speaker": "Tyler Cowen",
+          "start_seconds": 45.35,
+          "end_seconds": 46.6,
+          "matched_text": "Cass Sunstein, welcome.",
+          "turn_start_seconds": 42.0,
+          "turn_end_seconds": 46.6,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DMF-14",
+      "category": "multi_file",
+      "archetype": "cross_file_theme",
+      "query": "change about to speed up and overwhelm people",
+      "description": "Compute centralization only accelerating (Dylan); laggards overwhelmed by evidence (DHH).",
+      "target_file_count": 2,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 6,
+          "speaker": "Dylan Patel",
+          "start_seconds": 264.98,
+          "end_seconds": 271.42,
+          "matched_text": "This centralization doesn’t look like it’s slowing down or stopping. In fact, it looks like it’s only accelerating.",
+          "turn_start_seconds": 230.6,
+          "turn_end_seconds": 309.5,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 23,
+          "speaker": "DHH",
+          "start_seconds": 579.57,
+          "end_seconds": 584.0,
+          "matched_text": "they’re simply going to be overwhelmed by the evidence that’s about to flood over them.",
+          "turn_start_seconds": 568.0,
+          "turn_end_seconds": 584.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
     },
     {
       "query_id": "DNM-01",
       "category": "near_miss",
       "archetype": "semantic_precision",
-      "query": "Who talks about using an opponent's own force against them?",
+      "query": "using your opponent's force against them",
       "description": "Khabib's aikido philosophy; the distractor is Grant's strategy of ignoring what Lee will do, which is about opponents but not about redirecting their force.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -280,13 +756,14 @@
           "end_seconds": 76.0,
           "reason": "Grant tells officers to stop worrying about Lee's moves; opponent-focused strategy, but not using the opponent's own force."
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "DNM-02",
       "category": "near_miss",
       "archetype": "semantic_precision",
-      "query": "Why is crying seen as weakness in some situations but not others?",
+      "query": "crying as a sign of weakness",
       "description": "Mireille Reece on crying in front of a friend vs a boss; the distractor is Khabib saying heavy sparring pressure was not a sign of disrespect.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -311,13 +788,14 @@
           "end_seconds": 209.0,
           "reason": "Khabib says his pressure was not a sign of disrespect; 'a sign of' framing without crying or weakness."
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "DNM-03",
       "category": "near_miss",
       "archetype": "lexical_precision",
-      "query": "Why were arrays originally added to Postgres, and what did they have to do with access rules?",
+      "query": "arrays added to Postgres for access rules",
       "description": "Jonathan Katz: arrays were a shortcut for ACL lookups. The distractor shares 'access' and 'databases' (Microsoft Access) but is about end-user programming.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -342,13 +820,14 @@
           "end_seconds": 568.0,
           "reason": "Mentions Microsoft Access databases; lexical overlap on 'access' and databases, but about end-user programming environments."
         }
-      ]
+      ],
+      "style": "exact"
     },
     {
       "query_id": "DNM-04",
       "category": "near_miss",
       "archetype": "semantic_precision",
-      "query": "Someone admitting they were a skeptic of a new technology before being won over",
+      "query": "skeptical at first, installed Claude Code late",
       "description": "DHH admits he was skeptical of AI coding tools; the distractor is Michael saying the hosts had not used pgvector until recently, which is inexperience, not skepticism.",
       "target_file_count": 1,
       "relevant_moments": [
@@ -373,7 +852,414 @@
           "end_seconds": 56.9,
           "reason": "Michael says the hosts had not used pgvector until recently; unfamiliarity, not skepticism."
         }
-      ]
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "DNM-05",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Did Lee resign from the US Army to join the Confederacy?",
+      "description": "No: he resigned to go to Virginia, not yet in the Confederacy. Distractor: Lex's framing that Lee chose Virginia over Union command.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 20,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 350.93,
+          "end_seconds": 360.0,
+          "matched_text": "He didn’t resign his commission in the United States Army to go with the Confederacy. He resigned his commission in the United States Army to go to Virginia, which wasn’t in the Confederacy yet",
+          "turn_start_seconds": 337.0,
+          "turn_end_seconds": 382.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 14,
+          "speaker": "Lex Fridman",
+          "start_seconds": 272.0,
+          "end_seconds": 279.0,
+          "reason": "Lex notes Lee was offered Union command; same decision, but not why or to where he resigned."
+        }
+      ],
+      "style": "question"
+    },
+    {
+      "query_id": "DNM-06",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "sad because I lost a loved one",
+      "description": "Dr. Reece: 'I'm sad because I lost a loved one'. Distractor: grief as an unchosen struggle.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 21,
+          "speaker": "Dr. Mireille B. Reece",
+          "start_seconds": 525.72,
+          "end_seconds": 529.59,
+          "matched_text": "I'm sad because I lost a loved one",
+          "turn_start_seconds": 504.6,
+          "turn_end_seconds": 540.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 13,
+          "speaker": "Dr. Mireille B. Reece",
+          "start_seconds": 187.0,
+          "end_seconds": 230.3,
+          "reason": "Discusses grief and struggle, but does not name an emotion's cause."
+        }
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "DNM-08",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Ali Foreman fight audience size",
+      "description": "Up to a billion. Distractor: Ali-Frazier called the greatest rivalry.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 27,
+          "speaker": "Lex Fridman",
+          "start_seconds": 455.0,
+          "end_seconds": 458.0,
+          "matched_text": "The fight was watched by up to a billion people worldwide.",
+          "turn_start_seconds": 455.0,
+          "turn_end_seconds": 458.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 20,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 391.0,
+          "end_seconds": 435.0,
+          "reason": "Ali-Frazier rivalry and public interest, not Foreman viewership."
+        }
+      ],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DNM-09",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "only 80 gigawatts in 2028",
+      "description": "Because the value of compute rises so much. Distractor: Dwarkesh's own tripling projection.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 9,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 422.48,
+          "end_seconds": 431.0,
+          "matched_text": "why you think we only add 80 gigawatts in 2028 if we enter a world in which the value of compute increases so much.",
+          "turn_start_seconds": 421.3,
+          "turn_end_seconds": 431.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 7,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 309.5,
+          "end_seconds": 352.3,
+          "reason": "Projects gigawatts through 2028 by tripling, but is not the 80 GW objection."
+        }
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "DNM-10",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "who convinced DHH about AI early",
+      "description": "Tobi Lutke. Distractor: DHH on laggards who still doubt AI.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 18,
+          "speaker": "DHH",
+          "start_seconds": 457.76,
+          "end_seconds": 464.14,
+          "matched_text": "He saw these things very early, and he tried to tell me, and I wasn’t seeing it.",
+          "turn_start_seconds": 447.0,
+          "turn_end_seconds": 466.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 20,
+          "speaker": "DHH",
+          "start_seconds": 472.15,
+          "end_seconds": 475.96,
+          "matched_text": "He had already boarded the rocket and was heading towards space.",
+          "turn_start_seconds": 467.0,
+          "turn_end_seconds": 491.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 23,
+          "speaker": "DHH",
+          "start_seconds": 568.0,
+          "end_seconds": 584.0,
+          "reason": "About people still doubting AI, not the person who convinced DHH."
+        }
+      ],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DNM-11",
+      "category": "near_miss",
+      "archetype": "speaker_attributed",
+      "query": "steel man the case of delusion",
+      "description": "Lex's steel-man question. Distractor: DHH's answer that he is in a state of delirium.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 1,
+          "speaker": "Lex Fridman",
+          "start_seconds": 7.66,
+          "end_seconds": 13.45,
+          "matched_text": "Can you steel man the case that you are in fact experiencing in a state of delusion",
+          "turn_start_seconds": 0.0,
+          "turn_end_seconds": 16.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 2,
+          "speaker": "DHH",
+          "start_seconds": 16.0,
+          "end_seconds": 33.0,
+          "reason": "DHH's reply about delirium; same topic, different speaker and act."
+        }
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "DNM-12",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "undermined by illiberal forces",
+      "description": "Low probability; the threat is illiberal forces. Distractor: illiberalism in the human heart.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 6,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 62.86,
+          "end_seconds": 70.31,
+          "matched_text": "The likelihood is that we’ll be undermined by anti-liberal and illiberal forces, not self-undermining.",
+          "turn_start_seconds": 60.9,
+          "turn_end_seconds": 106.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 8,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 113.3,
+          "end_seconds": 176.6,
+          "reason": "Illiberal impulses in the human soul, not whether liberalism is self-undermining."
+        }
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "DNM-13",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Does Cass agree immigration threatens European freedoms?",
+      "description": "He does not agree. Distractor: his later view that immigration screens are a good idea.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 16,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 261.5,
+          "end_seconds": 274.45,
+          "matched_text": "I don’t agree. I do think that whether immigration is, broadly speaking, an excellent thing or a risk is something that it’s reasonable to have divergent views about.",
+          "turn_start_seconds": 261.5,
+          "turn_end_seconds": 321.1,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 18,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 348.4,
+          "end_seconds": 412.2,
+          "reason": "Supports immigration screens; related, but not his answer to the threat question."
+        }
+      ],
+      "style": "question"
+    },
+    {
+      "query_id": "DNM-14",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Grant failed at farming and business",
+      "description": "Farming, business, the peacetime army. Distractor: Grant's wartime record despite alcohol.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 1,
+          "speaker": "Lex Fridman",
+          "start_seconds": 10.76,
+          "end_seconds": 18.47,
+          "matched_text": "this is a man who failed at farming, failed at business, failed at his role in the peacetime army.",
+          "turn_start_seconds": 0.0,
+          "turn_end_seconds": 24.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 6,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 168.0,
+          "end_seconds": 215.0,
+          "reason": "Grant's wartime success, not his earlier failures."
+        }
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "DNM-15",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Lee superb soldier on the wrong side",
+      "description": "Gallagher's verdict on Lee. Distractor: Lee contrasted with Grant's background.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 22,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 425.0,
+          "end_seconds": 431.0,
+          "matched_text": "Lee was a superb soldier, as he would show during the war, but he’s on the wrong side.",
+          "turn_start_seconds": 425.0,
+          "turn_end_seconds": 431.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 19,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 297.0,
+          "end_seconds": 337.0,
+          "reason": "Contrasts Lee's aristocratic background with Grant's; about Lee, but not a verdict on his soldiering."
+        }
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "DNM-17",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "Lee offered command of the Union Army",
+      "description": "Lex on the 1861 offer. Distractor: Gallagher on Lee resigning his commission to go to Virginia.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 14,
+          "speaker": "Lex Fridman",
+          "start_seconds": 274.37,
+          "end_seconds": 279.0,
+          "matched_text": "In April 1861, Lee was offered command of the Union Army-",
+          "turn_start_seconds": 272.0,
+          "turn_end_seconds": 279.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 16,
+          "speaker": "Lex Fridman",
+          "start_seconds": 280.04,
+          "end_seconds": 282.0,
+          "matched_text": "and chose Virginia instead.",
+          "turn_start_seconds": 280.0,
+          "turn_end_seconds": 282.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 20,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 337.0,
+          "end_seconds": 382.0,
+          "reason": "About Lee resigning his commission and choosing Virginia, not the Union command offer."
+        }
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "DNM-18",
+      "category": "near_miss",
+      "archetype": "semantic_precision",
+      "query": "struggle as a comprehension problem",
+      "description": "Adam frames struggle as trying to comprehend life. Distractor: Dr. Reece on everyone struggling.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 16,
+          "speaker": "Adam Stacoviak",
+          "start_seconds": 364.52,
+          "end_seconds": 367.81,
+          "matched_text": "The struggle really is a comprehension problem.",
+          "turn_start_seconds": 360.1,
+          "turn_end_seconds": 402.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 13,
+          "speaker": "Dr. Mireille B. Reece",
+          "start_seconds": 187.0,
+          "end_seconds": 230.3,
+          "reason": "About everyone struggling, not struggle as comprehension."
+        }
+      ],
+      "style": "exact"
     },
     {
       "query_id": "DKW-01",
@@ -395,7 +1281,8 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "keyword"
     },
     {
       "query_id": "DKW-02",
@@ -417,7 +1304,180 @@
           "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
         }
       ],
-      "hard_negatives": []
+      "hard_negatives": [],
+      "style": "keyword"
+    },
+    {
+      "query_id": "DKW-03",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Le Mans",
+      "description": "Race name; ASR spelled it correctly.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 8,
+          "speaker": "DHH",
+          "start_seconds": 165.82,
+          "end_seconds": 167.0,
+          "matched_text": "24 Hours of Le Mans",
+          "turn_start_seconds": 153.0,
+          "turn_end_seconds": 167.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "keyword"
+    },
+    {
+      "query_id": "DKW-04",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Tobi Lutke",
+      "description": "Person name; the ASR misspells it.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 18,
+          "speaker": "DHH",
+          "start_seconds": 447.0,
+          "end_seconds": 448.74,
+          "matched_text": "Tobi, Tobi Lutke",
+          "turn_start_seconds": 447.0,
+          "turn_end_seconds": 466.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "keyword"
+    },
+    {
+      "query_id": "DKW-05",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Holyfield",
+      "description": "Boxer name; ASR spelled it correctly.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 20,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 403.19,
+          "end_seconds": 406.71,
+          "matched_text": "Evander Holyfield? Look, Holyfield-Tyson is no Muhammad Ali.",
+          "turn_start_seconds": 391.0,
+          "turn_end_seconds": 435.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "keyword"
+    },
+    {
+      "query_id": "DKW-06",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Sharia",
+      "description": "Term; ASR spelled it correctly.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 17,
+          "speaker": "Tyler Cowen",
+          "start_seconds": 328.27,
+          "end_seconds": 329.93,
+          "matched_text": "Sharia law can mean different things",
+          "turn_start_seconds": 321.1,
+          "turn_end_seconds": 348.4,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "keyword"
+    },
+    {
+      "query_id": "DKW-07",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Freud",
+      "description": "Name; also matches 'Freudian'. Two occurrences.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 9,
+          "speaker": "Tyler Cowen",
+          "start_seconds": 178.31,
+          "end_seconds": 179.93,
+          "matched_text": "the Freudian critique of liberalism",
+          "turn_start_seconds": 176.6,
+          "turn_end_seconds": 186.5,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        },
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 10,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 207.96,
+          "end_seconds": 211.41,
+          "matched_text": "I think Freud was a great kind of novelist.",
+          "turn_start_seconds": 186.5,
+          "turn_end_seconds": 220.6,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "keyword"
+    },
+    {
+      "query_id": "DKW-08",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Stoneman",
+      "description": "Film character name; ASR spelled it correctly.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 34,
+          "speaker": "Gary Gallagher",
+          "start_seconds": 529.85,
+          "end_seconds": 532.94,
+          "matched_text": "the evil radical Republican named Stoneman",
+          "turn_start_seconds": 522.0,
+          "turn_end_seconds": 534.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "keyword"
+    },
+    {
+      "query_id": "DKW-09",
+      "category": "short_keyword",
+      "archetype": "keyword_short",
+      "query": "Fluidstack",
+      "description": "Company name; ASR spelled it correctly.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 6,
+          "speaker": "Dylan Patel",
+          "start_seconds": 294.99,
+          "end_seconds": 296.77,
+          "matched_text": "deploying with Fluidstack",
+          "turn_start_seconds": 230.6,
+          "turn_end_seconds": 309.5,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "keyword"
     }
   ]
 }

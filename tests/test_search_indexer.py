@@ -99,6 +99,22 @@ class TestIndexer(ThrowawayDatabaseTestCase):
             cur.execute("SELECT DISTINCT chunker FROM chunks")
             self.assertEqual({r[0] for r in cur.fetchall()}, set(CHUNK_CONFIGS))
 
+    def test_sentence_word_timings_match_the_transcript(self):
+        self.indexer().index_all(self.paths()[:1])
+        with open(self.paths()[0], encoding="utf-8") as f:
+            canonical = json.load(f)
+        first_turn = canonical["turns"][0]
+        with self.conn.cursor() as cur:
+            cur.execute("SELECT text, start_s, end_s, words FROM sentences WHERE turn_id = %s ORDER BY start_s LIMIT 1",
+                        (first_turn["turn_id"],))
+            text, start_s, end_s, words = cur.fetchone()
+            cur.execute("SELECT count(*) FROM sentences WHERE jsonb_array_length(words) = 0")
+            self.assertEqual(cur.fetchone()[0], 0)
+        self.assertEqual(" ".join(w[0] for w in words), text)
+        self.assertEqual((words[0][1], words[-1][2]), (start_s, end_s))
+        self.assertEqual(words[0], [first_turn["words"][0]["word"], first_turn["words"][0]["start_seconds"],
+                                    first_turn["words"][0]["end_seconds"]])
+
     def test_chunk_sentence_ids_reference_sentences_of_the_same_file(self):
         self.indexer().index_all(self.paths())
         orphans = self.scalar(

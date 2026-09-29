@@ -46,6 +46,15 @@ class NoQueryEmbedder(HashEmbedder):
         raise AssertionError("lexical mode must not embed the query")
 
 
+class SpyReranker:
+    def __init__(self):
+        self.calls = []
+
+    def score(self, query, passages):
+        self.calls.append(list(passages))
+        return [0.0] * len(passages)
+
+
 class KeywordReranker:
     """Scores a passage by whether it contains a marker word, to prove reranking reorders."""
 
@@ -134,7 +143,7 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
 
     def test_every_mode_and_chunker_returns_results(self):
         for mode in ("hybrid", "lexical", "dense"):
-            for chunker in ("A-15s", "A-30s", "A-45s", "B", "C-512", "D"):
+            for chunker in ("A-15s", "A-30s", "A-45s", "B", "B-prev", "C-512", "D"):
                 results = self.run_search("sourdough starter fermentation", mode=mode, chunker=chunker).results
                 self.assertTrue(results, (mode, chunker))
                 self.assertEqual(results[0]["file_id"], "cooking_show.wav", (mode, chunker))
@@ -170,19 +179,57 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
         self.assertNotIn("<script>", top["highlight"])
 
     def test_reranker_reorders_shortlist(self):
-        plain = self.run_search("theme plain dark", chunker="B").results
-        engine = self.engine(rerankers={"minilm-reranker": KeywordReranker("zebra")})
-        reranked = self.run_search("theme plain dark", chunker="B", engine=engine, reranker="minilm-reranker").results
+        query = "went back to plain dark colors afterwards"
+        options = {"chunker": "B", "context": False, "dedupe_gap_seconds": 0}
+        plain = self.run_search(query, **options).results
+        engine = self.engine(rerankers={"bge-reranker": KeywordReranker("zebra")})
+        reranked = self.run_search(query, engine=engine, reranker="bge-reranker", **options).results
         self.assertIn("zebra", reranked[0]["text"].lower())
         self.assertNotEqual([r["start_seconds"] for r in plain], [r["start_seconds"] for r in reranked])
 
     def test_reranker_ignored_outside_hybrid(self):
-        engine = self.engine(rerankers={"minilm-reranker": KeywordReranker("zebra")})
+        engine = self.engine(rerankers={"bge-reranker": KeywordReranker("zebra")})
         for mode in ("lexical", "dense"):
             plain = self.run_search("theme plain dark", mode=mode, chunker="B").results
-            with_reranker = self.run_search("theme plain dark", mode=mode, chunker="B", engine=engine, reranker="minilm-reranker")
+            with_reranker = self.run_search("theme plain dark", mode=mode, chunker="B", engine=engine, reranker="bge-reranker")
             self.assertNotIn("rerank", with_reranker.timings_ms)
             self.assertEqual(plain, with_reranker.results)
+
+    def test_reranker_reads_context_only_when_context_is_on(self):
+        spy = SpyReranker()
+        engine = self.engine(rerankers={"bge-reranker": spy})
+        query = "what desktop setup do you run at home these days"
+        self.run_search(query, chunker="B-prev", context=True, engine=engine, reranker="bge-reranker")
+        with_context = [p for call in spy.calls for p in call]
+        spy.calls.clear()
+        self.run_search(query, chunker="B-prev", context=False, engine=engine, reranker="bge-reranker")
+        without_context = [p for call in spy.calls for p in call]
+        self.assertTrue(any("desktop are you running" in p and "\n\n" in p for p in with_context))
+        self.assertTrue(all("\n\n" not in p for p in without_context))
+
+    def test_short_keyword_query_is_tightened_to_the_matched_word(self):
+        top = self.run_search("Hyprland", mode="lexical", chunker="D").results[0]
+        self.assertIn("Hyperland", top["text"])
+        self.assertLessEqual(top["end_seconds"] - top["start_seconds"], 6.0)
+        untightened = self.run_search("Hyprland", mode="lexical", chunker="D", keyword_span_padding_seconds=0).results[0]
+        self.assertGreater(untightened["end_seconds"] - untightened["start_seconds"], top["end_seconds"] - top["start_seconds"])
+
+    def test_long_queries_and_dense_mode_are_not_tightened(self):
+        for mode, query in (("hybrid", "tiling window compositor for the desktop"), ("dense", "Hyprland")):
+            loose = self.run_search(query, mode=mode, chunker="D", keyword_span_padding_seconds=0).results
+            tight = self.run_search(query, mode=mode, chunker="D").results
+            self.assertEqual([(r["start_seconds"], r["end_seconds"]) for r in loose],
+                             [(r["start_seconds"], r["end_seconds"]) for r in tight], mode)
+
+    def test_adjacent_sentences_are_merged_into_one_result(self):
+        query = "Hyperland tiling Wayland compositor window snap mouse configuration plain text file edit hand"
+        one_sentence = {"mode": "lexical", "chunker": "B", "top_k": 10, "span_max_sentences": 1, "span_min_seconds": 0}
+        merged = self.run_search(query, **one_sentence).results
+        separate = self.run_search(query, dedupe_gap_seconds=0, **one_sentence).results
+        self.assertLess(len([r for r in merged if r["file_id"] == "linux_talk.wav"]),
+                        len([r for r in separate if r["file_id"] == "linux_talk.wav"]))
+        for r in merged:
+            self.assertLessEqual(r["end_seconds"] - r["start_seconds"], 20.0 + 1e-6)
 
     def test_workspace_filter(self):
         response = SearchEngine(self.conn, embedders={"bge-small": HashEmbedder()}).search(
@@ -210,6 +257,8 @@ class TestSearchConfig(unittest.TestCase):
 
     def test_embedding_variant(self):
         self.assertEqual(SearchConfig(chunker="A-30s").embedding_variant, "bge-small+ctx")
+        self.assertEqual(SearchConfig(chunker="B-prev", model="gemma").embedding_variant, "gemma+ctx")
+        self.assertFalse(SearchConfig(chunker="C-512", context=True).uses_context)
         self.assertEqual(SearchConfig(chunker="A-30s", context=False).embedding_variant, "bge-small")
         self.assertEqual(SearchConfig(chunker="D", model="gemma").embedding_variant, "gemma")
 

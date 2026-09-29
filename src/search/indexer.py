@@ -24,7 +24,7 @@ import time
 from typing import Any, Dict, List, Optional, Sequence
 
 from psycopg2 import sql
-from psycopg2.extras import execute_values
+from psycopg2.extras import Json, execute_values
 
 from src.db.connection import connect
 from src.pipeline.common import GOLDEN, Workspace, file_base, sha256_file
@@ -34,7 +34,7 @@ from src.search.chunkers import CONTEXT_CONFIGS, bge_token_counter, build_chunks
 from src.search.embedders import DEFAULT_MODELS, MODELS, Embedder, variant_key
 from src.search.sentences import split_transcript
 
-INDEXER_VERSION = 1
+INDEXER_VERSION = 2
 CANONICAL_SUFFIX = "_canonical.json"
 
 
@@ -129,12 +129,17 @@ class Indexer:
             (self.workspace.root, file_id, file_base(file_id), canonical.get("audio_duration_seconds"), digest, self.settings_key),
         )
         file_pk = cur.fetchone()[0]
+        turn_words = {t["turn_id"]: t["words"] for t in canonical["turns"]}
+
+        def word_timings(s):
+            return Json([[w["word"], w["start_seconds"], w["end_seconds"]] for w in turn_words[s.turn_id][s.word_start:s.word_end]])
+
         sentence_ids = [
             r[0]
             for r in execute_values(
                 cur,
-                "INSERT INTO sentences (file_pk, speaker_label, turn_id, start_s, end_s, text) VALUES %s RETURNING id",
-                [(file_pk, s.speaker_label, s.turn_id, s.start_s, s.end_s, s.text) for s in sents],
+                "INSERT INTO sentences (file_pk, speaker_label, turn_id, start_s, end_s, text, words) VALUES %s RETURNING id",
+                [(file_pk, s.speaker_label, s.turn_id, s.start_s, s.end_s, s.text, word_timings(s)) for s in sents],
                 fetch=True,
                 page_size=1000,
             )

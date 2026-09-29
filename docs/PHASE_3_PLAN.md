@@ -122,6 +122,15 @@ Sources: [reranker comparison](https://futureagi.com/blog/best-rerankers-for-rag
   Placeholder config (A-30s, bge-small+ctx, equal RRF), dev hybrid, micro R@1 / R@5 / macro MRR: none 0.474 / 0.526 / 0.657; MiniLM 0.421 / 0.579 / 0.595; bge 0.474 / 0.632 / 0.679; Qwen3 0.474 / 0.632 / 0.661. Qwen3 scored R@1 0.0 until its model-card prompt template was applied. The reranker runs in hybrid mode only, so the keyword-only and semantic-only ablations stay clean.
 - **Keep rule:** keep the reranker only if it clearly improves dev recall@1 / MRR / near-miss rejection without hurting recall@5, and its latency is acceptable. Otherwise ship fusion alone and report the comparison.
 
+### Engine changes from the Round 1 audit
+
+A hit-by-hit audit of dev misses confirmed the scorer grades correctly (all qrel speakers resolvable, every decision consistent with the match rule, grid recall code identical to the harness). Of six misses for B · gemma, three were the right place with a span too wide (`pgMustard`: a 12.3 s sentence for a 1.6 s target), one a diarization error (Dylan's 4.5 s interjection merged into Dwarkesh's turn), two true retrieval misses. Four engine changes followed, applied to every config:
+
+1. **Keyword span tightening**: for queries of ≤ 3 words, the span shrinks to the matched words ± 2 s (exact or fuzzy, 1–3 word runs so `pgMustard` matches "PG Mustard"), using word timings stored on `sentences` (migration 005).
+2. **Reranker reads context**: with context on, the cross-encoder scores context + chunk, not the chunk alone.
+3. **Adjacent-span collapse**: results of the same file and speaker within 2 s of a kept one are merged if the union fits 20 s, else dropped, so neighbouring sentences no longer fill the top 5.
+4. **B-prev chunker**: one sentence per chunk, context = the other speaker's previous turn + the speaker's previous sentence.
+
 ### Storage
 
 ```
@@ -167,7 +176,12 @@ Renaming a speaker updates only `speakers`; nothing is re-embedded or re-indexed
 5. ✅ `src/search/engine.py` (retrievers, `fusion.py`, `rerankers.py`, `localize.py`, dedupe, `<mark>` highlights) wired into `evals/search_provider.py`; every grid knob is a `SearchConfig` field, passed through provider config or `evaluate_recall.py --search-config`. Placeholder config (A-30s, bge-small+ctx, equal RRF, no reranker) on dev: hybrid micro R@5 52.6%, lexical 31.6%, dense 36.8%.
 5b. ✅ Reranker candidates downloaded, CPU latency and a first dev comparison measured (§4 Reranker); real-model smoke tests skip when a model is not downloaded.
 6. Dev-set tuning grid; select the configuration.
-7. Streamlit search page; `indexing` job stage for uploads; label edits sync to `speakers`; model bootstrap for Docker.
+   - ✅ Model round (30 candidates, 3 models; `evals/results/grid_models.json`): EmbeddingGemma led or tied in every chunk family; context had no effect once the reranker ran.
+   - ✅ Engine changes above; index rebuilt with gemma only.
+   - ✅ Family round (11 families, gemma, bge reranker, equal RRF; `grid_families.json`): A-30s R@5 0.789 / R@1 0.579 (was 0.684 / 0.526 before the engine changes); C-512 0.684 / 0.632 (≡ D); A-45s below A-30s; B+ctx last.
+   - ⏳ Joint round: A-15s, A-30s, A-30s+ctx, B, B-prev+ctx, C-512 × 10 fusion settings × 4 rerankers (240 configs); eligible if search p50 ≤ 1.6 s; the reranker must beat its no-reranker twin.
+   - Span round: winner × span settings × dedupe gap (12 configs).
+7. Streamlit search page (with optional speaker and recording filters; `speaker_label` and `file_pk` are already on every chunk); `indexing` job stage for uploads; label edits sync to `speakers`; model bootstrap for Docker.
 8. One final test-set run; write-up (design, success criteria, results, limitations, coding-agent disclosure).
 
 ## 7. Known Risks

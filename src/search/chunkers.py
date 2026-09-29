@@ -4,15 +4,17 @@ one speaker turn, so each has exactly one speaker.
 
     A-15s / A-30s / A-45s   sentence-bounded windows of about that length, 1-sentence overlap
     B                       one sentence per chunk
+    B-prev                  one sentence per chunk; context adds the speaker's previous sentence
     C-512                   512 bge tokens cut at word boundaries, 64-token overlap (textbook default)
     D                       one chunk per turn
 
-A and B carry `context_text`: the tail of the previous turn by the other speaker, used only as
-embedding input so an answer like "Unfortunately, no" is embedded together with its question.
-Keyword search indexes `text` alone, so keyword hits stay attributed to the right speaker.
+A, B and B-prev carry `context_text`: the tail of the previous turn by the other speaker (for
+B-prev followed by the same speaker's previous sentence), so an answer like "Unfortunately, no"
+is embedded and reranked together with its question. Keyword search indexes `text` alone, so
+keyword hits stay attributed to the right speaker.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 from src.search.sentences import Sentence
@@ -22,8 +24,8 @@ C_MAX_TOKENS = 510
 C_OVERLAP_TOKENS = 64
 C_TOKENIZER = "BAAI/bge-small-en-v1.5"
 
-CHUNK_CONFIGS = ("A-15s", "A-30s", "A-45s", "B", "C-512", "D")
-CONTEXT_CONFIGS = {"A-15s", "A-30s", "A-45s", "B"}
+CHUNK_CONFIGS = ("A-15s", "A-30s", "A-45s", "B", "B-prev", "C-512", "D")
+CONTEXT_CONFIGS = {"A-15s", "A-30s", "A-45s", "B", "B-prev"}
 WINDOW_SECONDS = {"A-15s": 15.0, "A-30s": 30.0, "A-45s": 45.0}
 MAX_WINDOW_STRETCH = 4 / 3
 
@@ -147,6 +149,14 @@ def chunk_turn(
         return [make(range(0, len(words)), [i for i, _ in turn_sentences], False)]
     if config == "B":
         return [make(range(s.word_start, s.word_end), [i], True) for i, s in turn_sentences]
+    if config == "B-prev":
+        chunks = []
+        for position, (i, s) in enumerate(turn_sentences):
+            previous = turn_sentences[position - 1][1].text if position > 0 else None
+            parts = [p for p in (context, previous) if p]
+            chunk = make(range(s.word_start, s.word_end), [i], True)
+            chunks.append(replace(chunk, context_text="\n\n".join(parts) or None))
+        return chunks
     if config in WINDOW_SECONDS:
         sentences = [s for _, s in turn_sentences]
         return [

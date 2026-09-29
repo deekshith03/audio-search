@@ -1,7 +1,9 @@
 import unittest
 
 from src.search.fusion import convex, fuse, min_max, rrf
-from src.search.localize import ScoredSentence, blend, dedupe, normalize, overlaps, select_span
+from src.search.localize import (
+    ScoredSentence, blend, collapse_spans, normalize, overlaps, query_terms, select_span, tighten_to_keywords,
+)
 
 
 class TestRrf(unittest.TestCase):
@@ -110,18 +112,78 @@ class TestSelectSpan(unittest.TestCase):
             select_span(sentences((0, 5, 1.0)), {99})
 
 
-class TestDedupe(unittest.TestCase):
+class TestCollapseSpans(unittest.TestCase):
 
     def test_overlaps(self):
         self.assertTrue(overlaps(0, 10, 9, 20))
         self.assertFalse(overlaps(0, 10, 10, 20))
 
-    def test_drops_later_overlapping_span_in_same_file(self):
-        spans = [("f1", 0, 10), ("f1", 5, 15), ("f2", 5, 15), ("f1", 10, 20)]
-        self.assertEqual(dedupe(spans), [0, 2, 3])
+    def test_gap_zero_drops_only_overlaps(self):
+        spans = [("f1", "S0", 0, 10), ("f1", "S0", 5, 15), ("f2", "S0", 5, 15), ("f1", "S0", 10, 20)]
+        self.assertEqual(collapse_spans(spans, gap=0.0), [[0], [2], [3]])
+
+    def test_adjacent_same_speaker_merges_when_it_fits(self):
+        spans = [("f1", "S0", 10, 14), ("f1", "S0", 14.5, 18), ("f1", "S0", 5, 9.5)]
+        self.assertEqual(collapse_spans(spans, gap=2.0, max_seconds=20), [[0, 1, 2]])
+
+    def test_adjacent_merge_that_would_be_too_long_is_dropped(self):
+        spans = [("f1", "S0", 0, 15), ("f1", "S0", 16, 25)]
+        self.assertEqual(collapse_spans(spans, gap=2.0, max_seconds=20), [[0]])
+
+    def test_different_speaker_or_file_is_never_merged(self):
+        spans = [("f1", "S0", 0, 5), ("f1", "S1", 5.5, 9), ("f2", "S0", 5.5, 9)]
+        self.assertEqual(collapse_spans(spans, gap=2.0), [[0], [1], [2]])
+
+    def test_far_apart_spans_are_kept(self):
+        spans = [("f1", "S0", 0, 5), ("f1", "S0", 30, 35)]
+        self.assertEqual(collapse_spans(spans, gap=2.0), [[0], [1]])
 
     def test_empty(self):
-        self.assertEqual(dedupe([]), [])
+        self.assertEqual(collapse_spans([]), [])
+
+
+def words_at(text, start=0.0, step=0.5):
+    return [(w, start + i * step, start + i * step + 0.4) for i, w in enumerate(text.split())]
+
+
+class TestTightenToKeywords(unittest.TestCase):
+
+    def test_query_terms_drop_stopwords_and_add_joined_form(self):
+        self.assertEqual(query_terms("the Roger Gracie"), ["roger", "gracie", "therogergracie"])
+        self.assertEqual(query_terms("pgMustard"), ["pgmustard"])
+
+    def test_exact_match_with_padding(self):
+        words = words_at("a b c d e Neuralink f g h i j k l m n")
+        lo, hi = tighten_to_keywords(words, "Neuralink", padding=1.0)
+        self.assertEqual((words[lo][0], words[hi][0]), ("d", "g"))
+
+    def test_compound_match_across_words(self):
+        words = words_at("I am Michael founder of PG Mustard, and today I am delighted to be joined")
+        lo, hi = tighten_to_keywords(words, "pgMustard", padding=0.0)
+        self.assertEqual([w[0] for w in words[lo:hi + 1]], ["PG", "Mustard,"])
+
+    def test_fuzzy_match_for_asr_misspelling(self):
+        words = words_at("I switched to Hyperland last year")
+        lo, hi = tighten_to_keywords(words, "Hyprland", padding=0.0)
+        self.assertEqual(words[lo][0], "Hyperland")
+
+    def test_stemmed_form_matches(self):
+        words = words_at("the wayland compositors are fast")
+        self.assertIsNotNone(tighten_to_keywords(words, "compositor", padding=0.0))
+
+    def test_covers_all_matches(self):
+        words = words_at("Roger said hello x y z w v u Gracie waved")
+        lo, hi = tighten_to_keywords(words, "Roger Gracie", padding=0.0)
+        self.assertEqual((words[lo][0], words[hi][0]), ("Roger", "Gracie"))
+
+    def test_no_match_returns_none(self):
+        self.assertIsNone(tighten_to_keywords(words_at("nothing relevant here"), "Neuralink", padding=2.0))
+        self.assertIsNone(tighten_to_keywords([], "Neuralink", padding=2.0))
+        self.assertIsNone(tighten_to_keywords(words_at("x y"), "the of", padding=2.0) if query_terms("the of") == ["theof"] else None)
+
+    def test_padding_is_clamped_to_available_words(self):
+        words = words_at("Neuralink is here")
+        self.assertEqual(tighten_to_keywords(words, "Neuralink", padding=30.0), (0, 2))
 
 
 if __name__ == "__main__":
