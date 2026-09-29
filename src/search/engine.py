@@ -1,22 +1,20 @@
 """
-Hybrid search over indexed transcripts (docs/PHASE_3_PLAN.md §4).
+Hybrid search over indexed transcripts (docs/PHASE_3_PLAN.md §4, configuration frozen in §6).
 
-    query ─┬─ BM25 (pg_search) ─────┐
-           ├─ trigram (pg_trgm) ────┤ keyword: mode "lexical"
-           └─ dense (pgvector HNSW) ┤ semantic: mode "dense"      all three: mode "hybrid"
-                                    ▼
-            fusion (weighted RRF | convex) → optional cross-encoder rerank of the top
-            `rerank_depth` → localize each to 1-3 sentences (tightened to the matched words for
-            short keyword queries) → collapse overlapping / adjacent spans → top_k
-
-The reranker runs in hybrid mode only: lexical and dense are the retrieval ablations the eval gate
-compares against, and a cross-encoder would add a semantic signal to the keyword-only baseline.
+    query ─┬─ BM25 (pg_search) ─────────────────┐
+           ├─ trigram (pg_trgm, ≤ 3-word queries)┤ keyword: mode "lexical"
+           └─ EmbeddingGemma (pgvector HNSW) ────┤ semantic: mode "dense"     all three: mode "hybrid"
+                                                 ▼
+            convex fusion (BM25 1, trigram 1, dense 2) → top `localize_depth` chunks
+            → localize each to 1-3 sentences (tightened to the matched words for short keyword
+            queries) → drop overlapping spans → top_k
 
     uv run python -m src.search.engine "why were arrays added to postgres" [--mode dense] [--top-k 5]
 
-Results follow the eval harness contract: file_id, speaker (human name when labeled, else the
-SPEAKER_xx label), start_seconds, end_seconds, plus text, highlight (<mark> around keyword
-matches) and score. Speaker names are joined at query time, so renaming never needs re-indexing.
+`lexical` and `dense` exist as the ablations the eval gate compares hybrid against. Results follow
+the eval harness contract: file_id, speaker (human name when labeled, else the SPEAKER_xx label),
+start_seconds, end_seconds, plus text, highlight (<mark> around keyword matches) and score.
+Speaker names are joined at query time, so renaming never needs re-indexing.
 """
 
 import argparse
@@ -31,12 +29,10 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 from psycopg2 import sql
 
 from src.db.connection import connect
-from src.search.chunkers import CHUNK_CONFIGS, CONTEXT_CONFIGS
-from src.search.embedders import MODELS, Embedder, variant_key
-from src.search.fusion import FUSIONS, fuse
+from src.search.embedders import EMBEDDING_MODEL, Embedder
+from src.search.fusion import convex
 from src.search.indexer import vector_literal
-from src.search.localize import ScoredSentence, blend, collapse_spans, select_span, tighten_to_keywords
-from src.search.rerankers import RERANKERS, Reranker
+from src.search.localize import ScoredSentence, blend, dedupe, select_span, tighten_to_keywords
 
 MODES = {"lexical": ("bm25", "trigram"), "dense": ("dense",), "hybrid": ("bm25", "trigram", "dense")}
 DEFAULT_WORKSPACES = ("dataset",)
@@ -45,20 +41,13 @@ WORD_PATTERN = re.compile(r"\w+")
 
 @dataclass(frozen=True)
 class SearchConfig:
-    """Defaults are the configuration frozen on the dev set (docs/PHASE_3_PLAN.md §6): A-30s windows,
-    EmbeddingGemma without context, convex fusion weighting dense 2x, no reranker, no adjacent merge."""
+    """Retrieval and localization knobs; the defaults are the values frozen on the dev set."""
 
-    chunker: str = "A-30s"
-    model: str = "gemma"
-    context: bool = False
-    fusion: str = "convex"
     bm25_weight: float = 1.0
     trigram_weight: float = 1.0
     dense_weight: float = 2.0
-    reranker: Optional[str] = None
     candidates: int = 50
-    rerank_depth: int = 20
-    rrf_k: int = 60
+    localize_depth: int = 20
     trigram_threshold: float = 0.4
     trigram_max_query_words: int = 3
     hnsw_ef_search: int = 200
@@ -67,17 +56,6 @@ class SearchConfig:
     span_min_seconds: float = 4.0
     span_extend_ratio: float = 0.8
     keyword_span_padding_seconds: float = 2.0
-    dedupe_gap_seconds: float = 0.0
-
-    def __post_init__(self):
-        if self.chunker not in CHUNK_CONFIGS:
-            raise ValueError(f"unknown chunker {self.chunker!r}; choose from {CHUNK_CONFIGS}")
-        if self.model not in MODELS:
-            raise ValueError(f"unknown model {self.model!r}; choose from {sorted(MODELS)}")
-        if self.fusion not in FUSIONS:
-            raise ValueError(f"unknown fusion {self.fusion!r}; choose from {sorted(FUSIONS)}")
-        if self.reranker is not None and self.reranker not in RERANKERS:
-            raise ValueError(f"unknown reranker {self.reranker!r}; choose from {sorted(RERANKERS)} or None")
 
     @classmethod
     def from_dict(cls, values: Dict[str, Any]) -> "SearchConfig":
@@ -86,14 +64,6 @@ class SearchConfig:
         if unknown:
             raise ValueError(f"unknown search config key(s): {unknown}")
         return cls(**values)
-
-    @property
-    def uses_context(self) -> bool:
-        return self.context and self.chunker in CONTEXT_CONFIGS
-
-    @property
-    def embedding_variant(self) -> str:
-        return variant_key(self.model, self.uses_context)
 
     @property
     def weights(self) -> Dict[str, float]:
@@ -108,12 +78,11 @@ class SearchResponse:
 
 
 class SearchEngine:
-    """Holds one database connection and lazily loaded models; safe to reuse across queries."""
+    """Holds one database connection and the lazily loaded embedder; safe to reuse across queries."""
 
-    def __init__(self, conn=None, embedders: Optional[Dict[str, Any]] = None, rerankers: Optional[Dict[str, Any]] = None):
+    def __init__(self, conn=None, embedder=None):
         self._conn = conn
-        self._embedders: Dict[str, Any] = dict(embedders or {})
-        self._rerankers: Dict[str, Any] = dict(rerankers or {})
+        self._embedder = embedder
 
     @property
     def conn(self):
@@ -121,15 +90,11 @@ class SearchEngine:
             self._conn = connect()
         return self._conn
 
-    def embedder(self, key: str):
-        if key not in self._embedders:
-            self._embedders[key] = Embedder(key)
-        return self._embedders[key]
-
-    def reranker(self, key: str):
-        if key not in self._rerankers:
-            self._rerankers[key] = Reranker(key)
-        return self._rerankers[key]
+    @property
+    def embedder(self):
+        if self._embedder is None:
+            self._embedder = Embedder()
+        return self._embedder
 
     def search(
         self,
@@ -159,7 +124,7 @@ class SearchEngine:
         retrievers = [r for r in MODES[mode] if config.weights[r] > 0]
         query_vector = None
         if "dense" in retrievers:
-            query_vector = self.embedder(config.model).encode_query(query)
+            query_vector = self.embedder.encode_query(query)
             lap("embed_query")
 
         try:
@@ -173,20 +138,16 @@ class SearchEngine:
                     lists["dense"] = self._dense(cur, query_vector, config, workspaces)
                 lap("retrieve")
 
-                fused = fuse(config.fusion, lists, config.weights, config.rrf_k)
+                fused = convex(lists, config.weights)
                 response.fused_chunk_ids = [chunk_id for chunk_id, _ in fused]
-                shortlist = fused[: config.rerank_depth]
+                shortlist = fused[: config.localize_depth]
                 chunks = self._chunk_rows(cur, [chunk_id for chunk_id, _ in shortlist])
                 ranked = [(chunks[chunk_id], score) for chunk_id, score in shortlist if chunk_id in chunks]
                 lap("fuse")
 
-                if config.reranker and mode == "hybrid" and ranked:
-                    scores = self.reranker(config.reranker).score(query, [self._rerank_input(c, config) for c, _ in ranked])
-                    ranked = sorted(zip([c for c, _ in ranked], scores), key=lambda cs: -cs[1])
-                    lap("rerank")
-
                 spans = self._localize(cur, query, query_vector, ranked, mode, config)
-                results = self._collapse(spans, config)[:top_k]
+                keep = dedupe([(s["file_key"], s["start_seconds"], s["end_seconds"]) for s in spans])[:top_k]
+                results = [spans[i] for i in keep]
                 self._highlight(cur, query, results)
                 lap("localize")
             self.conn.rollback()
@@ -204,10 +165,10 @@ class SearchEngine:
     def _bm25(self, cur, query: str, config: SearchConfig, workspaces: Sequence[str]) -> List[Tuple[int, float]]:
         cur.execute(
             "SELECT c.id, pdb.score(c.id) FROM chunks c"
-            " WHERE c.text ||| %(q)s AND c.chunker = %(chunker)s"
+            " WHERE c.text ||| %(q)s"
             " AND c.file_pk IN (SELECT id FROM files WHERE workspace = ANY(%(ws)s))"
             " ORDER BY pdb.score(c.id) DESC, c.id LIMIT %(n)s",
-            {"q": query, "chunker": config.chunker, "ws": list(workspaces), "n": config.candidates},
+            {"q": query, "ws": list(workspaces), "n": config.candidates},
         )
         return [(r[0], float(r[1])) for r in cur.fetchall()]
 
@@ -215,27 +176,26 @@ class SearchEngine:
         cur.execute("SELECT set_config('pg_trgm.word_similarity_threshold', %s, true)", (str(config.trigram_threshold),))
         cur.execute(
             "SELECT c.id, word_similarity(%(q)s, c.text) AS sim FROM chunks c"
-            " WHERE %(q)s <%% c.text AND c.chunker = %(chunker)s"
+            " WHERE %(q)s <%% c.text"
             " AND c.file_pk IN (SELECT id FROM files WHERE workspace = ANY(%(ws)s))"
             " ORDER BY sim DESC, c.id LIMIT %(n)s",
-            {"q": query, "chunker": config.chunker, "ws": list(workspaces), "n": config.candidates},
+            {"q": query, "ws": list(workspaces), "n": config.candidates},
         )
         return [(r[0], float(r[1])) for r in cur.fetchall()]
 
     def _dense(self, cur, vector: Sequence[float], config: SearchConfig, workspaces: Sequence[str]) -> List[Tuple[int, float]]:
-        dims = MODELS[config.model].dimensions
+        model = self.embedder.model
         cur.execute("SELECT set_config('hnsw.ef_search', %s, true)", (str(config.hnsw_ef_search),))
         cur.execute("SELECT set_config('hnsw.iterative_scan', 'relaxed_order', true)")
-        distance = sql.SQL("e.embedding::vector({d}) <=> %(v)s::vector({d})").format(d=sql.Literal(dims))
+        distance = sql.SQL("e.embedding::vector({d}) <=> %(v)s::vector({d})").format(d=sql.Literal(model.dimensions))
         cur.execute(
             sql.SQL(
                 "SELECT e.chunk_id, 1 - ({distance}) AS sim FROM chunk_embeddings e JOIN chunks c ON c.id = e.chunk_id"
-                " WHERE e.model = %(variant)s AND c.chunker = %(chunker)s"
+                " WHERE e.model = %(model)s"
                 " AND c.file_pk IN (SELECT id FROM files WHERE workspace = ANY(%(ws)s))"
                 " ORDER BY {distance} LIMIT %(n)s"
             ).format(distance=distance),
-            {"v": vector_literal(vector), "variant": config.embedding_variant, "chunker": config.chunker,
-             "ws": list(workspaces), "n": config.candidates},
+            {"v": vector_literal(vector), "model": model.key, "ws": list(workspaces), "n": config.candidates},
         )
         return sorted(((r[0], float(r[1])) for r in cur.fetchall()), key=lambda kv: (-kv[1], kv[0]))
 
@@ -244,14 +204,13 @@ class SearchEngine:
             return {}
         cur.execute(
             "SELECT c.id, c.file_pk, f.workspace, f.file_id, c.speaker_label, sp.display_name,"
-            " c.start_s, c.end_s, c.text, c.sentence_ids, c.context_text"
+            " c.start_s, c.end_s, c.text, c.sentence_ids"
             " FROM chunks c JOIN files f ON f.id = c.file_pk"
             " LEFT JOIN speakers sp ON sp.file_pk = c.file_pk AND sp.speaker_label = c.speaker_label"
             " WHERE c.id = ANY(%s)",
             (list(chunk_ids),),
         )
-        keys = ("id", "file_pk", "workspace", "file_id", "speaker_label", "display_name", "start_s", "end_s", "text",
-                "sentence_ids", "context_text")
+        keys = ("id", "file_pk", "workspace", "file_id", "speaker_label", "display_name", "start_s", "end_s", "text", "sentence_ids")
         return {r[0]: dict(zip(keys, r)) for r in cur.fetchall()}
 
     def _localize(self, cur, query, query_vector, ranked, mode: str, config: SearchConfig) -> List[Dict[str, Any]]:
@@ -261,9 +220,9 @@ class SearchEngine:
         use_dense = query_vector is not None
         use_keyword = mode != "dense"
         short_query = len(WORD_PATTERN.findall(query)) <= config.trigram_max_query_words
-        dims = MODELS[config.model].dimensions
+        model = EMBEDDING_MODEL if not use_dense else self.embedder.model
         similarity = (
-            sql.SQL("1 - (se.embedding::vector({d}) <=> %(v)s::vector({d}))").format(d=sql.Literal(dims))
+            sql.SQL("1 - (se.embedding::vector({d}) <=> %(v)s::vector({d}))").format(d=sql.Literal(model.dimensions))
             if use_dense else sql.SQL("NULL::float")
         )
         cur.execute(
@@ -276,7 +235,7 @@ class SearchEngine:
                 " LEFT JOIN sentence_embeddings se ON se.sentence_id = s.id AND se.model = %(model)s"
                 " ORDER BY s.file_pk, s.turn_id, s.start_s"
             ).format(similarity=similarity),
-            {"ids": sentence_ids, "q": query, "short": short_query, "model": config.model,
+            {"ids": sentence_ids, "q": query, "short": short_query, "model": model.key,
              "v": vector_literal(query_vector) if use_dense else None},
         )
         turn_sentences: Dict[Tuple[int, int], List[tuple]] = {}
@@ -331,29 +290,6 @@ class SearchEngine:
             })
         return results
 
-    @staticmethod
-    def _rerank_input(chunk: Dict[str, Any], config: SearchConfig) -> str:
-        if config.uses_context and chunk.get("context_text"):
-            return f"{chunk['context_text']}\n\n{chunk['text']}"
-        return chunk["text"]
-
-    @staticmethod
-    def _collapse(spans: List[Dict[str, Any]], config: SearchConfig) -> List[Dict[str, Any]]:
-        groups = collapse_spans(
-            [(s["file_key"], s["speaker_label"], s["start_seconds"], s["end_seconds"]) for s in spans],
-            config.dedupe_gap_seconds, config.span_max_seconds,
-        )
-        results = []
-        for group in groups:
-            kept = dict(spans[group[0]])
-            if len(group) > 1:
-                members = sorted((spans[i] for i in group), key=lambda s: s["start_seconds"])
-                kept["start_seconds"] = members[0]["start_seconds"]
-                kept["end_seconds"] = max(m["end_seconds"] for m in members)
-                kept["text"] = " ".join(m["text"] for m in members)
-            results.append(kept)
-        return results
-
     def _highlight(self, cur, query: str, results: List[Dict[str, Any]]) -> None:
         if not results:
             return
@@ -393,7 +329,7 @@ def main(argv=None) -> int:
     parser.add_argument("--mode", default="hybrid", choices=sorted(MODES))
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--workspace", action="append", dest="workspaces", help="Repeatable; default dataset.")
-    parser.add_argument("--config", default="{}", help='JSON overrides, e.g. \'{"chunker": "B", "reranker": "bge-reranker"}\'.')
+    parser.add_argument("--config", default="{}", help='JSON overrides, e.g. \'{"dense_weight": 1.5}\'.')
     args = parser.parse_args(argv)
 
     config = SearchConfig.from_dict(json.loads(args.config))

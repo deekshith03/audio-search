@@ -1,35 +1,9 @@
 import unittest
 
-from src.search.fusion import convex, fuse, min_max, rrf
+from src.search.fusion import convex, min_max
 from src.search.localize import (
-    ScoredSentence, blend, collapse_spans, normalize, overlaps, query_terms, select_span, tighten_to_keywords,
+    ScoredSentence, blend, dedupe, normalize, overlaps, query_terms, select_span, tighten_to_keywords,
 )
-
-
-class TestRrf(unittest.TestCase):
-
-    def test_items_high_in_both_lists_win(self):
-        lists = {"a": [(1, 9.0), (2, 8.0), (3, 7.0)], "b": [(2, 0.9), (1, 0.8), (4, 0.7)]}
-        self.assertEqual([i for i, _ in rrf(lists, {"a": 1.0, "b": 1.0})][:2], [1, 2])
-
-    def test_score_formula(self):
-        (item, score), = rrf({"a": [(5, 1.0)]}, {"a": 2.0}, k=60)
-        self.assertEqual(item, 5)
-        self.assertAlmostEqual(score, 2.0 / 61)
-
-    def test_weights_shift_the_ranking(self):
-        lists = {"a": [(1, 1.0)], "b": [(2, 1.0)]}
-        self.assertEqual(rrf(lists, {"a": 1.0, "b": 3.0})[0][0], 2)
-
-    def test_zero_or_missing_weight_ignores_list(self):
-        lists = {"a": [(1, 1.0)], "b": [(2, 1.0)]}
-        self.assertEqual([i for i, s in rrf(lists, {"a": 1.0}) if s > 0], [1])
-
-    def test_ties_break_by_id(self):
-        self.assertEqual([i for i, _ in rrf({"a": [(7, 1.0)], "b": [(3, 1.0)]}, {"a": 1.0, "b": 1.0})], [3, 7])
-
-    def test_empty(self):
-        self.assertEqual(rrf({}, {}), [])
 
 
 class TestConvex(unittest.TestCase):
@@ -51,12 +25,16 @@ class TestConvex(unittest.TestCase):
         scores = dict(convex({"a": [(1, 1.0), (2, 0.0)], "b": [(2, 1.0), (3, 0.0)]}, {"a": 1.0, "b": 1.0}))
         self.assertEqual(scores, {1: 0.5, 2: 0.5, 3: 0.0})
 
-    def test_fuse_dispatch(self):
-        lists = {"a": [(1, 1.0)]}
-        self.assertEqual(fuse("rrf", lists, {"a": 1.0}), rrf(lists, {"a": 1.0}))
-        self.assertEqual(fuse("convex", lists, {"a": 1.0}), convex(lists, {"a": 1.0}))
-        with self.assertRaisesRegex(ValueError, "unknown fusion"):
-            fuse("max", lists, {})
+    def test_ties_break_by_id(self):
+        self.assertEqual([i for i, _ in convex({"a": [(7, 1.0)], "b": [(3, 1.0)]}, {"a": 1.0, "b": 1.0})], [3, 7])
+
+    def test_dense_weight_shifts_the_ranking(self):
+        lists = {"bm25": [(1, 5.0), (2, 1.0)], "dense": [(2, 0.9), (1, 0.1)]}
+        self.assertEqual(convex(lists, {"bm25": 1.0, "dense": 2.0})[0][0], 2)
+        self.assertEqual(convex(lists, {"bm25": 2.0, "dense": 1.0})[0][0], 1)
+
+    def test_empty(self):
+        self.assertEqual(convex({}, {}), [])
 
 
 def sentences(*specs):
@@ -112,34 +90,18 @@ class TestSelectSpan(unittest.TestCase):
             select_span(sentences((0, 5, 1.0)), {99})
 
 
-class TestCollapseSpans(unittest.TestCase):
+class TestDedupe(unittest.TestCase):
 
     def test_overlaps(self):
         self.assertTrue(overlaps(0, 10, 9, 20))
         self.assertFalse(overlaps(0, 10, 10, 20))
 
-    def test_gap_zero_drops_only_overlaps(self):
-        spans = [("f1", "S0", 0, 10), ("f1", "S0", 5, 15), ("f2", "S0", 5, 15), ("f1", "S0", 10, 20)]
-        self.assertEqual(collapse_spans(spans, gap=0.0), [[0], [2], [3]])
-
-    def test_adjacent_same_speaker_merges_when_it_fits(self):
-        spans = [("f1", "S0", 10, 14), ("f1", "S0", 14.5, 18), ("f1", "S0", 5, 9.5)]
-        self.assertEqual(collapse_spans(spans, gap=2.0, max_seconds=20), [[0, 1, 2]])
-
-    def test_adjacent_merge_that_would_be_too_long_is_dropped(self):
-        spans = [("f1", "S0", 0, 15), ("f1", "S0", 16, 25)]
-        self.assertEqual(collapse_spans(spans, gap=2.0, max_seconds=20), [[0]])
-
-    def test_different_speaker_or_file_is_never_merged(self):
-        spans = [("f1", "S0", 0, 5), ("f1", "S1", 5.5, 9), ("f2", "S0", 5.5, 9)]
-        self.assertEqual(collapse_spans(spans, gap=2.0), [[0], [1], [2]])
-
-    def test_far_apart_spans_are_kept(self):
-        spans = [("f1", "S0", 0, 5), ("f1", "S0", 30, 35)]
-        self.assertEqual(collapse_spans(spans, gap=2.0), [[0], [1]])
+    def test_drops_later_overlapping_span_in_same_file(self):
+        spans = [("f1", 0, 10), ("f1", 5, 15), ("f2", 5, 15), ("f1", 10, 20)]
+        self.assertEqual(dedupe(spans), [0, 2, 3])
 
     def test_empty(self):
-        self.assertEqual(collapse_spans([]), [])
+        self.assertEqual(dedupe([]), [])
 
 
 def words_at(text, start=0.0, step=0.5):

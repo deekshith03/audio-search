@@ -7,9 +7,8 @@ import unittest
 from src.db import connection
 from src.pipeline.common import Workspace
 from src.pipeline.labels import save_labels
-from src.search.chunkers import CHUNK_CONFIGS, CONTEXT_CONFIGS
 from src.search.embedders import EmbeddingModel
-from src.search.indexer import Indexer, canonical_paths, hnsw_index_name, parse_models, vector_literal
+from src.search.indexer import Indexer, canonical_paths, hnsw_index_name, vector_literal
 from tests.db_support import ThrowawayDatabaseTestCase, requires_database
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,23 +28,14 @@ class FakeEmbedder:
         return [[float(len(t) % 7 + 1)] + [1.0] * (self.model.dimensions - 1) for t in texts]
 
 
-def one_token_per_word(word):
-    return 1
-
-
 class TestHelpers(unittest.TestCase):
 
     def test_vector_literal(self):
         self.assertEqual(vector_literal([1.0, 0.5, -0.25]), "[1,0.5,-0.25]")
 
     def test_hnsw_index_name_is_a_safe_identifier(self):
-        self.assertEqual(hnsw_index_name("bge-small+ctx"), "chunk_embeddings_hnsw_bge_small_ctx")
-
-    def test_parse_models(self):
-        self.assertEqual(parse_models("none"), [])
-        self.assertEqual(parse_models("bge-small, gemma"), ["bge-small", "gemma"])
-        with self.assertRaises(Exception):
-            parse_models("nope")
+        self.assertEqual(hnsw_index_name("gemma"), "chunk_embeddings_hnsw_gemma")
+        self.assertEqual(hnsw_index_name("Some-Model"), "chunk_embeddings_hnsw_some_model")
 
     def test_canonical_paths_for_named_and_missing_files(self):
         golden = Workspace(os.path.join(REPO_ROOT, "dataset"))
@@ -80,7 +70,7 @@ class TestIndexer(ThrowawayDatabaseTestCase):
         shutil.rmtree(self.tmp)
 
     def indexer(self, *embedders):
-        return Indexer(self.conn, self.workspace, embedders, count_tokens=one_token_per_word)
+        return Indexer(self.conn, self.workspace, embedders)
 
     def scalar(self, query, params=None):
         with self.conn.cursor() as cur:
@@ -90,14 +80,14 @@ class TestIndexer(ThrowawayDatabaseTestCase):
     def paths(self):
         return canonical_paths(self.workspace)
 
-    def test_indexes_files_sentences_and_every_chunk_config(self):
+    def test_indexes_files_sentences_and_a30s_chunks(self):
         stats = self.indexer().index_all(self.paths())
         self.assertTrue(all(s["rechunked"] for s in stats))
         self.assertEqual(self.scalar("SELECT count(*) FROM files WHERE workspace = %s", (self.tmp,)), 2)
         self.assertGreater(self.scalar("SELECT count(*) FROM sentences"), 100)
         with self.conn.cursor() as cur:
             cur.execute("SELECT DISTINCT chunker FROM chunks")
-            self.assertEqual({r[0] for r in cur.fetchall()}, set(CHUNK_CONFIGS))
+            self.assertEqual({r[0] for r in cur.fetchall()}, {"A-30s"})
 
     def test_sentence_word_timings_match_the_transcript(self):
         self.indexer().index_all(self.paths()[:1])
@@ -141,28 +131,21 @@ class TestIndexer(ThrowawayDatabaseTestCase):
             json.dump(canonical, f)
         stats = self.indexer().index_all(self.paths())
         self.assertEqual([s["rechunked"] for s in stats], [True, False])
-        self.assertEqual(self.scalar("SELECT count(*) FROM chunks WHERE chunker = 'D' AND file_pk = "
-                                     "(SELECT id FROM files WHERE file_id = %s)", (canonical["file_id"],)), 3)
+        self.assertEqual(self.scalar("SELECT count(DISTINCT c.speaker_label || s.turn_id) FROM chunks c"
+                                     " JOIN sentences s ON s.id = c.sentence_ids[1]"
+                                     " JOIN files f ON f.id = c.file_pk WHERE f.file_id = %s", (canonical["file_id"],)), 3)
 
-    def test_embeds_plain_for_all_and_context_variant_for_a_and_b(self):
+    def test_embeds_every_chunk_and_sentence_text(self):
         embedder = FakeEmbedder()
         self.indexer(embedder).index_all(self.paths())
-        chunks = self.scalar("SELECT count(*) FROM chunks")
-        context_chunks = self.scalar("SELECT count(*) FROM chunks WHERE chunker = ANY(%s)", (sorted(CONTEXT_CONFIGS),))
-        self.assertEqual(self.scalar("SELECT count(*) FROM chunk_embeddings WHERE model = 'fake'"), chunks)
-        self.assertEqual(self.scalar("SELECT count(*) FROM chunk_embeddings WHERE model = 'fake+ctx'"), context_chunks)
+        self.assertEqual(self.scalar("SELECT count(*) FROM chunk_embeddings WHERE model = 'fake'"),
+                         self.scalar("SELECT count(*) FROM chunks"))
         self.assertEqual(self.scalar("SELECT count(*) FROM sentence_embeddings WHERE model = 'fake'"),
                          self.scalar("SELECT count(*) FROM sentences"))
-
-    def test_context_variant_embeds_context_before_text(self):
-        embedder = FakeEmbedder()
-        self.indexer(embedder).index_all(self.paths()[:1])
+        embedded = {t for call in embedder.calls for t in call}
         with self.conn.cursor() as cur:
-            cur.execute("SELECT text, context_text FROM chunks WHERE chunker = 'B' AND context_text IS NOT NULL ORDER BY id LIMIT 1")
-            text, context = cur.fetchone()
-        embedded = [t for call in embedder.calls for t in call]
-        self.assertIn(f"{context}\n\n{text}", embedded)
-        self.assertIn(text, embedded)
+            cur.execute("SELECT text FROM chunks ORDER BY id LIMIT 5")
+            self.assertTrue({r[0] for r in cur.fetchall()} <= embedded)
 
     def test_embeddings_are_incremental(self):
         self.indexer(FakeEmbedder()).index_all(self.paths())
@@ -175,12 +158,12 @@ class TestIndexer(ThrowawayDatabaseTestCase):
         self.indexer(other).index_all(self.paths())
         self.assertEqual(self.scalar("SELECT vector_dims(embedding) FROM chunk_embeddings WHERE model = 'other' LIMIT 1"), 5)
 
-    def test_creates_partial_hnsw_index_per_variant(self):
+    def test_creates_partial_hnsw_index_per_model(self):
         self.indexer(FakeEmbedder()).index_all(self.paths()[:1])
         with self.conn.cursor() as cur:
             cur.execute("SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'chunk_embeddings' AND indexname LIKE '%hnsw%'")
             indexes = dict(cur.fetchall())
-        self.assertEqual(set(indexes), {"chunk_embeddings_hnsw_fake", "chunk_embeddings_hnsw_fake_ctx"})
+        self.assertEqual(set(indexes), {"chunk_embeddings_hnsw_fake"})
         self.assertIn("vector(3)", indexes["chunk_embeddings_hnsw_fake"])
         self.assertIn("'fake'", indexes["chunk_embeddings_hnsw_fake"])
 
@@ -208,7 +191,7 @@ class TestIndexer(ThrowawayDatabaseTestCase):
             other = Workspace(other_root)
             os.makedirs(other.output_dir)
             shutil.copy(self.paths()[0], other.output_dir)
-            Indexer(self.conn, other, count_tokens=one_token_per_word).index_all(canonical_paths(other), prune=True)
+            Indexer(self.conn, other).index_all(canonical_paths(other), prune=True)
             self.assertEqual(self.scalar("SELECT count(*) FROM files"), 3)
         finally:
             shutil.rmtree(other_root)

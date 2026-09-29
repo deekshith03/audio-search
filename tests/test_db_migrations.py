@@ -47,7 +47,7 @@ class TestDiscoverMigrations(unittest.TestCase):
 
     def test_repository_migrations_are_well_formed(self):
         versions = [m.version for m in migrate.discover_migrations()]
-        self.assertEqual(versions[:3], ["001", "002", "003"])
+        self.assertEqual(versions, ["001", "002", "003", "004", "005", "006"])
 
 
 @requires_database
@@ -80,23 +80,35 @@ class TestMigrationsAgainstDatabase(ThrowawayDatabaseTestCase):
         indexes = self.fetch_column("SELECT indexname FROM pg_indexes WHERE tablename = 'chunks'")
         self.assertTrue({"chunks_bm25_idx", "chunks_text_trgm_idx", "chunks_file_start_idx"} <= indexes)
 
-    def test_04_bm25_stems_and_filters_by_chunker(self):
+    def test_04_bm25_stems_and_filters_by_file(self):
         with self.conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO files (workspace, file_id, sha256, pipeline_key) VALUES ('dataset', 'x.wav', 's', 'k') RETURNING id"
+                "INSERT INTO files (workspace, file_id, sha256, pipeline_key) VALUES ('dataset', 'x.wav', 's', 'k'),"
+                " ('dataset', 'w.wav', 's', 'k') RETURNING id"
             )
-            file_pk = cur.fetchone()[0]
+            (file_pk,), (other_pk,) = cur.fetchall()
             cur.executemany(
                 "INSERT INTO chunks (file_pk, chunker, speaker_label, start_s, end_s, text, sentence_ids)"
-                " VALUES (%s, %s, 'SPEAKER_00', 0, 1, %s, '{}')",
-                [(file_pk, "A", "Wayland compositors are fast"), (file_pk, "B", "a compositor too"), (file_pk, "A", "unrelated")],
+                " VALUES (%s, 'A-30s', 'SPEAKER_00', 0, 1, %s, '{}')",
+                [(file_pk, "Wayland compositors are fast"), (other_pk, "a compositor too"), (file_pk, "unrelated")],
             )
             cur.execute(
-                "SELECT text FROM chunks WHERE text ||| 'compositor' AND chunker = 'A' ORDER BY pdb.score(id) DESC"
+                "SELECT text FROM chunks WHERE text ||| 'compositor' AND file_pk = %s ORDER BY pdb.score(id) DESC", (file_pk,)
             )
             self.assertEqual([r[0] for r in cur.fetchall()], ["Wayland compositors are fast"])
             cur.execute("SELECT text FROM chunks WHERE 'compositer' <% text ORDER BY text")
             self.assertEqual([r[0] for r in cur.fetchall()], ["a compositor too", "Wayland compositors are fast"])
+        self.conn.rollback()
+
+    def test_04b_only_the_frozen_chunker_is_allowed_and_context_column_is_gone(self):
+        columns = self.fetch_column("SELECT column_name FROM information_schema.columns WHERE table_name = 'chunks'")
+        self.assertNotIn("context_text", columns)
+        with self.conn.cursor() as cur:
+            cur.execute("INSERT INTO files (workspace, file_id, sha256, pipeline_key) VALUES ('dataset', 'v.wav', 's', 'k') RETURNING id")
+            file_pk = cur.fetchone()[0]
+            with self.assertRaises(psycopg2.errors.CheckViolation):
+                cur.execute("INSERT INTO chunks (file_pk, chunker, speaker_label, start_s, end_s, text, sentence_ids)"
+                            " VALUES (%s, 'B', 'SPEAKER_00', 0, 1, 'x', '{}')", (file_pk,))
         self.conn.rollback()
 
     def test_05_embeddings_accept_any_dimension(self):
@@ -107,7 +119,7 @@ class TestMigrationsAgainstDatabase(ThrowawayDatabaseTestCase):
             file_pk = cur.fetchone()[0]
             cur.execute(
                 "INSERT INTO chunks (file_pk, chunker, speaker_label, start_s, end_s, text, sentence_ids)"
-                " VALUES (%s, 'D', 'SPEAKER_01', 0, 1, 'hi', '{}') RETURNING id",
+                " VALUES (%s, 'A-30s', 'SPEAKER_01', 0, 1, 'hi', '{}') RETURNING id",
                 (file_pk,),
             )
             chunk_id = cur.fetchone()[0]

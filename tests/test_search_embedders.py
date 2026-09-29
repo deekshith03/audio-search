@@ -1,32 +1,30 @@
 import unittest
+from unittest import mock
 
-from src.search.embedders import DEFAULT_MODELS, MODELS, Embedder, model_of_variant, variant_key
+import numpy as np
+
+from src.search.embedders import EMBEDDING_MODEL, Embedder
 
 
-class TestEmbedderRegistry(unittest.TestCase):
+class TestEmbedder(unittest.TestCase):
 
-    def test_qwen3_registered_but_not_default(self):
-        self.assertIn("qwen3", MODELS)
-        self.assertEqual(DEFAULT_MODELS, ("gemma",))
+    def test_model_is_embeddinggemma(self):
+        self.assertEqual((EMBEDDING_MODEL.key, EMBEDDING_MODEL.repo, EMBEDDING_MODEL.dimensions),
+                         ("gemma", "google/embeddinggemma-300m", 768))
 
-    def test_dimensions(self):
-        self.assertEqual({k: m.dimensions for k, m in MODELS.items()},
-                         {"bge-small": 384, "bge-base": 768, "gemma": 768, "qwen3": 1024})
-
-    def test_variant_keys_round_trip(self):
-        self.assertEqual(variant_key("gemma", True), "gemma+ctx")
-        self.assertEqual(variant_key("gemma", False), "gemma")
-        self.assertIs(model_of_variant("gemma+ctx"), MODELS["gemma"])
-        self.assertIs(model_of_variant("bge-small"), MODELS["bge-small"])
-
-    def test_embedder_does_not_load_model_until_used(self):
-        embedder = Embedder("bge-small")
+    def test_does_not_load_model_until_used(self):
+        embedder = Embedder()
         self.assertIsNone(embedder._st)
-        self.assertEqual(embedder.model.repo, "BAAI/bge-small-en-v1.5")
+        self.assertIs(embedder.model, EMBEDDING_MODEL)
 
-    def test_unknown_model_rejected(self):
-        with self.assertRaises(KeyError):
-            Embedder("nope")
+    def test_encodes_with_model_prompts_and_normalization(self):
+        embedder = Embedder()
+        embedder._st = mock.Mock(encode_document=mock.Mock(return_value=np.array([[0.6, 0.8]])),
+                                 encode_query=mock.Mock(return_value=np.array([[1.0, 0.0]])))
+        self.assertEqual(embedder.encode_documents(["doc"]), [[0.6, 0.8]])
+        self.assertEqual(embedder.encode_query("q"), [1.0, 0.0])
+        self.assertTrue(embedder._st.encode_document.call_args.kwargs["normalize_embeddings"])
+        self.assertTrue(embedder._st.encode_query.call_args.kwargs["normalize_embeddings"])
 
 
 if __name__ == "__main__":

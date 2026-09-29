@@ -1,15 +1,14 @@
 """
-Local embedding models compared on the dev set. Qwen3 is registered but not embedded by default;
-it is tried only if the first grid (the three cheaper models) suggests it is worth the cost.
+Local embedding model: EmbeddingGemma (google/embeddinggemma-300m, 768-d, gated on Hugging Face),
+chosen on the dev set over bge-small, bge-base and Qwen3-Embedding (docs/PHASE_3_PLAN.md §4).
 
-Query and document prompts come from each model's own sentence-transformers config
-(`encode_query` / `encode_document`), e.g. bge's "Represent this sentence for searching relevant
-passages: " query instruction. Vectors are L2-normalized, so cosine distance ranks them.
+Query and document prompts come from the model's own sentence-transformers config
+(`encode_query` / `encode_document`). Vectors are L2-normalized, so cosine distance ranks them.
 """
 
 import os
 from dataclasses import dataclass
-from typing import Dict, List, Sequence
+from typing import List, Sequence
 
 from src.pipeline.common import load_env_file
 
@@ -22,33 +21,15 @@ class EmbeddingModel:
     max_tokens: int
 
 
-MODELS: Dict[str, EmbeddingModel] = {
-    m.key: m
-    for m in (
-        EmbeddingModel("bge-small", "BAAI/bge-small-en-v1.5", 384, 512),
-        EmbeddingModel("bge-base", "BAAI/bge-base-en-v1.5", 768, 512),
-        EmbeddingModel("gemma", "google/embeddinggemma-300m", 768, 2048),
-        EmbeddingModel("qwen3", "Qwen/Qwen3-Embedding-0.6B", 1024, 32768),
-    )
-}
-DEFAULT_MODELS = ("gemma",)
-CONTEXT_SUFFIX = "+ctx"
+EMBEDDING_MODEL = EmbeddingModel("gemma", "google/embeddinggemma-300m", 768, 2048)
 BATCH_SIZE = 32
-
-
-def variant_key(model_key: str, with_context: bool) -> str:
-    return f"{model_key}{CONTEXT_SUFFIX}" if with_context else model_key
-
-
-def model_of_variant(variant: str) -> EmbeddingModel:
-    return MODELS[variant.removesuffix(CONTEXT_SUFFIX)]
 
 
 class Embedder:
     """Loads the model lazily, so importing this module or building one is cheap."""
 
-    def __init__(self, model_key: str):
-        self.model = MODELS[model_key]
+    def __init__(self, model: EmbeddingModel = EMBEDDING_MODEL):
+        self.model = model
         self._st = None
 
     def _load(self):
