@@ -22,6 +22,9 @@ RUN apt-get update \
 
 COPY --from=ghcr.io/astral-sh/uv:0.9.4 /uv /usr/local/bin/uv
 
+# The app runs as this user; the entrypoint starts as root only to fix volume ownership, then drops to it.
+RUN useradd --create-home --uid 1000 app
+
 WORKDIR /app
 
 # Dependencies first so code changes do not invalidate the (large) dependency layer.
@@ -29,10 +32,11 @@ COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project
 
-COPY . .
+COPY --chown=app:app . .
 
 RUN chmod +x scripts/docker-entrypoint.sh scripts/reproduce.sh src/pipeline/run_pipeline.sh \
-    && mkdir -p /models /app/data
+    && mkdir -p /models /app/data \
+    && chown app:app /models /app/data
 
 EXPOSE 8501
 

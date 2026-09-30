@@ -14,6 +14,20 @@
 set -euo pipefail
 cd /app
 
+# Start as root only to give the app user its volumes (volumes created by older images are
+# root-owned; the check keeps restarts fast), then re-exec everything as that user.
+APP_USER=app
+if [ "$(id -u)" = "0" ] && id "$APP_USER" >/dev/null 2>&1; then
+  for dir in /models "${APP_DATA_DIR:-/app/data}" /app/dataset/speaker_labels; do
+    mkdir -p "$dir"
+    if [ "$(stat -c %U "$dir")" != "$APP_USER" ]; then
+      chown -R "$APP_USER:$APP_USER" "$dir"
+    fi
+  done
+  export HOME="/home/$APP_USER"
+  exec setpriv --reuid="$APP_USER" --regid="$APP_USER" --init-groups "$0" "$@"
+fi
+
 command="${1:-app}"
 [ "$#" -gt 0 ] && shift
 
