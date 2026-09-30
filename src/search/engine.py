@@ -17,7 +17,8 @@ sees, so semantic search matches what was said rather than lines that merely men
 
 `lexical` and `dense` exist as the ablations the eval gate compares hybrid against. Results follow
 the eval harness contract: file_id, speaker (human name when labeled, else the SPEAKER_xx label),
-start_seconds, end_seconds, plus text, highlight (<mark> around keyword matches) and score.
+start_seconds, end_seconds, plus text, highlight (<mark> around keyword matches, and the best
+sentence marked for matches by meaning), matched_by ("words" / "meaning" / "both") and score.
 Speaker names are joined at query time, so renaming never needs re-indexing. Optional
 SearchFilters narrow every retriever to some recordings or speakers; without them the SQL is the
 exact query the eval ran.
@@ -36,9 +37,9 @@ from psycopg2 import sql
 
 from src.db.connection import connect
 from src.search.embedders import EMBEDDING_MODEL, Embedder
-from src.search.fusion import convex
+from src.search.fusion import contributions, convex
 from src.search.indexer import vector_literal
-from src.search.localize import ScoredSentence, blend, dedupe, select_span, tighten_to_keywords
+from src.search.localize import ScoredSentence, blend, dedupe, keyword_matches, seed_index, select_span, tighten_to_keywords
 
 MODES = {"lexical": ("bm25", "trigram"), "dense": ("dense",), "hybrid": ("bm25", "trigram", "dense", "sentence")}
 NAME_TOKEN = re.compile(r"[a-z]+")
@@ -46,6 +47,9 @@ NAME_TITLES = {"dr", "mr", "mrs", "ms", "prof"}
 MIN_NAME_TOKEN = 3
 DEFAULT_WORKSPACES = ("dataset",)
 WORD_PATTERN = re.compile(r"\w+")
+WORD_RETRIEVERS = ("bm25", "trigram")
+MEANING_RETRIEVERS = ("dense", "sentence")
+MATCHED_BY_MIN_SHARE = 0.25
 
 
 @dataclass(frozen=True)
@@ -183,6 +187,7 @@ class SearchEngine:
                 lap("retrieve")
 
                 fused = convex(lists, config.weights)
+                parts = contributions(lists, config.weights)
                 response.fused_chunk_ids = [chunk_id for chunk_id, _ in fused]
                 shortlist = fused[: config.localize_depth]
                 chunks = self._chunk_rows(cur, [chunk_id for chunk_id, _ in shortlist])
@@ -193,6 +198,8 @@ class SearchEngine:
                 spans = [s for s in spans if s["end_seconds"] - s["start_seconds"] >= config.result_min_seconds]
                 keep = dedupe([(s["file_key"], s["start_seconds"], s["end_seconds"]) for s in spans])[:top_k]
                 results = [spans[i] for i in keep]
+                for r in results:
+                    r["matched_by"] = matched_by(parts.get(r["chunk_id"], {}))
                 self._highlight(cur, query, results)
                 lap("localize")
             self.conn.rollback()
@@ -202,7 +209,8 @@ class SearchEngine:
 
         for rank, r in enumerate(results, start=1):
             r["rank"] = rank
-            r.pop("file_key")
+            for key in ("file_key", "sentences", "best_sentence", "keyword_clip"):
+                r.pop(key)
         response.results = results
         timings["total"] = round(sum(timings.values()), 2)
         return response
@@ -367,13 +375,21 @@ class SearchEngine:
             )
             span = window[lo:hi + 1]
             start_s, end_s, text = span[0].start_s, span[-1].end_s, " ".join(s.text for s in span)
+            best = seed_index(window, set(chunk["sentence_ids"]))
+            sentences, best_sentence, keyword_clip = [s.text for s in span], best - lo, None
             if use_keyword and short_query and config.keyword_span_padding_seconds > 0:
                 words = [tuple(w) for r in rows[lo:hi + 1] for w in r[9]]
+                word_sentence = [i for i, r in enumerate(rows[lo:hi + 1], start=lo) for _ in r[9]]
                 tightened = tighten_to_keywords(words, query, config.keyword_span_padding_seconds)
                 if tightened:
                     w_lo, w_hi = tightened
                     start_s, end_s = words[w_lo][1], words[w_hi][2]
                     text = " ".join(w[0] for w in words[w_lo:w_hi + 1])
+                    keyword_clip = {
+                        "words": [w[0] for w in words[w_lo:w_hi + 1]],
+                        "matched": {i - w_lo for i in keyword_matches(words, query) if w_lo <= i <= w_hi},
+                        "in_best": [word_sentence[i] == best for i in range(w_lo, w_hi + 1)],
+                    }
             results.append({
                 "file_key": (chunk["workspace"], chunk["file_id"]),
                 "file_id": chunk["file_id"],
@@ -383,6 +399,9 @@ class SearchEngine:
                 "start_seconds": round(start_s, 3),
                 "end_seconds": round(end_s, 3),
                 "text": text,
+                "sentences": sentences,
+                "best_sentence": best_sentence,
+                "keyword_clip": keyword_clip,
                 "score": round(float(score), 6),
                 "chunk_id": chunk["id"],
                 "chunk_start_seconds": round(chunk["start_s"], 3),
@@ -391,15 +410,55 @@ class SearchEngine:
         return results
 
     def _highlight(self, cur, query: str, results: List[Dict[str, Any]]) -> None:
+        """<mark> around words shared with the query; for results matched by meaning, the clip's
+        best-scoring sentence is also wrapped in <span class="meaning"> (shared words say nothing there).
+        Clips tightened to keywords are marked by the words the keyword matcher took, fuzzy ones
+        included (ts_headline would miss "Hyperland" for "Hyprland")."""
+        for r in results:
+            if r["keyword_clip"]:
+                r["highlight"] = keyword_clip_html(r["keyword_clip"], r["matched_by"] != "words")
+        results = [r for r in results if not r["keyword_clip"]]
         if not results:
             return
+        parts = [html.escape(t, quote=False) for r in results for t in r["sentences"]]
         cur.execute(
             "SELECT ts_headline('english', t, plainto_tsquery('english', %s),"
             " 'StartSel=<mark>, StopSel=</mark>, HighlightAll=true') FROM unnest(%s::text[]) WITH ORDINALITY AS u(t, n) ORDER BY n",
-            (query, [html.escape(r["text"], quote=False) for r in results]),
+            (query, parts),
         )
-        for r, (highlighted,) in zip(results, cur.fetchall()):
-            r["highlight"] = highlighted
+        marked = iter(row[0] for row in cur.fetchall())
+        for r in results:
+            sentences = [next(marked) for _ in r["sentences"]]
+            best = r["best_sentence"]
+            if best is not None and r["matched_by"] != "words":
+                sentences[best] = f'<span class="meaning">{sentences[best]}</span>'
+            r["highlight"] = " ".join(sentences)
+
+
+def keyword_clip_html(clip: Dict[str, Any], mark_meaning: bool) -> str:
+    """The tightened clip's words, matched ones in <mark>, the best sentence's run in <span class="meaning">."""
+    pieces, in_meaning = [], False
+    for i, word in enumerate(clip["words"]):
+        want = mark_meaning and clip["in_best"][i]
+        if want != in_meaning:
+            pieces.append('<span class="meaning">' if want else "</span>")
+            in_meaning = want
+        escaped = html.escape(word, quote=False)
+        pieces.append(f"<mark>{escaped}</mark> " if i in clip["matched"] else f"{escaped} ")
+    return ("".join(pieces).rstrip() + ("</span>" if in_meaning else "")).replace(" </span>", "</span> ")
+
+
+def matched_by(parts: Dict[str, float]) -> str:
+    """"words", "meaning" or "both": which side of the fusion gave the chunk its score; each side
+    needs MATCHED_BY_MIN_SHARE of the fused score to count."""
+    words = sum(parts.get(name, 0.0) for name in WORD_RETRIEVERS)
+    meaning = sum(parts.get(name, 0.0) for name in MEANING_RETRIEVERS)
+    total = words + meaning
+    if total <= 0:
+        return "meaning" if any(name in parts for name in MEANING_RETRIEVERS) else "words"
+    if min(words, meaning) / total >= MATCHED_BY_MIN_SHARE:
+        return "both"
+    return "words" if words > meaning else "meaning"
 
 
 _default_engine: Optional[SearchEngine] = None
@@ -435,7 +494,7 @@ def main(argv=None) -> int:
     config = SearchConfig.from_dict(json.loads(args.config))
     response = default_engine().search(args.query, args.mode, args.top_k, config, args.workspaces or DEFAULT_WORKSPACES)
     for r in response.results:
-        print(f"{r['rank']}. {r['file_id']}  {r['speaker']}  [{r['start_seconds']:.1f}-{r['end_seconds']:.1f}s]  score {r['score']:.4f}")
+        print(f"{r['rank']}. {r['file_id']}  {r['speaker']}  [{r['start_seconds']:.1f}-{r['end_seconds']:.1f}s]  score {r['score']:.4f}  matched by {r['matched_by']}")
         print(f"   {r['highlight']}")
     print(f"timings (ms): {response.timings_ms}")
     return 0

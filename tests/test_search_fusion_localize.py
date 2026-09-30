@@ -1,8 +1,8 @@
 import unittest
 
-from src.search.fusion import convex, min_max
+from src.search.fusion import contributions, convex, min_max
 from src.search.localize import (
-    ScoredSentence, blend, dedupe, normalize, overlaps, query_terms, select_span, tighten_to_keywords,
+    ScoredSentence, blend, dedupe, keyword_matches, normalize, overlaps, query_terms, seed_index, select_span, tighten_to_keywords,
 )
 
 
@@ -35,6 +35,16 @@ class TestConvex(unittest.TestCase):
 
     def test_empty(self):
         self.assertEqual(convex({}, {}), [])
+        self.assertEqual(contributions({}, {}), {})
+
+    def test_contributions_are_the_weighted_parts_of_the_fused_score(self):
+        lists = {"bm25": [(1, 5.0), (2, 1.0)], "dense": [(2, 0.9), (1, 0.1), (3, 0.5)]}
+        weights = {"bm25": 1.0, "dense": 3.0}
+        parts = contributions(lists, weights)
+        self.assertEqual(parts[1], {"bm25": 0.25, "dense": 0.0})
+        self.assertEqual(parts[2], {"bm25": 0.0, "dense": 0.75})
+        self.assertEqual(parts[3], {"dense": 0.75 * 0.5})
+        self.assertEqual(dict(convex(lists, weights)), {item: sum(p.values()) for item, p in parts.items()})
 
 
 def sentences(*specs):
@@ -88,6 +98,14 @@ class TestSelectSpan(unittest.TestCase):
     def test_no_eligible_sentence_raises(self):
         with self.assertRaises(ValueError):
             select_span(sentences((0, 5, 1.0)), {99})
+        with self.assertRaises(ValueError):
+            seed_index(sentences((0, 5, 1.0)), {99})
+
+    def test_seed_index_is_the_best_eligible_sentence_first_on_ties(self):
+        window = sentences((0, 5, 1.0), (5, 10, 0.4), (10, 15, 0.7), (15, 20, 0.7))
+        self.assertEqual(seed_index(window, {2, 3, 4}), 2)
+        self.assertEqual(seed_index(window, {1, 2}), 0)
+        self.assertEqual(select_span(window, {2, 3, 4}, max_sentences=1), (2, 2))
 
 
 class TestDedupe(unittest.TestCase):
@@ -109,6 +127,13 @@ def words_at(text, start=0.0, step=0.5):
 
 
 class TestTightenToKeywords(unittest.TestCase):
+
+    def test_keyword_matches_are_the_exact_fuzzy_and_compound_hits(self):
+        self.assertEqual(keyword_matches(words_at("I run Hyperland on a laptop"), "Hyprland"), {2})
+        self.assertEqual(keyword_matches(words_at("try PG Mustard today"), "pgMustard"), {1, 2})
+        self.assertEqual(keyword_matches(words_at("Thriller in Manila right"), "Thrilla in Manila"), {0, 2})
+        self.assertEqual(keyword_matches(words_at("nothing here"), "zebra"), set())
+        self.assertEqual(keyword_matches([], "zebra"), set())
 
     def test_query_terms_drop_stopwords_and_add_joined_form(self):
         self.assertEqual(query_terms("the Roger Gracie"), ["roger", "gracie", "therogergracie"])

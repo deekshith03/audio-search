@@ -24,12 +24,18 @@ def min_max(ranked: Ranked) -> Dict[int, float]:
     return {item: (s - lo) / (hi - lo) for item, s in ranked}
 
 
-def convex(lists: Dict[str, Ranked], weights: Dict[str, float]) -> List[Tuple[int, float]]:
+def contributions(lists: Dict[str, Ranked], weights: Dict[str, float]) -> Dict[int, Dict[str, float]]:
+    """Per item, what each list adds to its fused score (w · minmax); convex() sums these."""
     active = {name: weights.get(name, 0.0) for name in lists}
     total = sum(active.values()) or 1.0
-    scores: Dict[int, float] = {}
+    parts: Dict[int, Dict[str, float]] = {}
     for name, ranked in lists.items():
         w = active[name] / total
         for item, s in min_max(ranked).items():
-            scores[item] = scores.get(item, 0.0) + w * s
+            parts.setdefault(item, {})[name] = w * s
+    return parts
+
+
+def convex(lists: Dict[str, Ranked], weights: Dict[str, float]) -> List[Tuple[int, float]]:
+    scores = {item: sum(p.values()) for item, p in contributions(lists, weights).items()}
     return sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))

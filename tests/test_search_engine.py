@@ -13,7 +13,7 @@ from src.db import connection
 from src.pipeline.common import Workspace
 from src.pipeline.labels import save_labels
 from src.search.embedders import EMBEDDING_MODEL
-from src.search.engine import NO_FILTERS, SearchConfig, SearchEngine, SearchFilters
+from src.search.engine import NO_FILTERS, SearchConfig, SearchEngine, SearchFilters, keyword_clip_html, matched_by
 from src.search.indexer import Indexer, canonical_paths
 from tests.db_support import ThrowawayDatabaseTestCase, requires_database
 
@@ -110,8 +110,10 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
     def test_result_contract(self):
         (top, *_) = self.run_search("tiling window compositor").results
         self.assertEqual(top["file_id"], "linux_talk.wav")
-        for key in ("file_id", "speaker", "speaker_label", "start_seconds", "end_seconds", "text", "highlight", "score", "rank"):
+        for key in ("file_id", "speaker", "speaker_label", "start_seconds", "end_seconds", "text", "highlight", "matched_by", "score", "rank"):
             self.assertIn(key, top)
+        for internal in ("file_key", "sentences", "best_sentence"):
+            self.assertNotIn(internal, top)
         self.assertEqual(top["rank"], 1)
         self.assertLess(top["start_seconds"], top["end_seconds"])
 
@@ -155,6 +157,41 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
         top = self.run_search("compositors", mode="lexical").results[0]
         self.assertIn("<mark>compositor.</mark>".replace(".", ""), top["highlight"].replace(".", ""))
         self.assertNotIn("<script>", top["highlight"])
+
+    def test_matched_by_follows_the_mode(self):
+        self.assertEqual({r["matched_by"] for r in self.run_search("zebra theme", mode="lexical").results}, {"words"})
+        self.assertEqual({r["matched_by"] for r in self.run_search("zebra theme", mode="dense").results}, {"meaning"})
+        self.assertLessEqual({r["matched_by"] for r in self.run_search("zebra theme").results}, {"words", "meaning", "both"})
+
+    def test_meaning_matches_mark_their_best_sentence_and_word_matches_do_not(self):
+        for r in self.run_search("configuration plain text file edit by hand", mode="dense").results:
+            self.assertEqual(r["highlight"].count('<span class="meaning">'), 1, r["highlight"])
+            self.assertIn("</span>", r["highlight"])
+        for r in self.run_search("configuration plain text file edit by hand", mode="lexical").results:
+            self.assertNotIn('class="meaning"', r["highlight"])
+
+    def test_meaning_mark_is_on_the_clip_sentence_that_scored_best(self):
+        top = self.run_search("snap every window into place without a mouse", mode="dense", span_max_sentences=3, span_min_seconds=30.0).results[0]
+        marked = top["highlight"].split('<span class="meaning">', 1)[1].split("</span>", 1)[0]
+        self.assertIn("snap", marked)
+        self.assertGreater(len(top["text"]), len(re.sub(r"<[^>]+>", "", marked)))
+
+    def test_tightened_clip_marks_fuzzy_keyword_matches(self):
+        for mode in ("lexical", "hybrid"):
+            top = self.run_search("Hyprland", mode=mode).results[0]
+            self.assertIn("<mark>Hyperland</mark>", top["highlight"], mode)
+            self.assertEqual(top["highlight"].count("<mark>"), 1, mode)
+
+    def test_tightened_clip_underlines_meaning_only_when_matched_by_meaning(self):
+        lexical = self.run_search("Hyprland", mode="lexical").results[0]
+        self.assertNotIn('class="meaning"', lexical["highlight"])
+        for r in self.run_search("Hyprland").results:
+            self.assertEqual('class="meaning"' in r["highlight"], r["matched_by"] != "words", r)
+
+    def test_highlight_is_the_clip_text_plus_markup_only(self):
+        for mode in ("hybrid", "lexical", "dense"):
+            for r in self.run_search("tiling Wayland compositor", mode=mode).results + self.run_search("Hyprland", mode=mode).results:
+                self.assertEqual(re.sub(r"<[^>]+>", "", r["highlight"]), r["text"], mode)
 
     def test_short_keyword_query_is_tightened_to_the_matched_word(self):
         top = self.run_search("Hyprland", mode="lexical").results[0]
@@ -275,6 +312,37 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
 
     def test_zero_weight_retriever_is_skipped(self):
         self.assertEqual(self.run_search("Hyprland desktop setup on the laptop today", mode="lexical", bm25_weight=0.0).results, [])
+
+
+class TestKeywordClipHtml(unittest.TestCase):
+
+    CLIP = {"words": ["the", "<Hyperland>", "tiling", "compositor."], "matched": {1}, "in_best": [False, True, True, False]}
+
+    def test_marks_matches_and_escapes(self):
+        self.assertEqual(keyword_clip_html(self.CLIP, mark_meaning=False), "the <mark>&lt;Hyperland&gt;</mark> tiling compositor.")
+
+    def test_underlines_the_best_sentence_run(self):
+        self.assertEqual(keyword_clip_html(self.CLIP, mark_meaning=True),
+                         'the <span class="meaning"><mark>&lt;Hyperland&gt;</mark> tiling</span> compositor.')
+
+    def test_run_reaching_the_end_is_closed(self):
+        clip = {"words": ["a", "b"], "matched": set(), "in_best": [False, True]}
+        self.assertEqual(keyword_clip_html(clip, mark_meaning=True), 'a <span class="meaning">b</span>')
+
+
+class TestMatchedBy(unittest.TestCase):
+
+    def test_each_side_needs_a_quarter_of_the_fused_score(self):
+        self.assertEqual(matched_by({"bm25": 0.3, "trigram": 0.1}), "words")
+        self.assertEqual(matched_by({"dense": 0.5, "sentence": 0.2}), "meaning")
+        self.assertEqual(matched_by({"bm25": 0.25, "dense": 0.75}), "both")
+        self.assertEqual(matched_by({"bm25": 0.2, "dense": 0.8}), "meaning")
+        self.assertEqual(matched_by({"trigram": 0.9, "sentence": 0.1}), "words")
+
+    def test_zero_score_falls_back_to_the_lists_that_found_it(self):
+        self.assertEqual(matched_by({"dense": 0.0}), "meaning")
+        self.assertEqual(matched_by({"bm25": 0.0}), "words")
+        self.assertEqual(matched_by({}), "words")
 
 
 class TestSearchFilters(unittest.TestCase):

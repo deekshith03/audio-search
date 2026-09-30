@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import shutil
 import tempfile
 import unittest
@@ -54,6 +55,7 @@ class FakeEngine:
     def __init__(self, golden_root, uploads_root, fail=False):
         self.golden_root, self.uploads_root, self.fail = golden_root, uploads_root, fail
         self.calls = []
+        self.result = {}
 
     def speakers_in(self, workspaces):
         if self.fail:
@@ -72,11 +74,12 @@ class FakeEngine:
             "rank": 1, "workspace": self.golden_root, "file_id": f"{GOLDEN_FILE}.wav", "speaker": "Cass Sunstein",
             "speaker_label": "SPEAKER_01", "start_seconds": 64.0, "end_seconds": 71.5,
             "text": "the constitution <b>matters</b>", "highlight": "the <mark>constitution</mark> &lt;b&gt;matters&lt;/b&gt;",
+            "matched_by": "words", **self.result,
         }
         return SearchResponse(results=[result] if query != "nothing" else [], timings_ms={"total": 42.0})
 
 
-class TestSearchView(AppTestCase):
+class SearchTestCase(AppTestCase):
 
     def setUp(self):
         super().setUp()
@@ -94,6 +97,9 @@ class TestSearchView(AppTestCase):
         at = self.app(view="🔍 Search", **session).run()
         at.text_input(key="query").input(query).run()
         return at
+
+
+class TestSearchView(SearchTestCase):
 
     def test_search_is_the_default_view(self):
         at = AppTest.from_file(APP, default_timeout=60).run()
@@ -155,6 +161,136 @@ class TestSearchView(AppTestCase):
         self.assertFalse(at.exception)
         self.assertTrue(any("docker compose up -d db" in e.value for e in at.error))
         self.assertEqual(self.engine.calls, [])
+
+
+class TestSearchResultCard(SearchTestCase):
+    """Fixture turns: #4 SPEAKER_01 0:48–1:00, #5 SPEAKER_00 1:01–1:45 (holds the 1:04–1:11 clip), #6 SPEAKER_01 1:45–1:53."""
+
+    def html(self, at):
+        return " ".join(h.proto.body for h in at.get("html"))
+
+    def conversation(self, **result):
+        self.engine.result = result
+        at = self.search()
+        at.toggle(key=self.toggle_key(at)).set_value(True).run()
+        self.assertFalse(at.exception)
+        return at
+
+    def toggle_key(self, at):
+        return next(t.key for t in at.toggle if t.key.startswith("conv_"))
+
+    def button(self, at, prefix):
+        return next(b for b in at.button if b.key and b.key.startswith(prefix))
+
+    def turn_times(self, at):
+        return re.findall(r"<code>(\d+:\d\d)</code>", self.html(at))
+
+    def test_matched_by_label_for_each_kind(self):
+        for kind, label in (("words", "🔤 words"), ("meaning", "💡 meaning"), ("both", "🔤💡 words + meaning")):
+            self.engine.result = {"matched_by": kind}
+            at = self.search()
+            heading = " ".join(m.value for m in at.markdown)
+            self.assertIn(f"`1:04–1:11` · :gray[matched by {label}]", heading, kind)
+
+    def test_meaning_sentence_is_styled_and_escaped(self):
+        self.engine.result = {"matched_by": "meaning", "highlight": '<span class="meaning">why &lt;liberalism&gt; lasts</span>'}
+        at = self.search()
+        body = self.html(at)
+        self.assertIn('<span class="meaning">why &lt;liberalism&gt; lasts</span>', body)
+        self.assertIn(".meaning {", body)
+
+    def test_conversation_is_hidden_until_toggled(self):
+        at = self.search()
+        self.assertEqual(self.turn_times(at), [])
+        self.assertEqual(len(at.get("audio")), 1)
+
+    def test_conversation_shows_previous_matched_and_next_turn_with_clip_shaded(self):
+        at = self.conversation()
+        self.assertEqual(self.turn_times(at), ["0:48", "1:01", "1:45"])
+        body = self.html(at)
+        self.assertEqual(body.count('class="turn matched"'), 1)
+        self.assertIn('<span class="clip">', body)
+        shaded = body.split('<span class="clip">', 1)[1].split("</span>", 1)[0]
+        self.assertTrue(shaded.strip())
+        self.assertLess(len(shaded), len(body.split('class="turn matched"', 1)[1]))
+
+    def test_step_earlier_and_later_moves_the_window_one_turn(self):
+        at = self.conversation()
+        self.button(at, "later_").click().run()
+        self.assertEqual(self.turn_times(at), ["1:01", "1:45", "1:54"])
+        self.button(at, "earlier_").click().run()
+        self.button(at, "earlier_").click().run()
+        self.assertEqual(self.turn_times(at), ["0:46", "0:48", "1:01"])
+
+    def test_steps_stop_at_the_start_and_end_of_the_recording(self):
+        at = self.conversation(start_seconds=2.0, end_seconds=6.0, speaker_label="SPEAKER_01")
+        self.assertEqual(self.turn_times(at), ["0:00", "0:39"])
+        self.assertTrue(self.button(at, "earlier_").disabled)
+        self.assertFalse(self.button(at, "later_").disabled)
+
+        with open(self.golden.canonical_path(GOLDEN_FILE), encoding="utf-8") as f:
+            last = json.load(f)["turns"][-1]
+        at = self.conversation(start_seconds=last["start_seconds"], end_seconds=last["end_seconds"], speaker_label=last["speaker_label"])
+        self.assertEqual(len(self.turn_times(at)), 2)
+        self.assertTrue(self.button(at, "later_").disabled)
+
+    def test_play_exchange_adds_a_player_for_the_three_turns(self):
+        at = self.conversation()
+        self.assertEqual(len(at.get("audio")), 1)
+        play = self.button(at, "playbtn_")
+        self.assertIn("0:48–1:53", play.label)
+        play.click().run()
+        self.assertEqual(len(at.get("audio")), 2)
+        self.button(at, "later_").click().run()
+        self.assertEqual(len(at.get("audio")), 1)
+
+    def test_open_transcript_jumps_to_the_recording_at_the_clip_time(self):
+        at = self.conversation()
+        self.button(at, "jump_").click().run()
+        self.assertFalse(at.exception)
+        self.assertEqual(at.session_state["view"], "🎙️ Recordings")
+        self.assertEqual(at.session_state["workspace_name"], "Golden set")
+        self.assertEqual(at.session_state["selected"], f"{GOLDEN_FILE}.wav")
+        self.assertTrue(any("Opened from search at `1:04`" in m.value for m in at.markdown))
+        focused = [m.value for m in at.markdown if m.value.startswith("👉")]
+        self.assertEqual(len(focused), 1)
+        self.assertIn("`1:01`", focused[0])
+        self.assertTrue(any(a.proto.start_time == 64 for a in at.get("audio")))
+
+    def test_picking_another_recording_clears_the_jump(self):
+        at = self.conversation()
+        self.button(at, "jump_").click().run()
+        at.button(key=f"pick_Golden set_{GOLDEN_FILE}.wav").click().run()
+        self.assertFalse(any(m.value.startswith("👉") for m in at.markdown))
+
+    def test_query_mode_places_and_filters_survive_a_visit_to_recordings(self):
+        at = self.app(view="🔍 Search", search_uploads=True).run()
+        at.radio(key="search_mode").set_value("Keyword")
+        at.number_input(key="top_k").set_value(8)
+        at.multiselect(key="filter_speakers").select("Tyler Cowen")
+        at.text_input(key="query").input("constitution").run()
+        first = self.engine.calls[-1]
+
+        at.radio(key="view").set_value("🎙️ Recordings").run()
+        self.assertNotIn("Search conversations", [h.value for h in at.header])
+        at.radio(key="view").set_value("🔍 Search").run()
+
+        self.assertFalse(at.exception)
+        self.assertEqual(at.text_input(key="query").value, "constitution")
+        self.assertEqual(at.radio(key="search_mode").value, "Keyword")
+        self.assertTrue(at.checkbox(key="search_uploads").value)
+        self.assertEqual(at.number_input(key="top_k").value, 8)
+        self.assertEqual(at.multiselect(key="filter_speakers").value, ["Tyler Cowen"])
+        self.assertEqual(self.engine.calls[-1], first)
+
+    def test_filters_no_longer_offered_are_dropped(self):
+        at = self.app(view="🔍 Search", search_uploads=True).run()
+        at.multiselect(key="filter_recordings").select(2).run()
+        at.checkbox(key="search_uploads").uncheck()
+        at.text_input(key="query").input("constitution").run()
+        self.assertFalse(at.exception)
+        self.assertEqual(at.multiselect(key="filter_recordings").value, [])
+        self.assertEqual(self.engine.calls[-1]["filters"], SearchFilters())
 
 
 class TestUploadView(AppTestCase):

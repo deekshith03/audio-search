@@ -54,6 +54,14 @@ def blend(signals: Dict[str, Sequence[Optional[float]]], weights: Dict[str, floa
     return total
 
 
+def seed_index(window: Sequence[ScoredSentence], eligible: Set[int]) -> int:
+    """Position of the best-scoring sentence among the chunk's own (`eligible`) sentences."""
+    seeds = [i for i, s in enumerate(window) if s.id in eligible]
+    if not seeds:
+        raise ValueError("chunk has no sentences in the window")
+    return max(seeds, key=lambda i: (window[i].score, -i))
+
+
 def select_span(
     window: Sequence[ScoredSentence],
     eligible: Set[int],
@@ -66,10 +74,7 @@ def select_span(
 
     The seed must be one of the chunk's own sentences (`eligible` ids); growth may use neighbours.
     """
-    seeds = [i for i, s in enumerate(window) if s.id in eligible]
-    if not seeds:
-        raise ValueError("chunk has no sentences in the window")
-    best = max(seeds, key=lambda i: (window[i].score, -i))
+    best = seed_index(window, eligible)
     lo = hi = best
     threshold = extend_ratio * window[best].score
     while hi - lo + 1 < max_sentences:
@@ -116,11 +121,8 @@ def match_score(candidate: str, terms: Sequence[str]) -> float:
     return best
 
 
-def tighten_to_keywords(
-    words: Sequence[Tuple[str, float, float]], query: str, padding: float
-) -> Optional[Tuple[int, int]]:
-    """Inclusive word positions covering every query match plus `padding` seconds on each side,
-    snapped to word boundaries; None if nothing matches.
+def keyword_matches(words: Sequence[Tuple[str, float, float]], query: str) -> Set[int]:
+    """Positions of the words matching a query term, exactly or fuzzily.
 
     Candidate matches are runs of 1-3 words (so "PG Mustard" can match "pgMustard"); the best
     ones are taken greedily without overlap, exact before fuzzy and shorter before longer, so a
@@ -128,7 +130,7 @@ def tighten_to_keywords(
     """
     terms = query_terms(query)
     if not terms or not words:
-        return None
+        return set()
     tokens = [normalize_token(w[0]) for w in words]
     candidates = []
     for i in range(len(tokens)):
@@ -143,6 +145,15 @@ def tighten_to_keywords(
         span = set(range(i, i + n))
         if not span & taken:
             taken |= span
+    return taken
+
+
+def tighten_to_keywords(
+    words: Sequence[Tuple[str, float, float]], query: str, padding: float
+) -> Optional[Tuple[int, int]]:
+    """Inclusive word positions covering every keyword_matches() hit plus `padding` seconds on
+    each side, snapped to word boundaries; None if nothing matches."""
+    taken = keyword_matches(words, query)
     if not taken:
         return None
     window_start = words[min(taken)][1] - padding

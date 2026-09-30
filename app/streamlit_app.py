@@ -4,6 +4,7 @@ upload a two-speaker recording, let the pipeline transcribe, diarize and index i
 speaker. Run with:  uv run streamlit run app/streamlit_app.py
 """
 
+import html
 import json
 import os
 import re
@@ -32,6 +33,16 @@ WORKSPACES = {"Uploads": UPLOADS, "Golden set": GOLDEN_SET}
 VIEWS = ("🔍 Search", "🎙️ Recordings")
 SEARCH_MODES = {"Hybrid": "hybrid", "Keyword": "lexical", "Semantic": "dense"}
 CLIP_PADDING_SECONDS = 2.0
+SEARCH_DEFAULTS = {"query": "", "search_mode": "Hybrid", "search_golden": True, "search_uploads": False, "top_k": 5,
+                   "filter_recordings": [], "filter_speakers": []}
+KEPT_ACROSS_VIEWS = (*SEARCH_DEFAULTS, "workspace_name")
+MATCHED_BY_LABELS = {"words": "🔤 words", "meaning": "💡 meaning", "both": "🔤💡 words + meaning"}
+RESULT_STYLE = """<style>
+.meaning { text-decoration: underline dotted 2px; text-underline-offset: 3px; background: rgba(99, 150, 255, 0.14); }
+.clip { background: rgba(255, 196, 0, 0.28); border-radius: 3px; }
+.turn { margin: 0.25rem 0; }
+.turn.matched { border-left: 3px solid rgba(255, 196, 0, 0.9); padding-left: 0.5rem; }
+</style>"""
 DB_DOWN = "The search database is not reachable. Start it with `docker compose up -d db`."
 STAGE_LABELS = {
     "transcribing": "Transcribing speech",
@@ -69,6 +80,7 @@ def safe_filename(name: str) -> str:
 
 def select_file(file_id: str) -> None:
     st.session_state["selected"] = file_id
+    st.session_state.pop("transcript_focus", None)
 
 
 def render_sidebar() -> Workspace:
@@ -179,9 +191,15 @@ def render_failed(ws: Workspace, file_id: str, job: dict) -> None:
         st.rerun()
 
 
-def _load_canonical(ws: Workspace, file_id: str) -> dict:
-    with open(ws.canonical_path(file_base(file_id)), "r", encoding="utf-8") as f:
+@st.cache_data(max_entries=16, show_spinner=False)
+def _read_canonical(path: str, mtime: float) -> dict:
+    with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+def _load_canonical(ws: Workspace, file_id: str) -> dict:
+    path = ws.canonical_path(file_base(file_id))
+    return _read_canonical(path, os.path.getmtime(path))
 
 
 @st.cache_data(max_entries=64, show_spinner=False)
@@ -259,13 +277,35 @@ def render_flash() -> None:
         getattr(st, flash[0])(flash[1])
 
 
+def transcript_focus(file_id: str):
+    focus = st.session_state.get("transcript_focus")
+    return focus[1] if focus and focus[0] == file_id else None
+
+
+def turn_at(turns: list, seconds: float) -> int:
+    """The turn playing at `seconds`, else the last one that started before it."""
+    started = [i for i, t in enumerate(turns) if t["start_seconds"] <= seconds]
+    return next((i for i in started if seconds < turns[i]["end_seconds"]), started[-1] if started else 0)
+
+
+def render_jump(ws: Workspace, file_id: str, seconds: float) -> None:
+    wav_path = os.path.join(ws.audio_dir, file_id)
+    with st.container(border=True):
+        st.markdown(f"**Opened from search at `{mmss(seconds)}`** · the turn is marked 👉 in the transcript below.")
+        if os.path.exists(wav_path):
+            st.audio(wav_path, format="audio/wav", start_time=int(seconds))
+
+
 def render_transcript(ws: Workspace, file_id: str) -> None:
     canonical = _load_canonical(ws, file_id)
     labels_doc = load_labels(ws, file_id)
-    with st.expander("Transcript", expanded=bool(labels_doc)):
-        for t in canonical["turns"]:
+    focus = transcript_focus(file_id)
+    focused = turn_at(canonical["turns"], focus) if focus is not None else None
+    with st.expander("Transcript", expanded=bool(labels_doc) or focus is not None):
+        for i, t in enumerate(canonical["turns"]):
             name = speaker_name(labels_doc, t["speaker_label"])
-            st.markdown(f"`{mmss(t['start_seconds'])}` **{name}:** {t['text']}")
+            line = f"`{mmss(t['start_seconds'])}` **{name}:** {t['text']}"
+            st.markdown(f"👉 :orange-background[{line}]" if i == focused else line)
 
 
 def render_file(ws: Workspace, file_id: str) -> None:
@@ -279,6 +319,9 @@ def render_file(ws: Workspace, file_id: str) -> None:
 
     render_status_caption(status, job)
     render_flash()
+    focus = transcript_focus(file_id)
+    if focus is not None and status in jobs.DONE_STATUSES:
+        render_jump(ws, file_id, focus)
     if status == "failed":
         render_failed(ws, file_id, job)
     elif status in jobs.DONE_STATUSES:
@@ -303,6 +346,10 @@ def workspace_at(root: str) -> Workspace:
     return next(ws for ws in WORKSPACES.values() if ws.root == root)
 
 
+def workspace_name_at(root: str) -> str:
+    return next(name for name, ws in WORKSPACES.items() if ws.root == root)
+
+
 def recording_names(rows: list) -> dict:
     """(workspace, file_id) → the name people know the recording by: the uploaded filename, else the file id."""
     uploaded = {}
@@ -322,14 +369,102 @@ def filter_options(rows: list, names: dict) -> tuple:
     return recordings, speakers
 
 
+def matched_turn(turns: list, r: dict) -> int:
+    """The turn the clip came from: the most overlap, then the result's speaker."""
+    def overlap(t):
+        return min(t["end_seconds"], r["end_seconds"]) - max(t["start_seconds"], r["start_seconds"])
+    return max(range(len(turns)), key=lambda i: (overlap(turns[i]), turns[i]["speaker_label"] == r["speaker_label"], -i))
+
+
+def conversation_window(n_turns: int, center: int) -> tuple:
+    """Inclusive turn range around `center`: the previous, matched and next turn, clamped to the recording."""
+    center = min(max(center, 0), n_turns - 1)
+    return max(center - 1, 0), min(center + 1, n_turns - 1)
+
+
+def turn_html(turn: dict, name: str, clip: tuple = None) -> str:
+    """One transcript line; words overlapping `clip` (start, end) are shaded."""
+    if clip and turn.get("words"):
+        pieces, open_ = [], False
+        for w in turn["words"]:
+            inside = w["start_seconds"] < clip[1] and clip[0] < w["end_seconds"]
+            if inside != open_:
+                pieces.append('<span class="clip">' if inside else "</span>")
+                open_ = inside
+            pieces.append(html.escape(w["word"]) + " ")
+        text = "".join(pieces).rstrip() + ("</span>" if open_ else "")
+    else:
+        text = html.escape(turn["text"])
+    css = "turn matched" if clip else "turn"
+    return f'<p class="{css}"><code>{mmss(turn["start_seconds"])}</code> <b>{html.escape(name)}:</b> {text}</p>'
+
+
+def result_key(r: dict) -> str:
+    return f"{r['workspace']}|{r['file_id']}|{r['start_seconds']}"
+
+
+def step_conversation(key: str, delta: int) -> None:
+    st.session_state[f"ctx_{key}"] = st.session_state.get(f"ctx_{key}", 0) + delta
+    st.session_state.pop(f"play_{key}", None)
+
+
+def open_transcript(root: str, file_id: str, seconds: float) -> None:
+    st.session_state["view"] = VIEWS[1]
+    st.session_state["workspace_name"] = workspace_name_at(root)
+    st.session_state["selected"] = file_id
+    st.session_state["transcript_focus"] = (file_id, seconds)
+
+
+def render_conversation(r: dict, ws: Workspace, wav_path: str, key: str) -> None:
+    canonical = _load_canonical(ws, r["file_id"])
+    turns, labels_doc = canonical["turns"], load_labels(ws, r["file_id"])
+    matched = matched_turn(turns, r)
+    lo, hi = conversation_window(len(turns), matched + st.session_state.get(f"ctx_{key}", 0))
+    st.html(RESULT_STYLE + "".join(
+        turn_html(turns[i], speaker_name(labels_doc, turns[i]["speaker_label"]),
+                  (r["start_seconds"], r["end_seconds"]) if i == matched else None)
+        for i in range(lo, hi + 1)
+    ))
+    start, end = turns[lo]["start_seconds"], turns[hi]["end_seconds"]
+    earlier, play, later, jump = st.columns([1, 2, 1, 2])
+    earlier.button("◀ Earlier", key=f"earlier_{key}", on_click=step_conversation, args=(key, -1), disabled=lo == 0, width="stretch")
+    if play.button(f"▶ Play exchange {mmss(start)}–{mmss(end)}", key=f"playbtn_{key}", width="stretch"):
+        st.session_state[f"play_{key}"] = (lo, hi)
+    later.button("Later ▶", key=f"later_{key}", on_click=step_conversation, args=(key, 1), disabled=hi == len(turns) - 1, width="stretch")
+    jump.button(f"Open transcript at {mmss(r['start_seconds'])}", key=f"jump_{key}", on_click=open_transcript,
+                args=(r["workspace"], r["file_id"], r["start_seconds"]), width="stretch")
+    if st.session_state.get(f"play_{key}") == (lo, hi) and os.path.exists(wav_path):
+        st.audio(clip_bytes(wav_path, start, end, os.path.getmtime(wav_path)), format="audio/wav", autoplay=True)
+
+
 def render_result(r: dict, name: str) -> None:
-    wav_path = os.path.join(workspace_at(r["workspace"]).audio_dir, r["file_id"])
+    ws = workspace_at(r["workspace"])
+    wav_path = os.path.join(ws.audio_dir, r["file_id"])
+    key = result_key(r)
     with st.container(border=True):
-        st.markdown(f"**{r['rank']}. {name}** · {r['speaker']} · `{mmss(r['start_seconds'])}–{mmss(r['end_seconds'])}`")
-        st.html(f"<p>{r['highlight']}</p>")
+        badge = f" · :gray[matched by {MATCHED_BY_LABELS[r['matched_by']]}]" if r.get("matched_by") else ""
+        st.markdown(f"**{r['rank']}. {name}** · {r['speaker']} · `{mmss(r['start_seconds'])}–{mmss(r['end_seconds'])}`{badge}")
+        st.html(f"{RESULT_STYLE}<p>{r['highlight']}</p>")
         if os.path.exists(wav_path):
             clip = clip_bytes(wav_path, r["start_seconds"], r["end_seconds"] + CLIP_PADDING_SECONDS, os.path.getmtime(wav_path))
             st.audio(clip, format="audio/wav")
+        if os.path.exists(ws.canonical_path(file_base(r["file_id"]))) and st.toggle("Show in conversation", key=f"conv_{key}"):
+            render_conversation(r, ws, wav_path, key)
+
+
+def keep_available(key: str, options) -> None:
+    """Drops remembered filter choices that are no longer offered (e.g. after unticking a workspace)."""
+    st.session_state[key] = [v for v in st.session_state.get(key, []) if v in options]
+
+
+def keep_search_state() -> None:
+    """Streamlit forgets a widget's value on any run that does not draw it, so the Search widgets
+    would reset after a visit to Recordings; re-assigning each key makes it survive that run."""
+    for key, default in SEARCH_DEFAULTS.items():
+        st.session_state.setdefault(key, default)
+    for key in KEPT_ACROSS_VIEWS:
+        if key in st.session_state:
+            st.session_state[key] = st.session_state[key]
 
 
 def render_search() -> None:
@@ -339,9 +474,9 @@ def render_search() -> None:
     mode = left.radio("Mode", list(SEARCH_MODES), horizontal=True, key="search_mode")
     with middle:
         st.caption("Search in")
-        in_golden = st.checkbox("Golden set", value=True, key="search_golden")
-        in_uploads = st.checkbox("Uploads", value=False, key="search_uploads")
-    top_k = right.number_input("Results", min_value=1, max_value=20, value=5, key="top_k")
+        in_golden = st.checkbox("Golden set", key="search_golden")
+        in_uploads = st.checkbox("Uploads", key="search_uploads")
+    top_k = right.number_input("Results", min_value=1, max_value=20, key="top_k")
     roots = [ws.root for ws, on in ((GOLDEN_SET, in_golden), (UPLOADS, in_uploads)) if on]
     if not roots:
         st.info("Choose at least one place to search.")
@@ -360,6 +495,8 @@ def render_search() -> None:
 
     names = recording_names(rows)
     recordings, speakers = filter_options(rows, names)
+    keep_available("filter_recordings", recordings)
+    keep_available("filter_speakers", speakers)
     with st.expander("Filters"):
         picked_files = st.multiselect("Recording", list(recordings), format_func=recordings.get, key="filter_recordings")
         picked_speakers = st.multiselect("Speaker", sorted(speakers), key="filter_speakers")
@@ -388,6 +525,7 @@ def render_search() -> None:
 def main() -> None:
     st.set_page_config(page_title="Audio Search", page_icon="🎙️", layout="wide")
     st.sidebar.title("🎙️ Audio Search")
+    keep_search_state()
     if st.sidebar.radio("View", VIEWS, horizontal=True, key="view", label_visibility="collapsed") == VIEWS[0]:
         render_search()
         return
