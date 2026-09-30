@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from evals import evaluate_recall
 from evals.metrics import evaluate_retrieval, result_matches_moment
-from evals.qrels import ANY_OF_CATEGORIES, CATEGORIES, EXPECTED_BREAKDOWN, ONE_TIME_RESULTS, SPLIT_PATHS, load_qrels
+from evals.qrels import ANY_OF_CATEGORIES, CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, ONE_TIME_RESULTS, RETIRED_SPLIT_PATHS, SPLIT_PATHS, load_qrels
 from evals.validate_dataset_integrity import validate_all
 
 
@@ -22,23 +22,25 @@ class TestQrelsModule(unittest.TestCase):
             queries = load_qrels(split)["queries"]
             counts = {c: sum(q["category"] == c for q in queries) for c in CATEGORIES}
             self.assertEqual(counts, EXPECTED_BREAKDOWN[split])
-        self.assertEqual({s: sum(EXPECTED_BREAKDOWN[s].values()) for s in ("dev", "test", "holdout")}, {"dev": 73, "test": 21, "holdout": 9})
+        self.assertEqual({s: sum(EXPECTED_BREAKDOWN[s].values()) for s in ("dev", "test", "test2")}, {"dev": 73, "test": 21, "test2": 40})
 
-    def test_holdout_is_a_one_time_split(self):
-        self.assertIn("holdout", SPLIT_PATHS)
-        self.assertEqual(set(ONE_TIME_RESULTS), {"holdout"})
+    def test_test2_is_the_one_time_split_and_holdout_is_retired(self):
+        self.assertIn("test2", SPLIT_PATHS)
+        self.assertNotIn("holdout", SPLIT_PATHS)
+        self.assertTrue(os.path.exists(RETIRED_SPLIT_PATHS["holdout"]))
+        self.assertEqual(set(ONE_TIME_RESULTS), {"test2"})
 
     def test_rerun_of_one_time_split_is_refused_unless_forced(self):
         with tempfile.TemporaryDirectory() as tmp:
-            path = os.path.join(tmp, "final_holdout.json")
-            with patch.dict(evaluate_recall.ONE_TIME_RESULTS, {"holdout": path}):
-                evaluate_recall.refuse_rerun("holdout", force=False)
-                evaluate_recall.save_one_time_result("holdout", {"hybrid": {"micro_r5": 0.5}}, {})
+            path = os.path.join(tmp, "final_test2.json")
+            with patch.dict(evaluate_recall.ONE_TIME_RESULTS, {"test2": path}):
+                evaluate_recall.refuse_rerun("test2", force=False)
+                evaluate_recall.save_one_time_result("test2", {"hybrid": {"micro_r5": 0.5}}, {})
                 with open(path) as f:
                     self.assertEqual(json.load(f)["report"]["hybrid"]["micro_r5"], 0.5)
                 with self.assertRaises(SystemExit):
-                    evaluate_recall.refuse_rerun("holdout", force=False)
-                evaluate_recall.refuse_rerun("holdout", force=True)
+                    evaluate_recall.refuse_rerun("test2", force=False)
+                evaluate_recall.refuse_rerun("test2", force=True)
                 evaluate_recall.refuse_rerun("dev", force=False)
 
     def test_unknown_split_is_rejected(self):
@@ -49,7 +51,7 @@ class TestQrelsModule(unittest.TestCase):
         for split in SPLIT_PATHS:
             for q in load_qrels(split)["queries"]:
                 if q["category"] == "short_keyword":
-                    self.assertLessEqual(len(q["query"].split()), 2, q["query_id"])
+                    self.assertLessEqual(len(q["query"].split()), MAX_SHORT_KEYWORD_WORDS, q["query_id"])
 
     def test_default_split_is_dev(self):
         self.assertEqual(evaluate_recall.run_benchmark.__defaults__[0], "dev")

@@ -14,10 +14,10 @@ Strictly proves:
 3. Benchmark Queries (Qrels), for each split (dev, test):
    - Query counts per category match EXPECTED_BREAKDOWN (evals/qrels.py).
    - short_keyword queries have at most two words.
-   - dev, test and holdout reference pairwise disjoint (file_id, turn_id) pairs, including hard negatives,
-     except that a dev moment's `alternatives` (equally good answers) may sit on test turns: the test
-     split was spent before they were added, and test numbers after that are post-hoc anyway.
-     No split may touch a holdout turn.
+   - dev and the old test split share no answer or distractor turn (dev `alternatives` may sit on
+     test turns). test2 may share turns with any split: its queries were written after all tuning
+     and no query was ever tuned on, so the right answer wins over turn bookkeeping.
+   - short_keyword answers are labeled at phrase level: at least MIN_KEYWORD_LABEL_SECONDS long.
    - All query IDs are unique.
    - target_file_count strictly equals len(unique_files).
    - Every relevant moment points to an existing file_id and turn_id.
@@ -34,12 +34,13 @@ import wave
 import math
 
 try:
-    from qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, SPLIT_PATHS
+    from qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, MIN_KEYWORD_LABEL_SECONDS, ONE_TIME_RESULTS, SPLIT_PATHS
 except ImportError:
-    from evals.qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, SPLIT_PATHS
+    from evals.qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, MIN_KEYWORD_LABEL_SECONDS, ONE_TIME_RESULTS, SPLIT_PATHS
 
 
-DEV_TEST_ALTERNATIVES_ALLOWED = {"dev", "test"}
+TUNING_SPLIT = "dev"
+TURN_SHARING_ALLOWED = {frozenset({"test", "test2"}), frozenset({"dev", "test2"})}
 
 
 def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
@@ -128,6 +129,8 @@ def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
             if met <= mst:
                 errors.append(f"[{split}] {qid}: Non-positive moment interval [{mst}, {met}]")
                 continue
+            if category == "short_keyword" and not is_alternative and met - mst < MIN_KEYWORD_LABEL_SECONDS:
+                errors.append(f"[{split}] {qid}: keyword label is {met - mst:.2f}s; label the phrase around the term (>= {MIN_KEYWORD_LABEL_SECONDS}s)")
 
             # Check interval containment: moment must sit within turn boundaries
             if mst < ref_st - 0.05 or met > ref_et + 0.05:
@@ -298,14 +301,18 @@ def validate_all():
     any_shared = False
     for i, a in enumerate(splits):
         for b in splits[i + 1:]:
+            if frozenset({a, b}) in TURN_SHARING_ALLOWED:
+                continue
             shared = used_by_split[a] & used_by_split[b]
-            if {a, b} != DEV_TEST_ALTERNATIVES_ALLOWED:
-                shared |= (alternatives_by_split[a] & (used_by_split[b] | alternatives_by_split[b])) | (used_by_split[a] & alternatives_by_split[b])
+            if TUNING_SPLIT in (a, b):
+                other = b if a == TUNING_SPLIT else a
+                if other in ONE_TIME_RESULTS:
+                    shared |= alternatives_by_split[TUNING_SPLIT] & used_by_split[other]
             for fid, tid in sorted(shared):
                 any_shared = True
                 errors.append(f"{a} and {b} both reference {fid} turn {tid}; splits must use disjoint turns")
     if not any_shared:
-        print(f"✓ {', '.join(splits)} splits reference disjoint turns (dev alternatives may sit on test turns).")
+        print(f"✓ {', '.join(splits)}: dev shares no answer or distractor turn with the old test split.")
 
     if errors:
         print(f"\n❌ FOUND {len(errors)} INTEGRITY ERRORS:")
