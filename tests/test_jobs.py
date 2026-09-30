@@ -4,7 +4,9 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 
 from src.pipeline import jobs
@@ -92,6 +94,60 @@ class TestRunJob(JobTestCase):
 
 
 class TestJobState(JobTestCase):
+
+    def age_job(self, seconds):
+        """Moves the job's last update and any heartbeat `seconds` into the past."""
+        path = jobs.job_path(self.ws, "upload_abc.wav")
+        with open(path) as f:
+            job = json.load(f)
+        past = datetime.now(timezone.utc) - timedelta(seconds=seconds)
+        job["updated_at"] = past.isoformat(timespec="seconds")
+        with open(path, "w") as f:
+            json.dump(job, f)
+        beat = jobs.heartbeat_path(self.ws, "upload_abc.wav")
+        if os.path.exists(beat):
+            os.utime(beat, (past.timestamp(), past.timestamp()))
+
+    def test_live_pid_without_a_recent_heartbeat_is_marked_failed(self):
+        jobs._update(self.ws, "upload_abc.wav", status="diarizing", worker_pid=os.getpid(), launched_at=jobs._now())
+        self.age_job(jobs.STALE_SECONDS + 5)
+        job = jobs.load_job(self.ws, "upload_abc.wav")
+        self.assertEqual(job["status"], "failed")
+        self.assertIn("stopped unexpectedly", job["error"])
+
+    def test_recent_heartbeat_keeps_a_long_stage_alive(self):
+        jobs._update(self.ws, "upload_abc.wav", status="diarizing", worker_pid=os.getpid(), launched_at=jobs._now())
+        self.age_job(jobs.STALE_SECONDS * 5)
+        os.makedirs(self.ws.jobs_dir, exist_ok=True)
+        open(jobs.heartbeat_path(self.ws, "upload_abc.wav"), "w").close()
+        self.assertEqual(jobs.load_job(self.ws, "upload_abc.wav")["status"], "diarizing")
+
+    def test_queued_job_whose_worker_never_started_is_marked_failed(self):
+        jobs._update(self.ws, "upload_abc.wav", status="queued", worker_pid=None, launched_at=jobs._now())
+        self.assertEqual(jobs.load_job(self.ws, "upload_abc.wav")["status"], "queued")
+        self.age_job(jobs.STALE_SECONDS + 5)
+        self.assertEqual(jobs.load_job(self.ws, "upload_abc.wav")["status"], "failed")
+
+    def test_job_created_but_never_launched_is_launched(self):
+        with patch.object(jobs.subprocess, "Popen", return_value=MagicMock(pid=os.getpid())) as popen:
+            job = jobs.launch_worker(self.ws, "upload_abc.wav")
+        self.assertEqual(popen.call_count, 1)
+        self.assertTrue(job["launched_at"])
+
+    def test_retry_clears_the_previous_attempts_stages(self):
+        jobs.run_job(self.ws, "upload_abc.wav", build_command=failing_at("src.pipeline.diarize"))
+        self.assertIn("diarizing", jobs.load_job(self.ws, "upload_abc.wav")["stages"])
+        with patch.object(jobs.subprocess, "Popen", return_value=MagicMock(pid=os.getpid())):
+            job = jobs.launch_worker(self.ws, "upload_abc.wav")
+        self.assertEqual((job["status"], job["stages"], job["error"]), ("queued", {}, None))
+        self.assertFalse(os.path.exists(jobs.heartbeat_path(self.ws, "upload_abc.wav")))
+
+    def test_worker_writes_a_heartbeat_and_stops_beating_when_done(self):
+        job = jobs.run_job(self.ws, "upload_abc.wav", build_command=ok_command)
+        self.assertEqual(job["status"], "awaiting_labels")
+        beat = jobs.heartbeat_path(self.ws, "upload_abc.wav")
+        self.assertTrue(os.path.exists(beat))
+        self.assertFalse(any(t.name == "heartbeat-upload_abc.wav" for t in threading.enumerate()))
 
     def test_create_job_records_upload_metadata(self):
         job = jobs.load_job(self.ws, "upload_abc.wav")

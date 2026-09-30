@@ -113,6 +113,17 @@ class TestBootstrapSuccess(BootstrapTestCase):
         self.assertFalse(bootstrap_models.already_bootstrapped())
         self.assertEqual(bootstrap_models.expected_marker()["embedding"], "google/embeddinggemma-300m")
 
+    def test_model_cache_dir_from_env_file_is_used_for_checking_the_marker(self):
+        cache = os.path.join(self.tmp.name, "from_env_file")
+        os.makedirs(cache)
+        with open(os.path.join(cache, ".bootstrap.json"), "w") as f:
+            json.dump(bootstrap_models.expected_marker(), f)
+        del os.environ["MODEL_CACHE_DIR"]
+        with patch.object(bootstrap_models, "load_env_file", lambda *a, **k: os.environ.setdefault("MODEL_CACHE_DIR", cache)), \
+                patch.object(bootstrap_models, "download_asr") as asr:
+            bootstrap_models.main()
+        asr.assert_not_called()
+
     def test_marker_lives_in_model_cache_dir(self):
         self.assertEqual(bootstrap_models.marker_path(), os.path.join(self.tmp.name, ".bootstrap.json"))
 

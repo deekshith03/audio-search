@@ -234,6 +234,15 @@ class TestSearchResultCard(SearchTestCase):
         self.assertEqual(len(self.turn_times(at)), 2)
         self.assertTrue(self.button(at, "later_").disabled)
 
+    def test_stepping_away_from_the_first_turn_can_step_back(self):
+        at = self.conversation(start_seconds=2.0, end_seconds=6.0, speaker_label="SPEAKER_01")
+        self.button(at, "later_").click().run()
+        self.assertEqual(self.turn_times(at), ["0:00", "0:39", "0:41"])
+        self.assertFalse(self.button(at, "earlier_").disabled)
+        self.button(at, "earlier_").click().run()
+        self.assertEqual(self.turn_times(at), ["0:00", "0:39"])
+        self.assertTrue(self.button(at, "earlier_").disabled)
+
     def test_play_exchange_adds_a_player_for_the_three_turns(self):
         at = self.conversation()
         self.assertEqual(len(at.get("audio")), 1)
@@ -252,16 +261,17 @@ class TestSearchResultCard(SearchTestCase):
         self.assertEqual(at.session_state["workspace_name"], "Golden set")
         self.assertEqual(at.session_state["selected"], f"{GOLDEN_FILE}.wav")
         self.assertTrue(any("Opened from search at `1:04`" in m.value for m in at.markdown))
-        focused = [m.value for m in at.markdown if m.value.startswith("👉")]
+        focused = re.findall(r'<p class="turn focused">(.*?)</p>', self.html(at))
         self.assertEqual(len(focused), 1)
-        self.assertIn("`1:01`", focused[0])
+        self.assertTrue(focused[0].startswith("👉 <code>1:01</code>"), focused[0])
         self.assertTrue(any(a.proto.start_time == 64 for a in at.get("audio")))
 
     def test_picking_another_recording_clears_the_jump(self):
         at = self.conversation()
         self.button(at, "jump_").click().run()
         at.button(key=f"pick_Golden set_{GOLDEN_FILE}.wav").click().run()
-        self.assertFalse(any(m.value.startswith("👉") for m in at.markdown))
+        self.assertNotIn('class="turn focused"', self.html(at))
+        self.assertFalse(any("Opened from search" in m.value for m in at.markdown))
 
     def test_query_mode_places_and_filters_survive_a_visit_to_recordings(self):
         at = self.app(view="🔍 Search", search_uploads=True).run()
@@ -358,6 +368,30 @@ class TestLabelingView(AppTestCase):
         next(b for b in at.button if b.label == "⇄ Swap names").click().run()
         self.assertEqual(at.text_input(key=self.name_key("SPEAKER_00")).value, "B")
         self.assertEqual(at.text_input(key=self.name_key("SPEAKER_01")).value, "A")
+
+    def test_swap_with_a_single_speaker_shows_an_error_instead_of_crashing(self):
+        path = self.golden.canonical_path(GOLDEN_FILE)
+        with open(path, encoding="utf-8") as f:
+            doc = json.load(f)
+        doc["speaker_labels"] = ["SPEAKER_00"]
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(doc, f)
+        at = self.open_golden()
+        next(b for b in at.button if b.label == "⇄ Swap names").click().run()
+        self.assertFalse(at.exception)
+        self.assertTrue(any("two speakers" in e.value for e in at.error))
+
+    def test_transcript_text_is_shown_literally(self):
+        path = self.golden.canonical_path(GOLDEN_FILE)
+        with open(path, encoding="utf-8") as f:
+            doc = json.load(f)
+        doc["turns"][0]["text"] = "It costs $10 or $13 [roughly] <b>per</b> **megawatt**"
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(doc, f)
+        at = self.open_golden()
+        body = " ".join(h.proto.body for h in at.get("html"))
+        self.assertIn("It costs $10 or $13 [roughly] &lt;b&gt;per&lt;/b&gt; **megawatt**", body)
+        self.assertFalse(any("$10" in m.value for m in at.markdown))
 
 
 class TestJobViews(AppTestCase):

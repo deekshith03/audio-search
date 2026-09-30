@@ -12,10 +12,13 @@ services:
       MAX_DURATION_SECONDS: ${MAX_DURATION_SECONDS:-600}
       DATABASE_URL: postgresql://${POSTGRES_USER:-audio}:${POSTGRES_PASSWORD:-audio}@db:5432/${POSTGRES_DB:-audio_search}
     ports:
-      - "${APP_PORT:-8501}:8501"
+      # Local only by default (the app has no login); APP_BIND=0.0.0.0 shares it on the network.
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-8501}:8501"
     volumes:
       - models:/models
       - app_data:/app/data
+      # Golden-set speaker names typed in the app survive a rebuild; seeded from the image on first use.
+      - golden_labels:/app/dataset/speaker_labels
     depends_on:
       db:
         condition: service_healthy
@@ -41,4 +44,5 @@ services:
 volumes:
   models:
   app_data:
+  golden_labels:
   pgdata:

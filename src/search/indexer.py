@@ -73,7 +73,10 @@ class Indexer:
 
     def index_all(self, paths: Sequence[str], force: bool = False, prune: bool = False) -> List[Dict[str, Any]]:
         stats = [self.index_file(p, force=force) for p in paths]
-        if prune:
+        if prune and not stats:
+            print(f"No transcripts found under {self.workspace.output_dir}; not pruning, so a missing or"
+                  " unmounted folder cannot empty the index.", file=sys.stderr)
+        elif prune:
             self.prune({s["file_id"] for s in stats})
         self.ensure_hnsw_indexes()
         self.compact_bm25_index()

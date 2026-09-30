@@ -61,6 +61,19 @@ class TestInterpolateUntimedWords(unittest.TestCase):
         for w in words[1:3]:
             self.assertAlmostEqual(w["end_seconds"] - w["start_seconds"], MIN_INTERPOLATED_WORD_SECONDS, places=3)
 
+    def test_word_starts_never_go_backwards_even_in_a_tiny_gap(self):
+        for gap in (0.0, 0.03, 0.2):
+            words, _ = interpolate_untimed_words(
+                [timed("a", 1.0, 2.0), untimed("x"), untimed("y"), untimed("z"), timed("b", 2.0 + gap, 2.5)], 0.0, 5.0
+            )
+            starts = [w["start_seconds"] for w in words]
+            self.assertEqual(starts, sorted(starts), gap)
+            self.assertLessEqual(words[3]["start_seconds"], words[4]["start_seconds"], gap)
+
+    def test_trailing_words_in_a_zero_gap_share_its_start(self):
+        words, _ = interpolate_untimed_words([timed("a", 1.0, 2.0), untimed("x"), untimed("y")], 0.0, 2.0)
+        self.assertEqual([(w["start_seconds"], w["end_seconds"]) for w in words[1:]], [(2.0, 2.05), (2.0, 2.05)])
+
     def test_word_with_only_start_is_treated_as_untimed(self):
         words, n = interpolate_untimed_words([{"word": "x", "start": 1.0}], 0.0, 2.0)
         self.assertEqual(n, 1)

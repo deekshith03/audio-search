@@ -66,7 +66,9 @@ def interpolate_untimed_words(
     """
     Converts WhisperX word dicts into the canonical word schema. Each run of consecutive untimed
     words is spread evenly between the previous timed word's end and the next timed word's start
-    (segment bounds at the edges). Returns (words, number_of_interpolated_words).
+    (segment bounds at the edges). Starts stay inside that gap so word order never goes backwards;
+    each word still lasts at least MIN_INTERPOLATED_WORD_SECONDS, so in a gap too small for that
+    its end may reach into the next word. Returns (words, number_of_interpolated_words).
     """
     out: List[Dict[str, Any]] = []
     interpolated = 0
@@ -92,14 +94,14 @@ def interpolate_untimed_words(
 
         gap_start = out[-1]["end_seconds"] if out else seg_start
         gap_end = float(words[run_end]["start"]) if run_end < len(words) else seg_end
-        gap_end = max(gap_end, gap_start + MIN_INTERPOLATED_WORD_SECONDS * len(run))
-        step = (gap_end - gap_start) / len(run)
+        step = max(gap_end - gap_start, 0.0) / len(run)
+        duration = max(step, MIN_INTERPOLATED_WORD_SECONDS)
 
         for k, uw in enumerate(run):
             out.append({
                 "word": uw.get("word", "").strip(),
                 "start_seconds": round(gap_start + k * step, 3),
-                "end_seconds": round(gap_start + (k + 1) * step, 3),
+                "end_seconds": round(gap_start + k * step + duration, 3),
                 "confidence": None,
                 "timing_source": "interpolated_fallback",
             })

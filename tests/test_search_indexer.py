@@ -208,6 +208,19 @@ class TestIndexer(ThrowawayDatabaseTestCase):
         self.assertEqual(self.scalar("SELECT count(*) FROM files"), 1)
         self.assertEqual(self.scalar("SELECT count(DISTINCT file_pk) FROM chunks"), 1)
 
+    def test_prune_with_no_transcripts_found_keeps_the_index(self):
+        self.indexer().index_all(self.paths())
+        for p in self.paths():
+            os.remove(p)
+        self.assertEqual(self.indexer().index_all(self.paths(), prune=True), [])
+        self.assertEqual(self.scalar("SELECT count(*) FROM files"), len(SAMPLE_FILES))
+
+    def test_workspace_spelled_with_a_trailing_slash_is_the_same_workspace(self):
+        self.indexer().index_all(self.paths())
+        Indexer(self.conn, Workspace(self.tmp + "/")).index_all(canonical_paths(Workspace(self.tmp + "/")), prune=True)
+        self.assertEqual(self.scalar("SELECT count(DISTINCT workspace) FROM files"), 1)
+        self.assertEqual(self.scalar("SELECT count(*) FROM files"), len(SAMPLE_FILES))
+
     def test_workspaces_are_independent(self):
         self.indexer().index_all(self.paths())
         other_root = tempfile.mkdtemp()

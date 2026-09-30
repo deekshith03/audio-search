@@ -10,8 +10,12 @@ the golden set), so re-uploading the same recording reuses its results.
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
+import tempfile
+import uuid
+import wave
 from dataclasses import asdict, dataclass
 from typing import Optional
 
@@ -66,16 +70,28 @@ def probe(path: str) -> dict:
         raise IngestError("File contains no audio stream.")
 
     stream = audio_streams[0]
+    # Streamed containers (e.g. browser-recorded WebM) often carry no duration; it is then taken
+    # from the converted WAV instead.
     duration = stream.get("duration") or info.get("format", {}).get("duration")
-    if duration is None:
-        raise IngestError("Could not determine audio duration.")
     return {
         "format": info.get("format", {}).get("format_name", "unknown"),
         "codec": stream.get("codec_name", "unknown"),
         "sample_rate": int(stream.get("sample_rate", 0) or 0),
         "channels": int(stream.get("channels", 0) or 0),
-        "duration": float(duration),
+        "duration": float(duration) if duration not in (None, "N/A") else None,
     }
+
+
+def check_duration(duration: float, max_duration: float = MAX_DURATION_SECONDS, min_duration: float = MIN_DURATION_SECONDS) -> None:
+    if duration > max_duration:
+        raise IngestError(f"Audio too long ({format_duration(duration)} > {format_duration(max_duration)}).")
+    if duration < min_duration:
+        raise IngestError(f"Audio too short ({duration:.1f}s < {min_duration:.0f}s).")
+
+
+def wav_duration(path: str) -> float:
+    with wave.open(path, "rb") as w:
+        return w.getnframes() / float(w.getframerate())
 
 
 def validate_upload(path: str, max_duration: float = MAX_DURATION_SECONDS, min_duration: float = MIN_DURATION_SECONDS) -> dict:
@@ -88,20 +104,24 @@ def validate_upload(path: str, max_duration: float = MAX_DURATION_SECONDS, min_d
         raise IngestError("File is empty.")
 
     info = probe(path)
-    if info["duration"] > max_duration:
-        raise IngestError(f"Audio too long ({format_duration(info['duration'])} > {format_duration(max_duration)}).")
-    if info["duration"] < min_duration:
-        raise IngestError(f"Audio too short ({info['duration']:.1f}s < {min_duration:.0f}s).")
+    if info["duration"] is not None:
+        check_duration(info["duration"], max_duration, min_duration)
     return info
 
 
-def normalize_to_wav(src_path: str, dst_path: str) -> None:
-    os.makedirs(os.path.dirname(dst_path) or ".", exist_ok=True)
-    tmp_path = f"{dst_path}.tmp.wav"
+def normalize_to_wav(src_path: str, dst_path: str, max_seconds: Optional[float] = None) -> None:
+    """Decodes to 16 kHz mono PCM16 through a uniquely named temp file; `max_seconds` caps how much
+    is decoded, so a file whose container understates its length cannot run past the limit."""
+    directory = os.path.dirname(dst_path) or "."
+    os.makedirs(directory, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(dir=directory, prefix=f".{os.path.basename(dst_path)}.", suffix=".tmp.wav")
+    os.close(fd)
+    limit = ["-t", f"{max_seconds:.3f}"] if max_seconds else []
     proc = subprocess.run(
         [
             "ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-y",
             "-i", src_path,
+            *limit,
             "-map", "0:a:0", "-vn",
             "-ac", "1", "-ar", str(TARGET_SAMPLE_RATE), "-sample_fmt", "s16", "-c:a", "pcm_s16le",
             tmp_path,
@@ -134,8 +154,17 @@ def ingest(
         with open(meta_path, "r", encoding="utf-8") as f:
             reused = json.load(f).get("source_sha256") == source_sha
 
-    if not reused:
-        normalize_to_wav(src_path, wav_path)
+    if reused:
+        with open(meta_path, "r", encoding="utf-8") as f:
+            duration = float(json.load(f)["duration_seconds"])
+    else:
+        normalize_to_wav(src_path, wav_path, max_seconds=max_duration + 1.0)
+        duration = wav_duration(wav_path)
+        try:
+            check_duration(duration, max_duration)
+        except IngestError:
+            os.remove(wav_path)
+            raise
 
     result = IngestResult(
         file_id=file_id,
@@ -146,12 +175,30 @@ def ingest(
         source_codec=info["codec"],
         source_sample_rate=info["sample_rate"],
         source_channels=info["channels"],
-        duration_seconds=round(info["duration"], 3),
+        duration_seconds=round(duration, 3),
         reused_existing=reused,
     )
     if not reused:
         write_json(meta_path, asdict(result))
     return result
+
+
+def safe_filename(name: str) -> str:
+    base = re.sub(r"[^A-Za-z0-9._-]+", "_", os.path.basename(name)).strip("._") or "upload"
+    return f"{uuid.uuid4().hex[:8]}_{base}"
+
+
+def ingest_upload(data: bytes, name: str, uploads_dir: str, out_dir: str) -> IngestResult:
+    """Saves uploaded bytes under a safe unique name, ingests them, and always deletes the saved
+    copy afterwards: the normalized WAV is what the pipeline keeps."""
+    os.makedirs(uploads_dir, exist_ok=True)
+    src_path = os.path.join(uploads_dir, safe_filename(name))
+    with open(src_path, "wb") as f:
+        f.write(data)
+    try:
+        return ingest(src_path, out_dir=out_dir)
+    finally:
+        os.remove(src_path)
 
 
 if __name__ == "__main__":

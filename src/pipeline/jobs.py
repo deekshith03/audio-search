@@ -10,6 +10,12 @@ The worker runs each stage as its own subprocess (the same CLIs as run_pipeline.
 progress in `<workspace>/jobs/{file_id}.json`; the app only polls that file. Workers take an
 exclusive lock so concurrent uploads queue instead of competing for CPU and memory.
 
+A worker touches `<workspace>/jobs/{file_id}.heartbeat` every HEARTBEAT_SECONDS, also while it
+waits for the lock. A running job whose newest sign of life (heartbeat or job update) is older
+than STALE_SECONDS is marked failed, so a worker that died without saying so (crash, SIGKILL,
+a launch that never started, an exited child nobody reaped whose pid still answers, a reused
+pid) always ends in a Retry button rather than "Processing" forever.
+
 Status flow: queued → transcribing → aligning → diarizing → reconciling → indexing → awaiting_labels → labeled
              (any running state) → failed
 """
@@ -20,6 +26,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, List, Optional
 
@@ -44,6 +51,8 @@ RATE_HISTORY = 5
 RUNNING_STATUSES = {"queued"} | {name for name, _ in STAGES}
 DONE_STATUSES = {"awaiting_labels", "labeled"}
 LOG_TAIL_LINES = 15
+HEARTBEAT_SECONDS = 10
+STALE_SECONDS = 60
 
 
 def _now() -> str:
@@ -56,6 +65,10 @@ def job_path(ws: Workspace, file_id: str) -> str:
 
 def log_path(ws: Workspace, file_id: str) -> str:
     return os.path.join(ws.jobs_dir, f"{file_base(file_id)}.log")
+
+
+def heartbeat_path(ws: Workspace, file_id: str) -> str:
+    return os.path.join(ws.jobs_dir, f"{file_base(file_id)}.heartbeat")
 
 
 def _pid_alive(pid: Optional[int]) -> bool:
@@ -96,13 +109,30 @@ def create_job(ws: Workspace, file_id: str, wav_path: str, source_filename: str,
         stages={},
         error=None,
         worker_pid=None,
+        launched_at=None,
     )
+
+
+def _quiet_seconds(ws: Workspace, file_id: str, job: Dict[str, Any]) -> float:
+    """Seconds since the worker last showed it was alive: its heartbeat or the job's last update."""
+    signs = [datetime.fromisoformat(job["updated_at"]).timestamp()] if job.get("updated_at") else []
+    try:
+        signs.append(os.path.getmtime(heartbeat_path(ws, file_id)))
+    except OSError:
+        pass
+    return datetime.now(timezone.utc).timestamp() - max(signs) if signs else float("inf")
+
+
+def _worker_dead(ws: Workspace, file_id: str, job: Dict[str, Any]) -> bool:
+    if job.get("worker_pid") and not _pid_alive(job["worker_pid"]):
+        return True
+    return _quiet_seconds(ws, file_id, job) >= STALE_SECONDS
 
 
 def load_job(ws: Workspace, file_id: str) -> Optional[Dict[str, Any]]:
     """Reads a job, marking it failed if its worker died without finishing."""
     job = _read_json(job_path(ws, file_id))
-    if job and job.get("status") in RUNNING_STATUSES and job.get("worker_pid") and not _pid_alive(job["worker_pid"]):
+    if job and job.get("status") in RUNNING_STATUSES and _worker_dead(ws, file_id, job):
         job = _update(ws, file_id, status="failed", error="Worker process stopped unexpectedly. Retry the job.")
     return job
 
@@ -111,10 +141,12 @@ def launch_worker(ws: Workspace, file_id: str) -> Dict[str, Any]:
     job = load_job(ws, file_id)
     if job is None:
         raise FileNotFoundError(f"No job for {file_id}")
-    if job.get("status") in RUNNING_STATUSES and _pid_alive(job.get("worker_pid")):
+    if job.get("status") in RUNNING_STATUSES and job.get("launched_at"):
         return job
 
-    _update(ws, file_id, status="queued", worker_pid=None, error=None)
+    if os.path.exists(heartbeat_path(ws, file_id)):
+        os.remove(heartbeat_path(ws, file_id))
+    _update(ws, file_id, status="queued", worker_pid=None, error=None, stages={}, launched_at=_now())
     with open(log_path(ws, file_id), "a", encoding="utf-8") as log:
         proc = subprocess.Popen(
             [sys.executable, "-m", "src.pipeline.jobs", "run", file_id, "--workspace", ws.root],
@@ -141,14 +173,33 @@ def _log_tail(ws: Workspace, file_id: str) -> str:
         return "".join(f.readlines()[-LOG_TAIL_LINES:]).strip()
 
 
+def _beat(path: str, stop: threading.Event) -> None:
+    while True:
+        with open(path, "a"):
+            os.utime(path)
+        if stop.wait(HEARTBEAT_SECONDS):
+            return
+
+
 def run_job(
     ws: Workspace,
     file_id: str,
     build_command: Callable[[str, Workspace, str], List[str]] = stage_command,
 ) -> Dict[str, Any]:
+    os.makedirs(ws.jobs_dir, exist_ok=True)
+    stop = threading.Event()
+    heartbeat = threading.Thread(target=_beat, args=(heartbeat_path(ws, file_id), stop), name=f"heartbeat-{file_id}", daemon=True)
+    heartbeat.start()
+    try:
+        return _run_stages(ws, file_id, build_command)
+    finally:
+        stop.set()
+        heartbeat.join()
+
+
+def _run_stages(ws: Workspace, file_id: str, build_command: Callable[[str, Workspace, str], List[str]]) -> Dict[str, Any]:
     job = _update(ws, file_id, worker_pid=os.getpid())
     wav_path = job["wav_path"]
-    os.makedirs(ws.jobs_dir, exist_ok=True)
 
     with open(os.path.join(ws.jobs_dir, ".worker.lock"), "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)

@@ -117,6 +117,49 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
         self.assertEqual(top["rank"], 1)
         self.assertLess(top["start_seconds"], top["end_seconds"])
 
+    def fresh_engine(self):
+        """An engine that opens its own connection (to the throwaway database)."""
+        url = self.url
+        patcher = mock.patch("src.search.engine.connect", lambda **kw: connection.connect(url, **kw))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        engine = SearchEngine(embedder=HashEmbedder())
+        self.addCleanup(lambda: engine._conn and engine._conn.close())
+        return engine
+
+    def kill_session(self, engine):
+        with self.conn.cursor() as cur:
+            cur.execute("SELECT pg_terminate_backend(%s)", (engine.conn.get_backend_pid(),))
+        self.conn.commit()
+
+    def test_own_connection_has_a_statement_timeout(self):
+        engine = self.fresh_engine()
+        with engine.conn.cursor() as cur:
+            cur.execute("SHOW statement_timeout")
+            self.assertEqual(cur.fetchone()[0], "15s")
+        engine.conn.rollback()
+
+    def test_first_query_after_a_lost_connection_is_retried_once(self):
+        engine = self.fresh_engine()
+        self.assertTrue(engine.speakers_in((self.tmp,)))
+        self.kill_session(engine)
+        self.assertTrue(engine.speakers_in((self.tmp,)))
+        self.kill_session(engine)
+        results = engine.search("sourdough", "hybrid", 3, SearchConfig(), workspaces=(self.tmp,)).results
+        self.assertEqual(results[0]["file_id"], "cooking_show.wav")
+
+    def test_query_errors_on_a_live_connection_are_not_retried(self):
+        engine = self.fresh_engine()
+        self.assertFalse(engine.conn.closed)
+        calls = []
+
+        def fail():
+            calls.append(1)
+            raise connection.psycopg2.OperationalError("canceling statement due to statement timeout")
+        with self.assertRaises(connection.psycopg2.OperationalError):
+            engine._retry_if_disconnected(fail)
+        self.assertEqual(len(calls), 1)
+
     def test_speaker_name_joined_or_label_fallback(self):
         linux = self.run_search("tiling window compositor").results[0]
         self.assertEqual((linux["speaker"], linux["speaker_label"]), ("DHH", "SPEAKER_01"))

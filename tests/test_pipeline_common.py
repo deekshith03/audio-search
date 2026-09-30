@@ -1,6 +1,7 @@
 import json
 import os
 import tempfile
+import threading
 import unittest
 from unittest.mock import patch
 
@@ -10,6 +11,7 @@ from src.pipeline.common import (
     build_cache_key,
     file_base,
     get_hf_token,
+    hf_token_path,
     is_cache_valid,
     parse_stage_args,
     resolve_audio_files,
@@ -124,6 +126,12 @@ class TestWorkspace(unittest.TestCase):
     def test_explicit_audio_dir_overrides_workspace(self):
         self.assertEqual(parse_stage_args("x", ["--workspace", "data", "--audio-dir", "x"]).audio_dir, "x")
 
+    def test_root_is_normalized_so_it_is_one_workspace_key(self):
+        for spelled in ("dataset/", "./dataset", "dataset//", "dataset/../dataset"):
+            self.assertEqual(Workspace(spelled).root, "dataset", spelled)
+        self.assertEqual(Workspace("/app/data/").root, "/app/data")
+        self.assertEqual(Workspace("dataset/"), GOLDEN)
+
 
 class TestWriteJson(unittest.TestCase):
 
@@ -134,6 +142,38 @@ class TestWriteJson(unittest.TestCase):
             with open(path, encoding="utf-8") as f:
                 self.assertEqual(json.load(f), {"k": "é"})
             self.assertEqual(os.listdir(os.path.dirname(path)), ["out.json"])
+
+    def test_concurrent_writers_never_collide_or_leave_temp_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "job.json")
+            errors = []
+
+            def write(n):
+                try:
+                    for i in range(50):
+                        write_json(path, {"writer": n, "i": i})
+                except Exception as e:
+                    errors.append(e)
+
+            threads = [threading.Thread(target=write, args=(n,)) for n in range(4)]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join()
+            self.assertEqual(errors, [])
+            with open(path) as f:
+                self.assertEqual(json.load(f)["i"], 49)
+            self.assertEqual(os.listdir(tmp), ["job.json"])
+
+    def test_failed_write_keeps_the_old_file_and_no_temp_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "job.json")
+            write_json(path, {"ok": 1})
+            with self.assertRaises(TypeError):
+                write_json(path, {"bad": object()})
+            with open(path) as f:
+                self.assertEqual(json.load(f), {"ok": 1})
+            self.assertEqual(os.listdir(tmp), ["job.json"])
 
 
 class TestHfToken(unittest.TestCase):
@@ -161,11 +201,23 @@ class TestHfToken(unittest.TestCase):
             token_path = os.path.join(d, "token")
             with open(token_path, "w") as f:
                 f.write("hf_cached\n")
-            with patch.dict(os.environ, {}, clear=True), patch("os.path.expanduser", return_value=token_path):
+            with patch.dict(os.environ, {}, clear=True), patch("os.path.expanduser", return_value=d):
                 self.assertEqual(get_hf_token(env_path=None), "hf_cached")
 
+    def test_reads_token_saved_under_hf_home_as_in_docker(self):
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "token"), "w") as f:
+                f.write("hf_in_hf_home\n")
+            with patch.dict(os.environ, {"HF_HOME": d}, clear=True):
+                self.assertEqual(hf_token_path(), os.path.join(d, "token"))
+                self.assertEqual(get_hf_token(env_path=None), "hf_in_hf_home")
+
+    def test_hf_token_path_prefers_explicit_path(self):
+        with patch.dict(os.environ, {"HF_TOKEN_PATH": "/x/tok", "HF_HOME": "/y"}, clear=True):
+            self.assertEqual(hf_token_path(), "/x/tok")
+
     def test_fails_closed_when_no_token_anywhere(self):
-        with patch.dict(os.environ, {}, clear=True), patch("os.path.expanduser", return_value="/nonexistent/token"):
+        with patch.dict(os.environ, {}, clear=True), patch("os.path.expanduser", return_value="/nonexistent"):
             with self.assertRaises(RuntimeError) as cm:
                 get_hf_token(env_path="/nonexistent/.env")
             self.assertIn("Hugging Face token not found", str(cm.exception))

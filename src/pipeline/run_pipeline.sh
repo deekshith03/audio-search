@@ -17,8 +17,9 @@ if [ -f "${ROOT_DIR}/.env" ]; then
   set +a
 fi
 
-if [ -z "${HF_TOKEN:-}" ] && [ ! -f "$HOME/.cache/huggingface/token" ]; then
-  echo "ERROR: HF_TOKEN is not set in environment or .env, and no cached token found in ~/.cache/huggingface/token."
+TOKEN_FILE="${HF_TOKEN_PATH:-${HF_HOME:-$HOME/.cache/huggingface}/token}"
+if [ -z "${HF_TOKEN:-}" ] && [ -z "${HUGGINGFACE_TOKEN:-}" ] && [ ! -f "$TOKEN_FILE" ]; then
+  echo "ERROR: HF_TOKEN is not set in environment or .env, and no cached token found in ${TOKEN_FILE}."
   echo "Please set HF_TOKEN in .env or login using huggingface-cli."
   exit 1
 fi

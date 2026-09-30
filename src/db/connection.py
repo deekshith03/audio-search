@@ -17,5 +17,6 @@ def database_url() -> str:
     return os.environ.get("DATABASE_URL") or DEFAULT_DATABASE_URL
 
 
-def connect(url: Optional[str] = None, connect_timeout: int = 5):
-    return psycopg2.connect(url or database_url(), connect_timeout=connect_timeout)
+def connect(url: Optional[str] = None, connect_timeout: int = 5, statement_timeout_ms: Optional[int] = None):
+    options = {"options": f"-c statement_timeout={int(statement_timeout_ms)}"} if statement_timeout_ms else {}
+    return psycopg2.connect(url or database_url(), connect_timeout=connect_timeout, **options)

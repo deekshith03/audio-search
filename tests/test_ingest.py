@@ -4,10 +4,11 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import soundfile as sf
 
-from src.pipeline.ingest import IngestError, format_duration, ingest, validate_upload
+from src.pipeline.ingest import IngestError, format_duration, ingest, ingest_upload, probe, safe_filename, validate_upload
 
 HAS_FFMPEG = shutil.which("ffmpeg") is not None and shutil.which("ffprobe") is not None
 
@@ -21,6 +22,17 @@ def make_tone(path: str, seconds: float, sample_rate: int = 44100, channels: int
         ],
         check=True,
     )
+    return path
+
+
+def make_streamed_webm(path: str, seconds: float) -> str:
+    """A WebM written to a pipe, as a browser MediaRecorder produces: no duration in its header."""
+    with open(path, "wb") as f:
+        subprocess.run(
+            ["ffmpeg", "-nostdin", "-loglevel", "error", "-f", "lavfi", "-i", f"sine=frequency=440:duration={seconds}",
+             "-c:a", "libopus", "-f", "webm", "pipe:1"],
+            stdout=f, check=True,
+        )
     return path
 
 
@@ -45,6 +57,47 @@ class TestIngest(unittest.TestCase):
                 self.assertEqual((info.samplerate, info.channels, info.subtype), (16000, 1, "PCM_16"))
                 self.assertAlmostEqual(info.duration, 11.0, delta=0.1)
                 self.assertEqual(res.source_channels, 2)
+
+    def test_streamed_webm_without_duration_is_measured_from_the_converted_wav(self):
+        src = make_streamed_webm(os.path.join(self.src, "recording.webm"), 12)
+        self.assertIsNone(probe(src)["duration"])
+        res = ingest(src, out_dir=self.out)
+        self.assertAlmostEqual(res.duration_seconds, 12.0, delta=0.1)
+        self.assertAlmostEqual(sf.info(res.wav_path).duration, 12.0, delta=0.1)
+
+    def test_streamed_webm_over_the_limit_is_rejected_and_leaves_no_wav(self):
+        src = make_streamed_webm(os.path.join(self.src, "long.webm"), 14)
+        with self.assertRaisesRegex(IngestError, "too long"):
+            ingest(src, out_dir=self.out, max_duration=11)
+        self.assertEqual([f for f in os.listdir(self.out) if f.endswith(".wav")], [])
+
+    def test_decoding_is_capped_just_past_the_limit(self):
+        src = make_streamed_webm(os.path.join(self.src, "long.webm"), 20)
+        decoded = []
+        with patch("src.pipeline.ingest.wav_duration", side_effect=lambda p: decoded.append(sf.info(p).duration) or decoded[-1]):
+            with self.assertRaisesRegex(IngestError, "too long"):
+                ingest(src, out_dir=self.out, max_duration=11)
+        self.assertEqual(len(decoded), 1)
+        self.assertAlmostEqual(decoded[0], 12.0, delta=0.1)
+
+    def test_conversion_leaves_no_temp_files(self):
+        ingest(make_tone(os.path.join(self.src, "tone.mp3"), 11), out_dir=self.out)
+        self.assertEqual([f for f in os.listdir(self.out) if "tmp" in f], [])
+
+    def test_upload_copy_is_deleted_after_success_rejection_and_unexpected_errors(self):
+        uploads = os.path.join(self.tmp.name, "uploads")
+        with open(make_tone(os.path.join(self.src, "tone.mp3"), 11), "rb") as f:
+            data = f.read()
+        res = ingest_upload(data, "My Show.mp3", uploads, self.out)
+        self.assertTrue(os.path.exists(res.wav_path))
+        self.assertEqual(os.listdir(uploads), [])
+        with self.assertRaises(IngestError):
+            ingest_upload(b"not audio", "broken.mp3", uploads, self.out)
+        self.assertEqual(os.listdir(uploads), [])
+        with patch("src.pipeline.ingest.ingest", side_effect=OSError("disk full")):
+            with self.assertRaises(OSError):
+                ingest_upload(data, "tone.mp3", uploads, self.out)
+        self.assertEqual(os.listdir(uploads), [])
 
     def test_file_id_is_content_hash_and_metadata_is_written(self):
         src = make_tone(os.path.join(self.src, "tone.mp3"), 11)
@@ -120,6 +173,15 @@ class TestIngest(unittest.TestCase):
     def test_rejects_missing_file(self):
         with self.assertRaises(IngestError):
             validate_upload(os.path.join(self.src, "nope.wav"))
+
+
+class TestSafeFilename(unittest.TestCase):
+
+    def test_strips_paths_and_unsafe_characters_and_adds_a_unique_prefix(self):
+        name = safe_filename("../../etc/My Show (ep 1).mp3")
+        self.assertRegex(name, r"^[0-9a-f]{8}_My_Show_ep_1_.mp3$")
+        self.assertNotEqual(safe_filename("a.mp3"), safe_filename("a.mp3"))
+        self.assertRegex(safe_filename("..."), r"^[0-9a-f]{8}_upload$")
 
 
 class TestFormatDuration(unittest.TestCase):

@@ -10,15 +10,21 @@ import argparse
 import hashlib
 import json
 import os
+import tempfile
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 
 @dataclass(frozen=True)
 class Workspace:
-    """Directory layout shared by the golden set (`dataset/`) and user uploads (`data/`)."""
+    """Directory layout shared by the golden set (`dataset/`) and user uploads (`data/`). The root is
+    normalized ("dataset/" and "./dataset" are "dataset") because it is also the workspace key
+    stored with every indexed file."""
 
     root: str
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "root", os.path.normpath(self.root))
 
     @property
     def audio_dir(self) -> str:
@@ -138,12 +144,20 @@ def load_env_file(env_path: str = ".env") -> None:
                 os.environ[k] = v
 
 
+def hf_token_path() -> str:
+    """Where `huggingface-cli login` saves the token: $HF_TOKEN_PATH, else $HF_HOME/token (the
+    Docker image sets HF_HOME=/models/huggingface), else ~/.cache/huggingface/token."""
+    if os.environ.get("HF_TOKEN_PATH"):
+        return os.environ["HF_TOKEN_PATH"]
+    return os.path.join(os.environ.get("HF_HOME") or os.path.expanduser("~/.cache/huggingface"), "token")
+
+
 def get_hf_token(env_path: Optional[str] = ".env") -> str:
     if env_path:
         load_env_file(env_path)
     token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN")
     if not token:
-        token_path = os.path.expanduser("~/.cache/huggingface/token")
+        token_path = hf_token_path()
         if os.path.exists(token_path):
             with open(token_path, "r") as f:
                 token = f.read().strip()
@@ -156,8 +170,15 @@ def get_hf_token(env_path: Optional[str] = ".env") -> str:
 
 
 def write_json(path: str, data: Dict[str, Any]) -> None:
-    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    tmp_path = f"{path}.tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-    os.replace(tmp_path, path)
+    """Atomic write through a uniquely named temp file, so concurrent writers never share one."""
+    directory = os.path.dirname(path) or "."
+    os.makedirs(directory, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(dir=directory, prefix=f".{os.path.basename(path)}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(tmp_path, path)
+    except BaseException:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+        raise

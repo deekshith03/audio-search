@@ -33,6 +33,7 @@ import time
 from dataclasses import dataclass, field, fields
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
+import psycopg2
 from psycopg2 import sql
 
 from src.db.connection import connect
@@ -50,6 +51,7 @@ WORD_PATTERN = re.compile(r"\w+")
 WORD_RETRIEVERS = ("bm25", "trigram")
 MEANING_RETRIEVERS = ("dense", "sentence")
 MATCHED_BY_MIN_SHARE = 0.25
+STATEMENT_TIMEOUT_MS = 15000
 
 
 @dataclass(frozen=True)
@@ -122,7 +124,11 @@ class SearchResponse:
 
 
 class SearchEngine:
-    """Holds one database connection and the lazily loaded embedder; safe to reuse across queries."""
+    """Holds one database connection and the lazily loaded embedder; safe to reuse across queries.
+
+    Its own connection gets a statement timeout, so one stuck query cannot hold the app's shared
+    search lock forever. A connection that died with the server (a database restart) is only
+    noticed when a query fails, so that one failure is retried once on a fresh connection."""
 
     def __init__(self, conn=None, embedder=None):
         self._conn = conn
@@ -131,8 +137,17 @@ class SearchEngine:
     @property
     def conn(self):
         if self._conn is None or self._conn.closed:
-            self._conn = connect()
+            self._conn = connect(statement_timeout_ms=STATEMENT_TIMEOUT_MS)
         return self._conn
+
+    def _retry_if_disconnected(self, run):
+        conn = self._conn
+        try:
+            return run()
+        except (psycopg2.OperationalError, psycopg2.InterfaceError):
+            if conn is None or not conn.closed:
+                raise
+            return run()
 
     @property
     def embedder(self):
@@ -148,6 +163,17 @@ class SearchEngine:
         config: Optional[SearchConfig] = None,
         workspaces: Sequence[str] = DEFAULT_WORKSPACES,
         filters: SearchFilters = NO_FILTERS,
+    ) -> SearchResponse:
+        return self._retry_if_disconnected(lambda: self._search(query, mode, top_k, config, workspaces, filters))
+
+    def _search(
+        self,
+        query: str,
+        mode: str,
+        top_k: int,
+        config: Optional[SearchConfig],
+        workspaces: Sequence[str],
+        filters: SearchFilters,
     ) -> SearchResponse:
         if mode not in MODES:
             raise ValueError(f"unknown mode {mode!r}; choose from {sorted(MODES)}")
@@ -254,6 +280,9 @@ class SearchEngine:
 
     def speakers_in(self, workspaces: Sequence[str]) -> List[Dict[str, Any]]:
         """Every indexed (recording, speaker) pair in `workspaces`: the options for search filters."""
+        return self._retry_if_disconnected(lambda: self._speakers_in(workspaces))
+
+    def _speakers_in(self, workspaces: Sequence[str]) -> List[Dict[str, Any]]:
         try:
             with self.conn.cursor() as cur:
                 cur.execute(

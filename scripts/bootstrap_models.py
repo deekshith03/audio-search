@@ -86,11 +86,13 @@ def download_alignment() -> None:
 
 
 def main() -> None:
+    # .env may set MODEL_CACHE_DIR / HF_HOME, which decide where the marker lives, so it is loaded
+    # before the marker is checked (and later written) rather than in between.
+    load_env_file()
     if already_bootstrapped():
         print("✓ Models already downloaded.")
         return
 
-    load_env_file()
     token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN")
     if not token:
         fail(2, "HF_TOKEN is not set. Speaker diarization and search embeddings use gated models:\n"
