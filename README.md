@@ -81,6 +81,8 @@ Each stage caches its output under a hash of its config and inputs. Uploads run 
 - **Recordings**: upload with per-stage progress, name the speakers (sample clips per voice, swap), and read the transcript.
 - The search query and filters are kept when you switch views.
 
+![Search results with matched speech highlighted, audio playback, and surrounding conversation](assets/streamlit-demo.jpeg)
+
 ### 2.4 Storage
 
 ![Storage: files, speakers, sentences, chunks and their embeddings](assets/diagrams/storage.svg)
