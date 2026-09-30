@@ -57,5 +57,29 @@ class TestAssertionUsesResolvedSpeaker(unittest.TestCase):
             assertions.resolve_result_speaker = original
 
 
+
+class TestAssertionAlternatives(unittest.TestCase):
+
+    def context(self):
+        return {"vars": {
+            "query_id": "T-2", "category": "single_file", "hard_negatives": [],
+            "expected_moments": [{
+                "file_id": "a.wav", "speaker": "Gary", "start_seconds": 10.0, "end_seconds": 14.0,
+                "alternatives": [{"file_id": "b.wav", "speaker": "Gary", "start_seconds": 50.0, "end_seconds": 54.0}],
+            }],
+        }}
+
+    def result(self, file_id, start):
+        return {"results": [{"file_id": file_id, "speaker": "Gary", "start_seconds": start, "end_seconds": start + 4.0}]}
+
+    def test_result_on_an_alternative_passes(self):
+        self.assertTrue(assertions.get_assert(self.result("b.wav", 50.0), self.context())["pass"])
+        self.assertEqual(assertions.get_assert(self.result("b.wav", 50.0), self.context())["score"], 1.0)
+
+    def test_result_on_the_moment_passes_and_elsewhere_fails(self):
+        self.assertTrue(assertions.get_assert(self.result("a.wav", 10.0), self.context())["pass"])
+        self.assertFalse(assertions.get_assert(self.result("b.wav", 200.0), self.context())["pass"])
+
+
 if __name__ == "__main__":
     unittest.main()

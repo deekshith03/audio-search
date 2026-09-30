@@ -112,29 +112,24 @@ def get_assert(output: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any
                 }
 
     # 2. Retrieval Recall Check: match expected moments
+    def matches(res, moment):
+        exp_start = float(moment.get("start_seconds", 0.0))
+        exp_end = float(moment.get("end_seconds", exp_start + 1.0))
+        r_start = float(res.get("start_seconds", 0.0))
+        r_end = float(res.get("end_seconds", r_start + 1.0))
+        speaker_match = (resolve_result_speaker(res) == moment["speaker"]) if moment.get("speaker") else True
+        return res.get("file_id") == moment.get("file_id") and speaker_match and check_temporal_match(r_start, r_end, exp_start, exp_end)
+
     hits = []
     for exp in expected_moments:
-        exp_file = exp.get("file_id")
-        exp_speaker = exp.get("speaker")
-        exp_start = float(exp.get("start_seconds", 0.0))
-        exp_end = float(exp.get("end_seconds", exp_start + 1.0))
-
+        # An expected moment is found by the moment itself or any of its equally good alternatives.
         for rank, res in enumerate(results, start=1):
-            r_file = res.get("file_id")
-            r_speaker = resolve_result_speaker(res)
-            r_start = float(res.get("start_seconds", 0.0))
-            r_end = float(res.get("end_seconds", r_start + 1.0))
-
-            file_match = (r_file == exp_file)
-            speaker_match = (r_speaker == exp_speaker) if exp_speaker else True
-            time_match = check_temporal_match(r_start, r_end, exp_start, exp_end)
-
-            if file_match and speaker_match and time_match:
+            if any(matches(res, m) for m in (exp, *exp.get("alternatives", ()))):
                 hits.append({
-                    "file_id": exp_file,
-                    "speaker": exp_speaker,
+                    "file_id": exp.get("file_id"),
+                    "speaker": exp.get("speaker"),
                     "rank": rank,
-                    "start_seconds": r_start
+                    "start_seconds": float(res.get("start_seconds", 0.0))
                 })
                 break
 

@@ -25,7 +25,7 @@ from typing import List, Dict, Any
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from metrics import evaluate_retrieval, is_temporal_match, result_matches_moment  # noqa: E402
-from qrels import ANY_OF_CATEGORIES, CATEGORIES, DEFAULT_SPLIT, add_split_argument, load_qrels  # noqa: E402
+from qrels import ANY_OF_CATEGORIES, CATEGORIES, DEFAULT_SPLIT, ONE_TIME_RESULTS, add_split_argument, load_qrels  # noqa: E402
 from search_provider import call_api  # noqa: E402
 
 
@@ -205,13 +205,33 @@ def check_gate(summary: Dict[str, Any]):
         print("✅ EVALUATION GATE PASSED: All retrieval thresholds and strict ablation criteria satisfied!")
 
 
+def refuse_rerun(split: str, force: bool) -> None:
+    """A one-time split may be scored once; a forced rerun must be reported as a rerun."""
+    path = ONE_TIME_RESULTS.get(split)
+    if path and os.path.exists(path) and not force:
+        sys.exit(f"The {split} split was already run ({path}). Pass --force only to report an explicit rerun.")
+
+
+def save_one_time_result(split: str, report: Dict[str, Any], search_config: Dict[str, Any]) -> None:
+    path = ONE_TIME_RESULTS.get(split)
+    if path:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump({"split": split, "search_config": search_config, "report": report}, f, indent=2)
+        print(f"Saved {path}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Recall@k scorecard over a query split")
     add_split_argument(parser)
     parser.add_argument("--enforce-gate", action="store_true")
     parser.add_argument("--search-config", default="{}", help='JSON SearchConfig overrides, e.g. \'{"chunker": "B"}\'')
+    parser.add_argument("--force", action="store_true", help="Rerun a one-time split (holdout) that already has results.")
     args = parser.parse_args()
-    report = run_benchmark(split=args.split, search_config=json.loads(args.search_config))
+    refuse_rerun(args.split, args.force)
+    search_config = json.loads(args.search_config)
+    report = run_benchmark(split=args.split, search_config=search_config)
+    save_one_time_result(args.split, report, search_config)
     print_scorecard(report)
     if args.enforce_gate:
         check_gate(report)

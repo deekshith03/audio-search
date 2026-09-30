@@ -1,0 +1,250 @@
+{
+  "version": "1.0.0",
+  "benchmark_name": "Conversational Audio Hybrid Search Benchmark: holdout split",
+  "split": "holdout",
+  "total_queries": 9,
+  "query_breakdown": {
+    "single_file": 6,
+    "multi_file": 0,
+    "near_miss": 2,
+    "short_keyword": 1
+  },
+  "corpus_files": [
+    "audio_01_lex_dhh_omarchy.wav",
+    "audio_02_postgres_fm_pgvector.wav",
+    "audio_03_brain_science_psychology.wav",
+    "audio_04_macroeconomics_semiconductor.wav",
+    "audio_05_sports_tactics_debate.wav",
+    "audio_06_constitutional_jurisprudence.wav",
+    "audio_07_investigative_history_cafe.wav"
+  ],
+  "provenance": "Written 2026-09-30, after the test run and before any post-test tuning, by an agent that saw only turns unused by dev and test and the test split's style mix; answers checked by a second text-only agent. Never searched before its one scored run.",
+  "queries": [
+    {
+      "query_id": "HSF-01",
+      "category": "single_file",
+      "archetype": "holdout_exact",
+      "query": "alternative operating system to macos and windows",
+      "description": "DHH pitches Omarchy as an alternative OS to macOS and Windows; the user recalls that phrasing.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 6,
+          "speaker": "DHH",
+          "start_seconds": 144.84,
+          "end_seconds": 148.0,
+          "matched_text": "It’s an alternative operating system to macOS and Windows",
+          "turn_start_seconds": 138.0,
+          "turn_end_seconds": 149.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "HNM-01",
+      "category": "near_miss",
+      "archetype": "holdout_exact",
+      "query": "world economy becoming a function of lab economics",
+      "description": "Dwarkesh frames the world economy as increasingly a function of AI lab economics.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 3,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 15.2,
+          "end_seconds": 20.27,
+          "matched_text": "where the world economy is headed is more and more becoming a function of where lab economics are headed",
+          "turn_start_seconds": 14.7,
+          "turn_end_seconds": 37.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 5,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 203.7,
+          "end_seconds": 230.6,
+          "reason": "Same speaker also talks about labs and compute share, but about centralization of compute, not the world economy framing."
+        }
+      ],
+      "style": "exact"
+    },
+    {
+      "query_id": "HSF-02",
+      "category": "single_file",
+      "archetype": "holdout_exact",
+      "query": "islamic immigration threat to european freedoms",
+      "description": "Tyler Cowen asks whether Islamic immigration threatens European freedoms.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 15,
+          "speaker": "Tyler Cowen",
+          "start_seconds": 254.05,
+          "end_seconds": 257.7,
+          "matched_text": "Islamic immigration is a major threat to European freedoms",
+          "turn_start_seconds": 252.1,
+          "turn_end_seconds": 261.5,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "HSF-03",
+      "category": "single_file",
+      "archetype": "holdout_exact",
+      "query": "was he choosing home honor or slavery",
+      "description": "Lex asks what Robert E. Lee was really choosing when he sided with Virginia: home, honor, or slavery.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_07_investigative_history_cafe.wav",
+          "turn_id": 18,
+          "speaker": "Lex Fridman",
+          "start_seconds": 285.69,
+          "end_seconds": 289.3,
+          "matched_text": "Was he choosing home? Was he choosing honor? Was he choosing slavery?",
+          "turn_start_seconds": 283.0,
+          "turn_end_seconds": 297.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "exact"
+    },
+    {
+      "query_id": "HSF-04",
+      "category": "single_file",
+      "archetype": "holdout_semantic",
+      "query": "needing others to reflect back that we exist",
+      "description": "Adam says we need an echo from another human to know we are there and alive.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 8,
+          "speaker": "Adam Stacoviak",
+          "start_seconds": 144.66,
+          "end_seconds": 150.97,
+          "matched_text": "we need to have that echo from another human being to let us know that we're there, we're alive",
+          "turn_start_seconds": 143.9,
+          "turn_end_seconds": 154.3,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "HNM-02",
+      "category": "near_miss",
+      "archetype": "holdout_semantic",
+      "query": "crushing a fighter's body and mind",
+      "description": "Lex says Khabib understood how to break an opponent physically and psychologically.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 14,
+          "speaker": "Lex Fridman",
+          "start_seconds": 266.03,
+          "end_seconds": 269.43,
+          "matched_text": "how to break an opponent, both physically and psychologically",
+          "turn_start_seconds": 264.0,
+          "turn_end_seconds": 272.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_05_sports_tactics_debate.wav",
+          "turn_id": 16,
+          "speaker": "Khabib Nurmagomedov",
+          "start_seconds": 331.0,
+          "end_seconds": 344.0,
+          "reason": "About finding and pressuring an opponent's weakness strategically, not breaking them physically and mentally."
+        }
+      ],
+      "style": "semantic"
+    },
+    {
+      "query_id": "HSF-05",
+      "category": "single_file",
+      "archetype": "holdout_question",
+      "query": "did pgvector come before chatgpt?",
+      "description": "Michael notes pgvector predates the ChatGPT hype by a couple of years.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_02_postgres_fm_pgvector.wav",
+          "turn_id": 5,
+          "speaker": "Michael",
+          "start_seconds": 67.31,
+          "end_seconds": 70.48,
+          "matched_text": "It definitely predates the ChatGPT hype",
+          "turn_start_seconds": 65.3,
+          "turn_end_seconds": 78.3,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "question"
+    },
+    {
+      "query_id": "HSF-06",
+      "category": "single_file",
+      "archetype": "holdout_question",
+      "query": "who teased the pronunciation of wafers?",
+      "description": "Dylan Patel teases Dwarkesh for how he pronounced wafers.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 12,
+          "speaker": "Dylan Patel",
+          "start_seconds": 455.45,
+          "end_seconds": 459.84,
+          "matched_text": "the way you said wafers was so fucking Indian",
+          "turn_start_seconds": 454.5,
+          "turn_end_seconds": 460.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "question"
+    },
+    {
+      "query_id": "HKW-01",
+      "category": "short_keyword",
+      "archetype": "holdout_keyword",
+      "query": "fish tank",
+      "description": "Adam says he does not see his fish in the fish tank struggling, contrasting animals with human struggle.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_03_brain_science_psychology.wav",
+          "turn_id": 14,
+          "speaker": "Adam Stacoviak",
+          "start_seconds": 235.77,
+          "end_seconds": 236.21,
+          "matched_text": "fish tank",
+          "turn_start_seconds": 230.3,
+          "turn_end_seconds": 267.7,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [],
+      "style": "keyword"
+    }
+  ],
+  "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+}

@@ -77,6 +77,11 @@ def result_matches_moment(
     tolerance_seconds: float = 5.0,
     min_iou: float = 0.3,
 ) -> bool:
+    """A result finds a moment if it matches the moment or one of its equally good `alternatives`."""
+    return any(_matches_one(res, m, tolerance_seconds, min_iou) for m in (gt, *gt.get("alternatives", ())))
+
+
+def _matches_one(res: Dict[str, Any], gt: Dict[str, Any], tolerance_seconds: float, min_iou: float) -> bool:
     """File, speaker (resolved to a human name) and strict temporal match between one result and one moment."""
     if res.get("file_id") != gt.get("file_id"):
         return False

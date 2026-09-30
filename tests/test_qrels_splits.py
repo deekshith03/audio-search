@@ -1,10 +1,12 @@
+import json
 import os
+import tempfile
 import unittest
 from unittest.mock import patch
 
 from evals import evaluate_recall
 from evals.metrics import evaluate_retrieval, result_matches_moment
-from evals.qrels import ANY_OF_CATEGORIES, CATEGORIES, EXPECTED_BREAKDOWN, SPLIT_PATHS, load_qrels
+from evals.qrels import ANY_OF_CATEGORIES, CATEGORIES, EXPECTED_BREAKDOWN, ONE_TIME_RESULTS, SPLIT_PATHS, load_qrels
 from evals.validate_dataset_integrity import validate_all
 
 
@@ -20,7 +22,24 @@ class TestQrelsModule(unittest.TestCase):
             queries = load_qrels(split)["queries"]
             counts = {c: sum(q["category"] == c for q in queries) for c in CATEGORIES}
             self.assertEqual(counts, EXPECTED_BREAKDOWN[split])
-        self.assertEqual({s: sum(EXPECTED_BREAKDOWN[s].values()) for s in ("dev", "test")}, {"dev": 50, "test": 21})
+        self.assertEqual({s: sum(EXPECTED_BREAKDOWN[s].values()) for s in ("dev", "test", "holdout")}, {"dev": 70, "test": 21, "holdout": 9})
+
+    def test_holdout_is_a_one_time_split(self):
+        self.assertIn("holdout", SPLIT_PATHS)
+        self.assertEqual(set(ONE_TIME_RESULTS), {"holdout"})
+
+    def test_rerun_of_one_time_split_is_refused_unless_forced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "final_holdout.json")
+            with patch.dict(evaluate_recall.ONE_TIME_RESULTS, {"holdout": path}):
+                evaluate_recall.refuse_rerun("holdout", force=False)
+                evaluate_recall.save_one_time_result("holdout", {"hybrid": {"micro_r5": 0.5}}, {})
+                with open(path) as f:
+                    self.assertEqual(json.load(f)["report"]["hybrid"]["micro_r5"], 0.5)
+                with self.assertRaises(SystemExit):
+                    evaluate_recall.refuse_rerun("holdout", force=False)
+                evaluate_recall.refuse_rerun("holdout", force=True)
+                evaluate_recall.refuse_rerun("dev", force=False)
 
     def test_unknown_split_is_rejected(self):
         with self.assertRaises(ValueError):
@@ -55,6 +74,18 @@ class TestAnyOfRecall(unittest.TestCase):
 
     def test_default_requires_every_moment(self):
         self.assertEqual(evaluate_retrieval(self.hit_second, self.moments)["recall@1"], 0.5)
+
+    def test_alternative_counts_as_finding_its_moment(self):
+        moment = {**self.moments[0], "alternatives": [{"file_id": "b.wav", "speaker": "Gary", "start_seconds": 50.0, "end_seconds": 54.0}]}
+        on_alternative = [{"file_id": "b.wav", "speaker": "Gary", "start_seconds": 50.0, "end_seconds": 54.0}]
+        self.assertEqual(evaluate_retrieval(on_alternative, [moment])["recall@1"], 1.0)
+        self.assertTrue(result_matches_moment(on_alternative[0], moment))
+        self.assertFalse(result_matches_moment(on_alternative[0], self.moments[0]))
+
+    def test_alternatives_do_not_merge_distinct_moments(self):
+        moment = {**self.moments[0], "alternatives": [{"file_id": "b.wav", "speaker": "Gary", "start_seconds": 50.0, "end_seconds": 54.0}]}
+        on_alternative = [{"file_id": "b.wav", "speaker": "Gary", "start_seconds": 50.0, "end_seconds": 54.0}]
+        self.assertEqual(evaluate_retrieval(on_alternative, [moment, self.moments[1]])["recall@5"], 0.5)
 
     def test_short_keyword_is_the_only_any_of_category(self):
         self.assertEqual(ANY_OF_CATEGORIES, {"short_keyword"})

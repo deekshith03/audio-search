@@ -14,7 +14,10 @@ Strictly proves:
 3. Benchmark Queries (Qrels), for each split (dev, test):
    - Query counts per category match EXPECTED_BREAKDOWN (evals/qrels.py).
    - short_keyword queries have at most two words.
-   - dev and test reference disjoint (file_id, turn_id) pairs, including hard negatives.
+   - dev, test and holdout reference pairwise disjoint (file_id, turn_id) pairs, including hard negatives,
+     except that a dev moment's `alternatives` (equally good answers) may sit on test turns: the test
+     split was spent before they were added, and test numbers after that are post-hoc anyway.
+     No split may touch a holdout turn.
    - All query IDs are unique.
    - target_file_count strictly equals len(unique_files).
    - Every relevant moment points to an existing file_id and turn_id.
@@ -36,9 +39,12 @@ except ImportError:
     from evals.qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, SPLIT_PATHS
 
 
+DEV_TEST_ALTERNATIVES_ALLOWED = {"dev", "test"}
+
+
 def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
-    """Validates one split and returns the set of (file_id, turn_id) it references."""
-    used_turns = set()
+    """Validates one split; returns the (file_id, turn_id) pairs it references, and those only its alternatives reference."""
+    used_turns, alternative_turns = set(), set()
     corpus_manifest = qrels_data.get("corpus_files", [])
     if sorted(corpus_manifest) != sorted(audio_files):
         errors.append(f"[{split}] corpus_files {corpus_manifest} does not match audio files {audio_files}")
@@ -83,7 +89,9 @@ def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
         if category == "multi_file" and len(unique_files) < 2:
             errors.append(f"[{split}] {qid}: Category is multi_file but references {len(unique_files)} files")
 
-        for m in expected:
+        alternatives = [a for m in expected for a in m.get("alternatives", [])]
+        for index, m in enumerate([*expected, *alternatives]):
+            is_alternative = index >= len(expected)
             fid = m.get("file_id")
             tid = m.get("turn_id")
             exp_spk = m.get("speaker")
@@ -99,7 +107,7 @@ def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
                 errors.append(f"[{split}] {qid}: References non-existent Turn {tid} in {fid}")
                 continue
 
-            used_turns.add((fid, tid))
+            (alternative_turns if is_alternative else used_turns).add((fid, tid))
             ref_turn = transcripts[fid][tid]
             ref_spk = ref_turn.get("speaker")
             ref_text = ref_turn.get("text")
@@ -170,7 +178,7 @@ def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
         errors.append(f"[{split}] Unexpected query breakdown: {breakdown} (expected {expected_breakdown})")
 
     print(f"✓ [{split}] qrels validated: {len(queries)} queries {breakdown}, all verbatim substrings.")
-    return used_turns
+    return used_turns, alternative_turns
 
 
 def validate_all():
@@ -280,17 +288,24 @@ def validate_all():
     print(f"✓ Ground-truth transcripts validated: exactly {len(transcripts)} files with 100% exact turn continuity.")
 
     # 3. Validate benchmark queries: each split, then split independence
-    used_by_split = {}
+    used_by_split, alternatives_by_split = {}, {}
     for split in SPLIT_PATHS:
         with open(SPLIT_PATHS[split], "r", encoding="utf-8") as f:
             qrels_data = json.load(f)
-        used_by_split[split] = validate_qrels(split, qrels_data, transcripts, audio_files, errors)
+        used_by_split[split], alternatives_by_split[split] = validate_qrels(split, qrels_data, transcripts, audio_files, errors)
 
-    shared = used_by_split["dev"] & used_by_split["test"]
-    for fid, tid in sorted(shared):
-        errors.append(f"dev and test both reference {fid} turn {tid}; splits must use disjoint turns")
-    if not shared:
-        print("✓ dev and test splits reference disjoint turns.")
+    splits = sorted(used_by_split)
+    any_shared = False
+    for i, a in enumerate(splits):
+        for b in splits[i + 1:]:
+            shared = used_by_split[a] & used_by_split[b]
+            if {a, b} != DEV_TEST_ALTERNATIVES_ALLOWED:
+                shared |= (alternatives_by_split[a] & (used_by_split[b] | alternatives_by_split[b])) | (used_by_split[a] & alternatives_by_split[b])
+            for fid, tid in sorted(shared):
+                any_shared = True
+                errors.append(f"{a} and {b} both reference {fid} turn {tid}; splits must use disjoint turns")
+    if not any_shared:
+        print(f"✓ {', '.join(splits)} splits reference disjoint turns (dev alternatives may sit on test turns).")
 
     if errors:
         print(f"\n❌ FOUND {len(errors)} INTEGRITY ERRORS:")
@@ -298,7 +313,7 @@ def validate_all():
             print("  -", e)
         sys.exit(1)
     else:
-        print("\n✅ ZERO DEFECTS: All audio, transcripts, and qrels (dev + test) pass integrity verification!")
+        print("\n✅ ZERO DEFECTS: All audio, transcripts, and qrels (all splits) pass integrity verification!")
 
 
 if __name__ == "__main__":

@@ -111,7 +111,8 @@ def tighten(qrels_path: str, dry_run: bool = False) -> None:
     transcripts: Dict[str, Dict[int, Dict[str, Any]]] = {}
     rows = []
     for q in qrels["queries"]:
-        for m in q["relevant_moments"]:
+        moments = [m for rm in q["relevant_moments"] for m in (rm, *rm.get("alternatives", ()))]
+        for m in moments:
             fid = m["file_id"]
             if fid not in transcripts:
                 with open(os.path.join(GROUND_TRUTH_DIR, fid.replace(".wav", ".json")), "r", encoding="utf-8") as f:

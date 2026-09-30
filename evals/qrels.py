@@ -3,6 +3,8 @@ Benchmark query sets (qrels) and their split rules.
 
 - dev  (40%): every tuning decision is made on this split.
 - test (60%): held out; run once with the frozen configuration.
+- holdout: written after the test run on turns no other split uses, before any post-test tuning,
+  by an agent that saw only those turns; run once at the end (evaluate_recall refuses a rerun).
 
 Categories:
 - single_file:   the answer is in exactly one recording
@@ -20,13 +22,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPLIT_PATHS = {
     "dev": os.path.join(ROOT, "dataset", "qrels", "dev_queries.json"),
     "test": os.path.join(ROOT, "dataset", "qrels", "test_queries.json"),
+    "holdout": os.path.join(ROOT, "dataset", "qrels", "holdout_queries.json"),
 }
+ONE_TIME_RESULTS = {"holdout": os.path.join(ROOT, "evals", "results", "final_holdout.json")}
 DEFAULT_SPLIT = "dev"
 CATEGORIES = ("single_file", "multi_file", "near_miss", "short_keyword")
 ANY_OF_CATEGORIES = {"short_keyword"}
 EXPECTED_BREAKDOWN = {
-    "dev": {"single_file": 18, "multi_file": 7, "near_miss": 16, "short_keyword": 9},
+    "dev": {"single_file": 33, "multi_file": 7, "near_miss": 21, "short_keyword": 9},
     "test": {"single_file": 6, "multi_file": 6, "near_miss": 6, "short_keyword": 3},
+    "holdout": {"single_file": 6, "multi_file": 0, "near_miss": 2, "short_keyword": 1},
 }
 MAX_SHORT_KEYWORD_WORDS = 2
 

@@ -1,5 +1,5 @@
 {
-  "description": "Conversational Audio Hybrid Search: dev split (50 queries)",
+  "description": "Conversational Audio Hybrid Search: dev split (70 queries)",
   "prompts": [
     "{{query}}"
   ],
@@ -134,7 +134,20 @@
             "matched_text": "Anthropic and OpenAI are taking as much as 40% to 50% of compute next year.",
             "turn_start_seconds": 230.6,
             "turn_end_seconds": 309.5,
-            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+            "alternatives": [
+              {
+                "file_id": "audio_04_macroeconomics_semiconductor.wav",
+                "turn_id": 8,
+                "speaker": "Dylan Patel",
+                "start_seconds": 389.92,
+                "end_seconds": 399.91,
+                "matched_text": "If Anthropic and OpenAI take on 45% of compute next year, you’ve got them in, let’s say, December ’27 having taken on half of the world’s incremental new compute.",
+                "turn_start_seconds": 352.3,
+                "turn_end_seconds": 421.3,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ]
           }
         ],
         "hard_negatives": []
@@ -453,7 +466,20 @@
             "matched_text": "what's a 20 dimensional vector? I can understand 3, 3 is like points in space.",
             "turn_start_seconds": 78.3,
             "turn_end_seconds": 227.8,
-            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+            "alternatives": [
+              {
+                "file_id": "audio_02_postgres_fm_pgvector.wav",
+                "turn_id": 10,
+                "speaker": "Jonathan",
+                "start_seconds": 398.09,
+                "end_seconds": 402.8,
+                "matched_text": "Like I still don't even know what a five-dimensional vector is, and here we're talking about 1,500 dimensional vectors.",
+                "turn_start_seconds": 247.0,
+                "turn_end_seconds": 427.2,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ]
           },
           {
             "file_id": "audio_02_postgres_fm_pgvector.wav",
@@ -493,7 +519,20 @@
             "matched_text": "Andrew has done phenomenal work on pgvector over the past several years.",
             "turn_start_seconds": 56.9,
             "turn_end_seconds": 65.3,
-            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+            "alternatives": [
+              {
+                "file_id": "audio_02_postgres_fm_pgvector.wav",
+                "turn_id": 10,
+                "speaker": "Jonathan",
+                "start_seconds": 280.05,
+                "end_seconds": 286.77,
+                "matched_text": "Andrew had the foresight to see that a lot of data was going to be generated around machine learning and AI systems.",
+                "turn_start_seconds": 247.0,
+                "turn_end_seconds": 427.2,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ]
           }
         ],
         "hard_negatives": []
@@ -671,7 +710,20 @@
             "matched_text": "One of those, I would say, would be fundamentally we're designed to feel... And it's ironic, because people actually have feelings about feelings.",
             "turn_start_seconds": 0.0,
             "turn_end_seconds": 50.5,
-            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+            "alternatives": [
+              {
+                "file_id": "audio_03_brain_science_psychology.wav",
+                "turn_id": 5,
+                "speaker": "Dr. Mireille B. Reece",
+                "start_seconds": 70.2,
+                "end_seconds": 78.98,
+                "matched_text": "For whatever reason, there's feelings about the feelings, but the bottom line is nobody gets to actually opt out of feeling.",
+                "turn_start_seconds": 70.2,
+                "turn_end_seconds": 137.5,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ]
           },
           {
             "file_id": "audio_06_constitutional_jurisprudence.wav",
@@ -682,46 +734,6 @@
             "matched_text": "I think there’s something illiberal in the human heart.",
             "turn_start_seconds": 113.3,
             "turn_end_seconds": 176.6,
-            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
-          }
-        ],
-        "hard_negatives": []
-      },
-      "assert": [
-        {
-          "type": "python",
-          "value": "file://evals/assertions.py"
-        }
-      ]
-    },
-    {
-      "description": "[DMF-04] MULTI_FILE: lessons from a father or grandfather...",
-      "vars": {
-        "query": "lessons from a father or grandfather",
-        "query_id": "DMF-04",
-        "category": "multi_file",
-        "archetype": "cross_file_theme",
-        "expected_moments": [
-          {
-            "file_id": "audio_05_sports_tactics_debate.wav",
-            "turn_id": 15,
-            "speaker": "Khabib Nurmagomedov",
-            "start_seconds": 285.93,
-            "end_seconds": 291.01,
-            "matched_text": "My grandfather always told me, “A dog that latches onto that one weak spot always wins.”",
-            "turn_start_seconds": 272.0,
-            "turn_end_seconds": 331.0,
-            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
-          },
-          {
-            "file_id": "audio_07_investigative_history_cafe.wav",
-            "turn_id": 19,
-            "speaker": "Gary Gallagher",
-            "start_seconds": 315.24,
-            "end_seconds": 318.24,
-            "matched_text": "His father was a famous commander under George Washington.",
-            "turn_start_seconds": 297.0,
-            "turn_end_seconds": 337.0,
             "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
@@ -1496,6 +1508,44 @@
       ]
     },
     {
+      "description": "[DNM-19] NEAR_MISS: what state DHH is in...",
+      "vars": {
+        "query": "what state DHH is in",
+        "query_id": "DNM-19",
+        "category": "near_miss",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 2,
+            "speaker": "DHH",
+            "start_seconds": 16.0,
+            "end_seconds": 20.19,
+            "matched_text": "I’m in a state of delirium. That’s the state I’m in.",
+            "turn_start_seconds": 16.0,
+            "turn_end_seconds": 33.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": [
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 1,
+            "speaker": "Lex Fridman",
+            "start_seconds": 0.0,
+            "end_seconds": 16.0,
+            "reason": "Lex's question names DHH and a state of delusion; same topic, but it is Lex speaking, not DHH's answer."
+          }
+        ]
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
       "description": "[DKW-01] SHORT_KEYWORD: Neuralink...",
       "vars": {
         "query": "Neuralink",
@@ -1755,6 +1805,720 @@
             "matched_text": "deploying with Fluidstack",
             "turn_start_seconds": 230.6,
             "turn_end_seconds": 309.5,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-22] SINGLE_FILE: frontier models...",
+      "vars": {
+        "query": "frontier models",
+        "query_id": "DSF-22",
+        "category": "single_file",
+        "archetype": "semantic_concept",
+        "expected_moments": [
+          {
+            "file_id": "audio_04_macroeconomics_semiconductor.wav",
+            "turn_id": 7,
+            "speaker": "Dwarkesh Patel",
+            "start_seconds": 322.93,
+            "end_seconds": 332.7,
+            "matched_text": "There’s this trend where maybe world compute in gigawatts doubles every year, but the compute at the frontier labs triples every single year.",
+            "turn_start_seconds": 309.5,
+            "turn_end_seconds": 352.3,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-23] SINGLE_FILE: how quickly are top ai companies expanding capacit...",
+      "vars": {
+        "query": "how quickly are top ai companies expanding capacity",
+        "query_id": "DSF-23",
+        "category": "single_file",
+        "archetype": "semantic_paraphrase",
+        "expected_moments": [
+          {
+            "file_id": "audio_04_macroeconomics_semiconductor.wav",
+            "turn_id": 6,
+            "speaker": "Dylan Patel",
+            "start_seconds": 241.51,
+            "end_seconds": 243.47,
+            "matched_text": "So they’ve 3-4x’d compute as a whole.",
+            "alternatives": [
+              {
+                "file_id": "audio_04_macroeconomics_semiconductor.wav",
+                "turn_id": 7,
+                "speaker": "Dwarkesh Patel",
+                "start_seconds": 322.93,
+                "end_seconds": 332.7,
+                "matched_text": "There’s this trend where maybe world compute in gigawatts doubles every year, but the compute at the frontier labs triples every single year.",
+                "turn_start_seconds": 309.5,
+                "turn_end_seconds": 352.3,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ],
+            "turn_start_seconds": 230.6,
+            "turn_end_seconds": 309.5,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-24] SINGLE_FILE: non-programmers making their own apps...",
+      "vars": {
+        "query": "non-programmers making their own apps",
+        "query_id": "DSF-24",
+        "category": "single_file",
+        "archetype": "semantic_concept",
+        "expected_moments": [
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 22,
+            "speaker": "DHH",
+            "start_seconds": 531.0,
+            "end_seconds": 547.86,
+            "matched_text": "Lisp was once upon a time presented, Smalltalk was presented as these environments that would let regular people write their own applications, and none of it came true in the sense beyond, like, Microsoft Access databases or Excel spreadsheets.",
+            "alternatives": [
+              {
+                "file_id": "audio_01_lex_dhh_omarchy.wav",
+                "turn_id": 21,
+                "speaker": "DHH",
+                "start_seconds": 518.17,
+                "end_seconds": 529.28,
+                "matched_text": "Because if you look at the history of computer programming, for the last 40, 50 years, people have been promising that regular people could write code just by talking.",
+                "turn_start_seconds": 491.0,
+                "turn_end_seconds": 531.0,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ],
+            "turn_start_seconds": 531.0,
+            "turn_end_seconds": 568.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-25] SINGLE_FILE: does sunstein worry about declining birth rates...",
+      "vars": {
+        "query": "does sunstein worry about declining birth rates",
+        "query_id": "DSF-25",
+        "category": "single_file",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_06_constitutional_jurisprudence.wav",
+            "turn_id": 12,
+            "speaker": "Cass Sunstein",
+            "start_seconds": 226.3,
+            "end_seconds": 236.5,
+            "matched_text": "Yes, I do worry about that. That’s a problem for things other than liberalism, but one of the things it’s a problem for is liberalism, so I do worry about fertility.",
+            "turn_start_seconds": 226.3,
+            "turn_end_seconds": 236.5,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          },
+          {
+            "file_id": "audio_06_constitutional_jurisprudence.wav",
+            "turn_id": 14,
+            "speaker": "Cass Sunstein",
+            "start_seconds": 240.4,
+            "end_seconds": 251.26,
+            "matched_text": "I do feel optimistic about long-term. That’s a character trait, so fertility — I think it’s going to be okay, but that’s more an article of faith than an empirical certainty.",
+            "turn_start_seconds": 239.7,
+            "turn_end_seconds": 252.1,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DNM-20] NEAR_MISS: is crying a sign of weakness...",
+      "vars": {
+        "query": "is crying a sign of weakness",
+        "query_id": "DNM-20",
+        "category": "near_miss",
+        "archetype": "semantic_precision",
+        "expected_moments": [
+          {
+            "file_id": "audio_03_brain_science_psychology.wav",
+            "turn_id": 3,
+            "speaker": "Dr. Mireille B. Reece",
+            "start_seconds": 53.66,
+            "end_seconds": 61.7,
+            "matched_text": "I think about it with crying, and going \"I don't want to cry anymore, because that's an indicator of weakness.\"",
+            "alternatives": [
+              {
+                "file_id": "audio_03_brain_science_psychology.wav",
+                "turn_id": 21,
+                "speaker": "Dr. Mireille B. Reece",
+                "start_seconds": 504.6,
+                "end_seconds": 514.93,
+                "matched_text": "And so, in our lives, if we can say, for example with emotions, \"Look, crying in and of itself doesn't mean that I'm weak.",
+                "turn_start_seconds": 504.6,
+                "turn_end_seconds": 540.0,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ],
+            "turn_start_seconds": 51.8,
+            "turn_end_seconds": 69.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": [
+          {
+            "file_id": "audio_05_sports_tactics_debate.wav",
+            "turn_id": 15,
+            "speaker": "Khabib Nurmagomedov",
+            "start_seconds": 272.0,
+            "end_seconds": 331.0,
+            "reason": "Khabib's grandfather on finding an opponent's weak spot: 'weak' in the fighting sense, not about emotions."
+          }
+        ]
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DMF-15] MULTI_FILE: famous rivalries...",
+      "vars": {
+        "query": "famous rivalries",
+        "query_id": "DMF-15",
+        "category": "multi_file",
+        "archetype": "cross_file_theme",
+        "expected_moments": [
+          {
+            "file_id": "audio_05_sports_tactics_debate.wav",
+            "turn_id": 20,
+            "speaker": "Khabib Nurmagomedov",
+            "start_seconds": 408.42,
+            "end_seconds": 417.0,
+            "matched_text": "Take Ali and Frazier, Thrilla in Manila, right? People called it the greatest rivalry, and it still is.",
+            "turn_start_seconds": 391.0,
+            "turn_end_seconds": 435.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          },
+          {
+            "file_id": "audio_07_investigative_history_cafe.wav",
+            "turn_id": 13,
+            "speaker": "Gary Gallagher",
+            "start_seconds": 242.18,
+            "end_seconds": 254.34,
+            "matched_text": "He and Lee are often compared, but for the last year of the war, they’re operating on– it’s not apples to apples because Grant is general in chief and is managing the entire war effort.",
+            "turn_start_seconds": 241.0,
+            "turn_end_seconds": 272.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-26] SINGLE_FILE: what did khabib's grandfather teach him...",
+      "vars": {
+        "query": "what did khabib's grandfather teach him",
+        "query_id": "DSF-26",
+        "category": "single_file",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_05_sports_tactics_debate.wav",
+            "turn_id": 15,
+            "speaker": "Khabib Nurmagomedov",
+            "start_seconds": 285.93,
+            "end_seconds": 291.01,
+            "matched_text": "My grandfather always told me, “A dog that latches onto that one weak spot always wins.”",
+            "turn_start_seconds": 272.0,
+            "turn_end_seconds": 331.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-27] SINGLE_FILE: connecting your brain directly to computers...",
+      "vars": {
+        "query": "connecting your brain directly to computers",
+        "query_id": "DSF-27",
+        "category": "single_file",
+        "archetype": "semantic_concept",
+        "expected_moments": [
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 16,
+            "speaker": "DHH",
+            "start_seconds": 374.0,
+            "end_seconds": 387.5,
+            "matched_text": "… that Neuralink and other projects are trying to accelerate. Like, the bandwidth we’re communicating over right now is quite low because we’re limited by our cognition.",
+            "turn_start_seconds": 374.0,
+            "turn_end_seconds": 402.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DNM-21] NEAR_MISS: what family was robert e lee from...",
+      "vars": {
+        "query": "what family was robert e lee from",
+        "query_id": "DNM-21",
+        "category": "near_miss",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_07_investigative_history_cafe.wav",
+            "turn_id": 19,
+            "speaker": "Gary Gallagher",
+            "start_seconds": 299.72,
+            "end_seconds": 304.07,
+            "matched_text": "Lee is from an aristocratic family. Grant was from a solidly middle-class family.",
+            "turn_start_seconds": 297.0,
+            "turn_end_seconds": 337.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": [
+          {
+            "file_id": "audio_07_investigative_history_cafe.wav",
+            "turn_id": 14,
+            "speaker": "Lex Fridman",
+            "start_seconds": 272.0,
+            "end_seconds": 279.0,
+            "reason": "Lex's question introducing Lee; asks who he was but does not describe his family."
+          }
+        ]
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-28] SINGLE_FILE: why is life so hard...",
+      "vars": {
+        "query": "why is life so hard",
+        "query_id": "DSF-28",
+        "category": "single_file",
+        "archetype": "semantic_theme",
+        "expected_moments": [
+          {
+            "file_id": "audio_03_brain_science_psychology.wav",
+            "turn_id": 16,
+            "speaker": "Adam Stacoviak",
+            "start_seconds": 364.52,
+            "end_seconds": 367.81,
+            "matched_text": "The struggle really is a comprehension problem.",
+            "turn_start_seconds": 360.1,
+            "turn_end_seconds": 402.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-29] SINGLE_FILE: intellectual humility...",
+      "vars": {
+        "query": "intellectual humility",
+        "query_id": "DSF-29",
+        "category": "single_file",
+        "archetype": "semantic_concept",
+        "expected_moments": [
+          {
+            "file_id": "audio_06_constitutional_jurisprudence.wav",
+            "turn_id": 10,
+            "speaker": "Cass Sunstein",
+            "start_seconds": 199.76,
+            "end_seconds": 206.7,
+            "matched_text": "Kahneman finally said, “It’s an empirical question, and I don’t have the evidence. It’s not a matter of thinking.”",
+            "turn_start_seconds": 186.5,
+            "turn_end_seconds": 220.6,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-30] SINGLE_FILE: largest ufc bout of all time...",
+      "vars": {
+        "query": "largest ufc bout of all time",
+        "query_id": "DSF-30",
+        "category": "single_file",
+        "archetype": "semantic_paraphrase",
+        "expected_moments": [
+          {
+            "file_id": "audio_05_sports_tactics_debate.wav",
+            "turn_id": 17,
+            "speaker": "Lex Fridman",
+            "start_seconds": 344.0,
+            "end_seconds": 348.77,
+            "matched_text": "Your fight with Conor, I think, was the biggest fight in UFC history.",
+            "turn_start_seconds": 344.0,
+            "turn_end_seconds": 359.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-31] SINGLE_FILE: why is exact vector search slow...",
+      "vars": {
+        "query": "why is exact vector search slow",
+        "query_id": "DSF-31",
+        "category": "single_file",
+        "archetype": "semantic_paraphrase",
+        "expected_moments": [
+          {
+            "file_id": "audio_02_postgres_fm_pgvector.wav",
+            "turn_id": 11,
+            "speaker": "Michael",
+            "start_seconds": 428.88,
+            "end_seconds": 442.2,
+            "matched_text": "It's at minimum, a sequential scan of the entire table, plus all of the CPU of doing those calculations 100 times per, well, 1,500 times per row.",
+            "alternatives": [
+              {
+                "file_id": "audio_02_postgres_fm_pgvector.wav",
+                "turn_id": 10,
+                "speaker": "Jonathan",
+                "start_seconds": 403.98,
+                "end_seconds": 412.24,
+                "matched_text": "To do an exact nearest neighbor search, as they call it, or the k nearest neighbor, you have to compare against every single vector that you store in a database.",
+                "turn_start_seconds": 247.0,
+                "turn_end_seconds": 427.2,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ],
+            "turn_start_seconds": 427.2,
+            "turn_end_seconds": 442.2,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-32] SINGLE_FILE: dystopian novel about surveillance state...",
+      "vars": {
+        "query": "dystopian novel about surveillance state",
+        "query_id": "DSF-32",
+        "category": "single_file",
+        "archetype": "semantic_concept",
+        "expected_moments": [
+          {
+            "file_id": "audio_06_constitutional_jurisprudence.wav",
+            "turn_id": 8,
+            "speaker": "Cass Sunstein",
+            "start_seconds": 116.96,
+            "end_seconds": 125.53,
+            "matched_text": "I recently reread Orwell’s 1984, and what staggered me about it is that Orwell’s of two minds, and that’s the power of the book.",
+            "turn_start_seconds": 113.3,
+            "turn_end_seconds": 176.6,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DNM-22] NEAR_MISS: does sunstein think muslim immigration threatens e...",
+      "vars": {
+        "query": "does sunstein think muslim immigration threatens europe",
+        "query_id": "DNM-22",
+        "category": "near_miss",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_06_constitutional_jurisprudence.wav",
+            "turn_id": 16,
+            "speaker": "Cass Sunstein",
+            "start_seconds": 261.5,
+            "end_seconds": 274.45,
+            "matched_text": "I don’t agree. I do think that whether immigration is, broadly speaking, an excellent thing or a risk is something that it’s reasonable to have divergent views about.",
+            "turn_start_seconds": 261.5,
+            "turn_end_seconds": 321.1,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": [
+          {
+            "file_id": "audio_06_constitutional_jurisprudence.wav",
+            "turn_id": 17,
+            "speaker": "Tyler Cowen",
+            "start_seconds": 321.1,
+            "end_seconds": 348.4,
+            "reason": "Tyler pushes the case that the stereotypes are true; the question side, not Sunstein's view."
+          }
+        ]
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-33] SINGLE_FILE: khabib didn't hold back wrestling lex...",
+      "vars": {
+        "query": "khabib didn't hold back wrestling lex",
+        "query_id": "DSF-33",
+        "category": "single_file",
+        "archetype": "semantic_paraphrase",
+        "expected_moments": [
+          {
+            "file_id": "audio_05_sports_tactics_debate.wav",
+            "turn_id": 9,
+            "speaker": "Khabib Nurmagomedov",
+            "start_seconds": 198.68,
+            "end_seconds": 204.43,
+            "matched_text": "I could have gone easy on you, but I wanted you to feel the real heavy pressure.",
+            "turn_start_seconds": 191.0,
+            "turn_end_seconds": 209.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DNM-23] NEAR_MISS: hard to picture many dimensions...",
+      "vars": {
+        "query": "hard to picture many dimensions",
+        "query_id": "DNM-23",
+        "category": "near_miss",
+        "archetype": "semantic_precision",
+        "expected_moments": [
+          {
+            "file_id": "audio_02_postgres_fm_pgvector.wav",
+            "turn_id": 9,
+            "speaker": "Michael",
+            "start_seconds": 240.95,
+            "end_seconds": 247.0,
+            "matched_text": "And yeah, 5 dimensions hurts my head to think about it, or to try and conceptualize it in any way.",
+            "alternatives": [
+              {
+                "file_id": "audio_02_postgres_fm_pgvector.wav",
+                "turn_id": 10,
+                "speaker": "Jonathan",
+                "start_seconds": 398.09,
+                "end_seconds": 402.8,
+                "matched_text": "Like I still don't even know what a five-dimensional vector is, and here we're talking about 1,500 dimensional vectors.",
+                "turn_start_seconds": 247.0,
+                "turn_end_seconds": 427.2,
+                "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+              }
+            ],
+            "turn_start_seconds": 230.2,
+            "turn_end_seconds": 247.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": [
+          {
+            "file_id": "audio_02_postgres_fm_pgvector.wav",
+            "turn_id": 6,
+            "speaker": "Jonathan",
+            "start_seconds": 78.3,
+            "end_seconds": 227.8,
+            "reason": "Jonathan on indexing up to 100-dimensional vectors: dimensions, but not about how hard they are to picture."
+          }
+        ]
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-34] SINGLE_FILE: moving to a new country...",
+      "vars": {
+        "query": "moving to a new country",
+        "query_id": "DSF-34",
+        "category": "single_file",
+        "archetype": "semantic_theme",
+        "expected_moments": [
+          {
+            "file_id": "audio_04_macroeconomics_semiconductor.wav",
+            "turn_id": 13,
+            "speaker": "Dwarkesh Patel",
+            "start_seconds": 460.0,
+            "end_seconds": 465.3,
+            "matched_text": "By the way, when we first moved to the US, I had the v/w thing pretty bad, and I was a vegetarian.",
+            "turn_start_seconds": 460.0,
+            "turn_end_seconds": 465.3,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-35] SINGLE_FILE: when did dhh start omarchy...",
+      "vars": {
+        "query": "when did dhh start omarchy",
+        "query_id": "DSF-35",
+        "category": "single_file",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 8,
+            "speaker": "DHH",
+            "start_seconds": 157.53,
+            "end_seconds": 167.0,
+            "matched_text": "The Omarchy project is only a year old and a little bit. I started it last summer in between sessions at the 24 Hours of Le Mans-",
+            "turn_start_seconds": 153.0,
+            "turn_end_seconds": 167.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DSF-36] SINGLE_FILE: skeptic who later changed his mind...",
+      "vars": {
+        "query": "skeptic who later changed his mind",
+        "query_id": "DSF-36",
+        "category": "single_file",
+        "archetype": "semantic_theme",
+        "expected_moments": [
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 17,
+            "speaker": "DHH",
+            "start_seconds": 421.04,
+            "end_seconds": 427.68,
+            "matched_text": "As we’ve talked about, I was rather skeptical, and I was using AI in certain ways, but I was not the first person who downloaded Claude Code.",
+            "turn_start_seconds": 402.0,
+            "turn_end_seconds": 447.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          },
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 20,
+            "speaker": "DHH",
+            "start_seconds": 476.26,
+            "end_seconds": 484.01,
+            "matched_text": "I remember actually reading his memo to the company, the AI memo, and thinking, “Ah, seems a little much.”",
+            "turn_start_seconds": 467.0,
+            "turn_end_seconds": 491.0,
             "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
           }
         ],
