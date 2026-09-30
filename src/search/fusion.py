@@ -4,7 +4,7 @@ Convex-combination fusion of ranked lists from several retrievers:
     score = Σ wᵢ · minmaxᵢ(scoreᵢ)      (weights normalized to sum to 1)
 
 Each list is min-max normalized per query, so BM25's unbounded scores and cosine similarity are
-comparable. It beat weighted reciprocal rank fusion on the dev set (docs/PHASE_3_PLAN.md §6), in
+comparable. It beat weighted reciprocal rank fusion on the dev set (README §3.2), in
 line with Bruch et al. A chunk missing from a list contributes nothing for that list. Ties break
 by chunk id so the order is deterministic.
 """

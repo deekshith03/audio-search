@@ -1,6 +1,6 @@
 """
 Search chunks: sentence-bounded windows of about 30 s inside one speaker turn, with a
-1-sentence overlap (the "A-30s" configuration chosen on the dev set; docs/PHASE_3_PLAN.md §6).
+1-sentence overlap (the "A-30s" configuration chosen on the dev set; README §3.2).
 
 Every chunk stays inside one turn, so it has exactly one speaker. Chunks are what retrieval
 scores; results are then pinpointed to the best 1-3 sentences inside them (localize.py).

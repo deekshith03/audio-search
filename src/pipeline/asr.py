@@ -3,7 +3,7 @@ Stage 1A: ASR Transcription with faster-whisper (large-v3-turbo, fp32, CPU).
 
 The same backend runs natively and inside Docker, so every environment produces identical
 transcripts. fp32 was chosen over int8 after benchmarking: equal-or-better WER and faster on
-ARM CPUs (see docs/PHASE_2_SUMMARY.md). Repetition loops are guarded with
+ARM CPUs (see README §3.2). Repetition loops are guarded with
 condition_on_previous_text=False and ghost tokens in long silences with
 hallucination_silence_threshold=2.0.
 """

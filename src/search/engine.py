@@ -1,5 +1,5 @@
 """
-Hybrid search over indexed transcripts (docs/PHASE_3_PLAN.md §4, configuration frozen in §6).
+Hybrid search over indexed transcripts (README §2.2; decisions in §3).
 
     query ─┬─ BM25 over chunks (pg_search) ─────────┐
            ├─ trigram over chunks (≤ 3-word queries) ┤ keyword: mode "lexical"

@@ -1,0 +1,2 @@
+flowchart LR
+  A[Upload] --> B["Transcribe<br/>Whisper"] --> C["Align words<br/>wav2vec2"] --> D["Who spoke when<br/>pyannote"] --> E["Speaker turns"] --> F["Name speakers"] --> G[("Index<br/>PostgreSQL")] --> H["Search<br/>keyword + meaning"]

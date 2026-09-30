@@ -1,4 +1,4 @@
--- The dev-set tuning grid is over (docs/PHASE_3_PLAN.md §6): only the frozen configuration
+-- The dev-set tuning grid is over (README §3): only the frozen configuration
 -- remains. Drop the losing chunk configs, embedding variants and their HNSW indexes, and the
 -- context column that only the losing configs used.
 DELETE FROM chunks WHERE chunker <> 'A-30s';

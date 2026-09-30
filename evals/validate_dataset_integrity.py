@@ -43,7 +43,7 @@ except ImportError:
 
 TURN_SHARING_ALLOWED = {frozenset({"dev", "blind"})}
 # Blind queries the test2 writer reused from earlier splits, found in the code review and disclosed
-# in docs/PHASE_3_PLAN.md §6 (blind is frozen, so they stay). Any other repeat is an error.
+# in README §4.6 (blind is frozen, so they stay). Any other repeat is an error.
 KNOWN_REPEATED_QUERIES = {("blind", "TKW-01"), ("blind", "TSF-14"), ("blind", "TKW-06")}
 
 

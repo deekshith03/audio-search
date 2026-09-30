@@ -1,0 +1,10 @@
+flowchart TD
+  U["Audio file<br/>wav · mp3 · m4a · aac · flac · ogg · opus · webm · mp4<br/>10 s to 10 min"]
+  U --> I["Ingest<br/>ffmpeg → 16 kHz mono PCM · content-hash file id · duration check"]
+  I --> A["ASR<br/>faster-whisper large-v3-turbo · fp32 · CPU"]
+  A --> W["Align<br/>wav2vec2 via WhisperX → ~20 ms word timings"]
+  W --> D["Diarize<br/>pyannote community-1 · exactly 2 speakers"]
+  D --> R["Reconcile<br/>each word → a speaker, smoothed into single-speaker turns"]
+  R --> T["Canonical transcript (JSON)<br/>turns → words, with times and SPEAKER_00 / SPEAKER_01"]
+  T --> N["Name speakers in the app<br/>names joined at query time"]
+  T --> X[("Search index<br/>PostgreSQL · ParadeDB")]

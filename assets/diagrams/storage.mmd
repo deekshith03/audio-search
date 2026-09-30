@@ -1,0 +1,6 @@
+erDiagram
+  files ||--o{ speakers : "names per label"
+  files ||--o{ sentences : "word-timed"
+  files ||--o{ chunks : "30 s single-speaker"
+  chunks ||--o{ chunk_embeddings : "pgvector"
+  sentences ||--o{ sentence_embeddings : "pgvector"

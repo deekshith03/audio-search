@@ -1,0 +1,10 @@
+flowchart TD
+  Q["Query"] --> K1["BM25 over 30 s chunks<br/>ParadeDB pg_search · weight 1"]
+  Q --> K2["Trigram fuzzy match<br/>pg_trgm · queries of up to 3 words · weight 1"]
+  Q --> M1["EmbeddingGemma-300m over chunks<br/>pgvector HNSW · weight 2"]
+  Q --> M2["EmbeddingGemma-300m over single sentences<br/>4+ words · weight 1"]
+  K1 & K2 & M1 & M2 --> F["Convex fusion<br/>sum of weight × min-max-normalized score"]
+  F --> S["Top 20 chunks"]
+  S --> L["Localize<br/>best 1–3 contiguous sentences of the chunk's turn, 2–20 s<br/>short keyword queries: the matched words ± 2 s"]
+  L --> P["Drop clips under 1 s and clips overlapping a higher-ranked one"]
+  P --> OUT["Top k results<br/>recording · speaker · 1:04–1:11 · text with highlights · matched by words / meaning / both"]

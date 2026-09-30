@@ -1,6 +1,6 @@
 """
 Local embedding model: EmbeddingGemma (google/embeddinggemma-300m, 768-d, gated on Hugging Face),
-chosen on the dev set over bge-small, bge-base and Qwen3-Embedding (docs/PHASE_3_PLAN.md §4).
+chosen on the dev set over bge-small, bge-base and Qwen3-Embedding (README §3.2).
 
 Query and document prompts come from the model's own sentence-transformers config
 (`encode_query` / `encode_document`). Vectors are L2-normalized, so cosine distance ranks them.
