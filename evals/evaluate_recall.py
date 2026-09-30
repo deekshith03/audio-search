@@ -226,7 +226,7 @@ if __name__ == "__main__":
     add_split_argument(parser)
     parser.add_argument("--enforce-gate", action="store_true")
     parser.add_argument("--search-config", default="{}", help='JSON SearchConfig overrides, e.g. \'{"chunker": "B"}\'')
-    parser.add_argument("--force", action="store_true", help="Rerun a one-time split (test2) that already has results.")
+    parser.add_argument("--force", action="store_true", help="Rerun a one-time split (blind) that already has results.")
     args = parser.parse_args()
     refuse_rerun(args.split, args.force)
     search_config = json.loads(args.search_config)

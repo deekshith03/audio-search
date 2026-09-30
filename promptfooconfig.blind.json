@@ -1,5 +1,5 @@
 {
-  "description": "Conversational Audio Hybrid Search: test2 split (40 queries)",
+  "description": "Conversational Audio Hybrid Search: blind split (40 queries)",
   "prompts": [
     "{{query}}"
   ],

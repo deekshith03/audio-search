@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "benchmark_name": "Conversational Audio Hybrid Search Benchmark: test2 split",
-  "split": "test2",
+  "benchmark_name": "Conversational Audio Hybrid Search Benchmark: blind split (named test2 when frozen)",
+  "split": "blind",
   "total_queries": 40,
   "query_breakdown": {
     "single_file": 19,

@@ -11,12 +11,12 @@ Strictly proves:
    - Exactly 2 declared foreground speakers per transcript.
    - Sequential, unique turn IDs (1..N).
    - Declared file durations match physical audio duration within 1.0s.
-3. Benchmark Queries (Qrels), for each split (dev, test):
+3. Benchmark Queries (Qrels), for each split (dev, blind):
    - Query counts per category match EXPECTED_BREAKDOWN (evals/qrels.py).
    - short_keyword queries have at most two words.
-   - dev and the old test split share no answer or distractor turn (dev `alternatives` may sit on
-     test turns). test2 may share turns with any split: its queries were written after all tuning
-     and no query was ever tuned on, so the right answer wins over turn bookkeeping.
+   - Splits use disjoint turns unless the pair is in TURN_SHARING_ALLOWED. dev and blind may share
+     turns: blind's queries were written after all tuning and none was ever tuned on, so the right
+     answer wins over turn bookkeeping.
    - short_keyword answers are labeled at phrase level: at least MIN_KEYWORD_LABEL_SECONDS long.
    - All query IDs are unique.
    - target_file_count strictly equals len(unique_files).
@@ -40,7 +40,7 @@ except ImportError:
 
 
 TUNING_SPLIT = "dev"
-TURN_SHARING_ALLOWED = {frozenset({"test", "test2"}), frozenset({"dev", "test2"})}
+TURN_SHARING_ALLOWED = {frozenset({"dev", "blind"})}
 
 
 def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
@@ -312,7 +312,7 @@ def validate_all():
                 any_shared = True
                 errors.append(f"{a} and {b} both reference {fid} turn {tid}; splits must use disjoint turns")
     if not any_shared:
-        print(f"✓ {', '.join(splits)}: dev shares no answer or distractor turn with the old test split.")
+        print(f"✓ {', '.join(splits)}: no turns shared outside the allowed pairs.")
 
     if errors:
         print(f"\n❌ FOUND {len(errors)} INTEGRITY ERRORS:")

@@ -1,6 +1,6 @@
 """
 Generates clean, readable promptfoo configs (YAML plus a structurally identical JSON copy)
-for each query split: promptfooconfig.{dev,test}.{yaml,json}, from dataset/qrels/{split}_queries.json.
+for each query split: promptfooconfig.{dev,blind}.{yaml,json}, from dataset/qrels/{split}_queries.json.
 
 Self-validates that parsed YAML structure matches parsed JSON 100%.
 """

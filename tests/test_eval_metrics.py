@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 from evals.metrics import compute_temporal_iou, is_temporal_match, evaluate_retrieval
 from evals.assertions import check_temporal_match, get_assert
 from evals.evaluate_recall import check_gate
+from evals.qrels import SPLIT_PATHS
 
 
 class TestEvaluationMetrics(unittest.TestCase):
@@ -80,7 +81,7 @@ class TestEvaluationMetrics(unittest.TestCase):
         self.assertEqual(eval_correct["recall@5"], 1.0)
 
     def test_json_and_yaml_parity(self):
-        for split in ("dev", "test"):
+        for split in SPLIT_PATHS:
             with self.subTest(split=split):
                 with open(f"promptfooconfig.{split}.json", "r", encoding="utf-8") as fj:
                     d_json = json.load(fj)
@@ -101,7 +102,7 @@ class TestEvaluationMetrics(unittest.TestCase):
 
     def test_configs_match_qrels(self):
         from evals.qrels import load_qrels
-        for split in ("dev", "test"):
+        for split in SPLIT_PATHS:
             with self.subTest(split=split):
                 with open(f"promptfooconfig.{split}.yaml", "r", encoding="utf-8") as fy:
                     cfg = yaml.safe_load(fy)

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Runner for Conversational Audio Hybrid Search Evaluation Benchmark
 #
-#   bash evals/run_evals.sh [--split dev|test] [--mock] [--enforce-gate] [promptfoo eval args...]
+#   bash evals/run_evals.sh [--split dev] [--mock] [--enforce-gate] [promptfoo eval args...]
 #   bash evals/run_evals.sh --view      open the promptfoo results UI
 #
-# --split defaults to dev (used for tuning). The held-out test split is run only on purpose:
-#   bash evals/run_evals.sh --split test --enforce-gate
+# Only dev (the tuning split) runs here. The blind split is one-time: its result is in
+# evals/results/final_blind.json and evals/evaluate_recall.py refuses a rerun.
 #
 # Promptfoo is a Node tool run through a pinned npx (no package.json / node_modules);
 # Node itself is pinned by .mise.toml.
@@ -49,8 +49,9 @@ while [ $# -gt 0 ]; do
 done
 
 case "$SPLIT" in
-    dev|test) ;;
-    *) echo "Unknown --split '${SPLIT}' (expected dev or test)" >&2; exit 64 ;;
+    dev) ;;
+    blind) echo "The blind split is one-time and already run (evals/results/final_blind.json); it is not rerun here." >&2; exit 64 ;;
+    *) echo "Unknown --split '${SPLIT}' (expected dev)" >&2; exit 64 ;;
 esac
 EVAL_ARGS+=("--split" "$SPLIT")
 PROMPTFOO_CONFIG="promptfooconfig.${SPLIT}.yaml"
