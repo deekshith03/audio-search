@@ -31,6 +31,7 @@ RETIRED_SPLIT_PATHS = {
     "holdout": os.path.join(ROOT, "dataset", "qrels", "retired", "holdout_queries.json"),
 }
 ONE_TIME_RESULTS = {"blind": os.path.join(ROOT, "evals", "results", "final_blind.json")}
+TUNABLE_SPLITS = tuple(s for s in SPLIT_PATHS if s not in ONE_TIME_RESULTS)
 MIN_KEYWORD_LABEL_SECONDS = 1.0
 DEFAULT_SPLIT = "dev"
 CATEGORIES = ("single_file", "multi_file", "near_miss", "short_keyword")

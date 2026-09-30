@@ -1,6 +1,7 @@
 """
 Generates clean, readable promptfoo configs (YAML plus a structurally identical JSON copy)
-for each query split: promptfooconfig.{dev,blind}.{yaml,json}, from dataset/qrels/{split}_queries.json.
+for each tunable query split: promptfooconfig.dev.{yaml,json}, from dataset/qrels/dev_queries.json.
+One-time splits (blind) get no config, so promptfoo cannot score them a second time.
 
 Self-validates that parsed YAML structure matches parsed JSON 100%.
 """
@@ -12,7 +13,7 @@ import sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from qrels import SPLIT_PATHS, load_qrels  # noqa: E402
+from qrels import TUNABLE_SPLITS, load_qrels  # noqa: E402
 
 
 def config_paths(split):
@@ -102,5 +103,5 @@ def generate_config(split):
 
 
 if __name__ == "__main__":
-    for split in SPLIT_PATHS:
+    for split in TUNABLE_SPLITS:
         generate_config(split)

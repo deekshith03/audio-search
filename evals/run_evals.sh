@@ -42,7 +42,10 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --mock) MOCK_MODE=1 ;;
         --enforce-gate) EVAL_ARGS+=("--enforce-gate") ;;
-        --split) shift; SPLIT="${1:-}" ;;
+        --split=*) SPLIT="${1#--split=}" ;;
+        --split)
+            if [ $# -lt 2 ]; then echo "--split needs a value (dev)" >&2; exit 64; fi
+            shift; SPLIT="$1" ;;
         *) PROMPTFOO_ARGS+=("$1") ;;
     esac
     shift

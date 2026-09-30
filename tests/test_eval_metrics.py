@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 from evals.metrics import compute_temporal_iou, is_temporal_match, evaluate_retrieval
 from evals.assertions import check_temporal_match, get_assert
 from evals.evaluate_recall import check_gate
-from evals.qrels import SPLIT_PATHS
+from evals.qrels import ONE_TIME_RESULTS, TUNABLE_SPLITS
 
 
 class TestEvaluationMetrics(unittest.TestCase):
@@ -81,7 +81,7 @@ class TestEvaluationMetrics(unittest.TestCase):
         self.assertEqual(eval_correct["recall@5"], 1.0)
 
     def test_json_and_yaml_parity(self):
-        for split in SPLIT_PATHS:
+        for split in TUNABLE_SPLITS:
             with self.subTest(split=split):
                 with open(f"promptfooconfig.{split}.json", "r", encoding="utf-8") as fj:
                     d_json = json.load(fj)
@@ -102,11 +102,16 @@ class TestEvaluationMetrics(unittest.TestCase):
 
     def test_configs_match_qrels(self):
         from evals.qrels import load_qrels
-        for split in SPLIT_PATHS:
+        for split in TUNABLE_SPLITS:
             with self.subTest(split=split):
                 with open(f"promptfooconfig.{split}.yaml", "r", encoding="utf-8") as fy:
                     cfg = yaml.safe_load(fy)
                 self.assertEqual([t["vars"]["query_id"] for t in cfg["tests"]], [q["query_id"] for q in load_qrels(split)["queries"]])
+
+    def test_one_time_splits_have_no_promptfoo_config(self):
+        for split in ONE_TIME_RESULTS:
+            for ext in ("json", "yaml"):
+                self.assertFalse(os.path.exists(f"promptfooconfig.{split}.{ext}"), split)
 
     def test_near_miss_hard_negative_rejection(self):
         context = {

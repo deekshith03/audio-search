@@ -2,7 +2,7 @@ import json
 import os
 import unittest
 
-from scripts.tighten_qrels import word_char_spans
+from scripts.tighten_qrels import target_paths, word_char_spans
 
 from evals.qrels import SPLIT_PATHS
 
@@ -70,6 +70,22 @@ class TestTightenedQrels(unittest.TestCase):
         for qid, m in self.moments():
             self.assertTrue(m["span_source"].startswith("wav2vec2_forced_alignment_of_reference_turn"), qid)
 
+
+
+class TestTightenTargets(unittest.TestCase):
+
+    def test_default_is_the_tunable_splits_only(self):
+        self.assertEqual(target_paths(None, allow_frozen=False), [SPLIT_PATHS["dev"]])
+
+    def test_frozen_blind_qrels_are_refused_unless_allowed(self):
+        with self.assertRaises(SystemExit):
+            target_paths([SPLIT_PATHS["blind"]], allow_frozen=False)
+        with self.assertRaises(SystemExit):
+            target_paths([os.path.relpath(SPLIT_PATHS["blind"])], allow_frozen=False)
+        self.assertEqual(target_paths([SPLIT_PATHS["blind"]], allow_frozen=True), [SPLIT_PATHS["blind"]])
+
+    def test_explicit_dev_path_is_allowed(self):
+        self.assertEqual(target_paths([SPLIT_PATHS["dev"]], allow_frozen=False), [SPLIT_PATHS["dev"]])
 
 if __name__ == "__main__":
     unittest.main()

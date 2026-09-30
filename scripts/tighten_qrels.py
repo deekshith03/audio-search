@@ -9,7 +9,9 @@ the audio inside the turn's own boundaries (wav2vec2 via WhisperX), and the word
 
 Idempotent: the original turn bounds are kept in `turn_start_seconds` / `turn_end_seconds`.
 
-Usage: uv run python -m scripts.tighten_qrels [--qrels path ...] [--dry-run]   (default: dev and test splits)
+Usage: uv run python -m scripts.tighten_qrels [--qrels path ...] [--dry-run] [--allow-frozen]
+(default: the tunable splits, i.e. dev; a one-time split such as blind is frozen and is rewritten
+only with --allow-frozen)
 """
 
 import argparse
@@ -23,7 +25,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import whisperx
 from whisperx.alignment import DEFAULT_ALIGN_MODELS_TORCH
 
-from evals.qrels import SPLIT_PATHS
+from evals.qrels import ONE_TIME_RESULTS, SPLIT_PATHS, TUNABLE_SPLITS
 from src.pipeline.common import GROUND_TRUTH_DIR, OUTPUT_DIR, write_json
 
 AUDIO_DIR = "dataset/audio"
@@ -144,10 +146,24 @@ def tighten(qrels_path: str, dry_run: bool = False) -> None:
         print(f"\nUpdated {qrels_path}")
 
 
+FROZEN_QRELS = {os.path.realpath(SPLIT_PATHS[s]) for s in ONE_TIME_RESULTS}
+
+
+def target_paths(requested: Optional[List[str]], allow_frozen: bool) -> List[str]:
+    """The qrels files to tighten: the tunable splits by default. A frozen (one-time) split's file
+    is refused unless allow_frozen, since rewriting it changes the sha256 recorded when it was frozen."""
+    paths = requested or [SPLIT_PATHS[s] for s in TUNABLE_SPLITS]
+    frozen = [p for p in paths if os.path.realpath(p) in FROZEN_QRELS]
+    if frozen and not allow_frozen:
+        raise SystemExit(f"Refusing to rewrite frozen qrels {frozen}; pass --allow-frozen to do it on purpose.")
+    return paths
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--qrels", action="append", help="Qrels file (repeatable). Defaults to every split.")
+    parser.add_argument("--qrels", action="append", help="Qrels file (repeatable). Defaults to the tunable splits (dev).")
+    parser.add_argument("--allow-frozen", action="store_true", help="Also allow rewriting a frozen one-time split's qrels.")
     args = parser.parse_args()
-    for path in args.qrels or SPLIT_PATHS.values():
+    for path in target_paths(args.qrels, args.allow_frozen or args.dry_run):
         tighten(path, args.dry_run)

@@ -4,11 +4,12 @@ import os
 import subprocess
 import tempfile
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 
 from evals import evaluate_recall
 from evals.metrics import evaluate_retrieval, result_matches_moment
-from evals.qrels import ANY_OF_CATEGORIES, CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, ONE_TIME_RESULTS, RETIRED_SPLIT_PATHS, ROOT, SPLIT_PATHS, load_qrels
+from evals.qrels import ANY_OF_CATEGORIES, CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, ONE_TIME_RESULTS, RETIRED_SPLIT_PATHS, ROOT, SPLIT_PATHS, TUNABLE_SPLITS, load_qrels
 
 BLIND_QRELS_SHA256 = "c5d8e14cad80cd2d2c9eb310cc99dd7b3cb6ec5ad33841af72a8b14d36abc984"
 BLIND_QRELS_FROZEN_AS_TEST2_SHA256 = "3c47eb8436ad6536b0b8ab0491891b7d83ab1d1e1f5ef2b4a7f38b2c14a4d232"
@@ -17,7 +18,8 @@ BLIND_RESULT_SHA256 = "794f58fa4fc808ffb6a885b19c33a50f4d9f35af69f77ea6999517557
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
-from evals.validate_dataset_integrity import validate_all
+from evals import bootstrap_ci
+from evals.validate_dataset_integrity import KNOWN_REPEATED_QUERIES, normalized_query, repeated_queries, validate_all
 
 
 class TestQrelsModule(unittest.TestCase):
@@ -60,6 +62,47 @@ class TestQrelsModule(unittest.TestCase):
         with open(ONE_TIME_RESULTS["blind"], "rb") as f:
             self.assertEqual(sha256(f.read()), BLIND_RESULT_SHA256)
 
+    def test_repeated_query_text_is_found_across_splits_only(self):
+        splits = {
+            "dev": [{"query_id": "D1", "query": "Why were arrays added?"}, {"query_id": "D2", "query": "fish tank"}],
+            "blind": [{"query_id": "B1", "query": "why  were ARRAYS added"}, {"query_id": "B2", "query": "something new"}],
+            "test": [{"query_id": "T1", "query": "Fish tank!"}, {"query_id": "T2", "query": "Fish tank"}],
+        }
+        self.assertEqual(normalized_query(" Why were  ARRAYS added? "), "why were arrays added")
+        self.assertEqual(repeated_queries(splits), [("blind", "B1", "dev", "D1"), ("test", "T1", "dev", "D2"), ("test", "T2", "dev", "D2")])
+
+    def test_only_the_three_disclosed_blind_repeats_are_allowed(self):
+        self.assertEqual(KNOWN_REPEATED_QUERIES, {("blind", "TKW-01"), ("blind", "TSF-14"), ("blind", "TKW-06")})
+
+    def test_bootstrap_micro_recall_matches_the_scorer_and_brackets_it(self):
+        weights = bootstrap_ci.moment_weights(load_qrels("dev")["queries"])
+        with open(os.path.join(ROOT, "evals", "results", "dev73_clean_index.json")) as f:
+            hybrid = json.load(f)["report"]["hybrid"]
+        for k in (1, 5):
+            estimate = bootstrap_ci.micro_recall(hybrid["queries"], weights, k)
+            self.assertAlmostEqual(estimate, hybrid["micro_moments"][f"recall@{k}"])
+            lo, hi = bootstrap_ci.bootstrap_ci(hybrid["queries"], weights, k, draws=2000)
+            self.assertLessEqual(lo, estimate)
+            self.assertGreaterEqual(hi, estimate)
+        self.assertEqual(bootstrap_ci.bootstrap_ci(hybrid["queries"], weights, 5, draws=500),
+                         bootstrap_ci.bootstrap_ci(hybrid["queries"], weights, 5, draws=500))
+
+    def test_bootstrap_resamples_whole_queries(self):
+        weights = {"A": 3, "B": 1}
+        per_query = [{"query_id": "A", "recall@1": 1.0}, {"query_id": "B", "recall@1": 0.0}]
+        self.assertEqual(bootstrap_ci.micro_recall(per_query, weights, 1), 0.75)
+        lo, hi = bootstrap_ci.bootstrap_ci(per_query, weights, 1, draws=2000)
+        self.assertEqual((lo, hi), (0.0, 1.0))
+
+    def test_run_evals_split_needs_a_value(self):
+        script = os.path.join(ROOT, "evals", "run_evals.sh")
+        done = subprocess.run(["bash", script, "--split"], capture_output=True, text=True, cwd=ROOT)
+        self.assertEqual(done.returncode, 64)
+        self.assertIn("--split needs a value", done.stderr)
+        done = subprocess.run(["bash", script, "--split=blind"], capture_output=True, text=True, cwd=ROOT)
+        self.assertEqual(done.returncode, 64)
+        self.assertIn("one-time", done.stderr)
+
     def test_run_evals_refuses_blind_and_unknown_splits(self):
         script = os.path.join(ROOT, "evals", "run_evals.sh")
         for split, message in (("blind", "one-time"), ("test", "expected dev")):
@@ -72,13 +115,37 @@ class TestQrelsModule(unittest.TestCase):
             path = os.path.join(tmp, "final_blind.json")
             with patch.dict(evaluate_recall.ONE_TIME_RESULTS, {"blind": path}):
                 evaluate_recall.refuse_rerun("blind", force=False)
-                evaluate_recall.save_one_time_result("blind", {"hybrid": {"micro_r5": 0.5}}, {})
+                self.assertEqual(evaluate_recall.one_time_result_path("blind"), path)
+                evaluate_recall.save_one_time_result("blind", {"hybrid": {"micro_r5": 0.5}}, {}, path)
                 with open(path) as f:
-                    self.assertEqual(json.load(f)["report"]["hybrid"]["micro_r5"], 0.5)
+                    saved = json.load(f)
+                self.assertEqual((saved["report"]["hybrid"]["micro_r5"], saved["rerun"]), (0.5, False))
                 with self.assertRaises(SystemExit):
                     evaluate_recall.refuse_rerun("blind", force=False)
                 evaluate_recall.refuse_rerun("blind", force=True)
                 evaluate_recall.refuse_rerun("dev", force=False)
+
+    def test_forced_rerun_goes_to_its_own_file_and_never_overwrites_the_official_result(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "final_blind.json")
+            with open(path, "w") as f:
+                f.write('{"official": true}')
+            with patch.dict(evaluate_recall.ONE_TIME_RESULTS, {"blind": path}):
+                rerun = evaluate_recall.one_time_result_path("blind", now=datetime(2026, 10, 1, 9, 30, 0))
+                self.assertEqual(rerun, os.path.join(tmp, "final_blind_rerun_20261001-093000.json"))
+                evaluate_recall.save_one_time_result("blind", {"hybrid": {}}, {}, rerun)
+                with open(rerun) as f:
+                    self.assertTrue(json.load(f)["rerun"])
+                with open(path) as f:
+                    self.assertEqual(f.read(), '{"official": true}')
+                with self.assertRaises(FileExistsError):
+                    evaluate_recall.save_one_time_result("blind", {"hybrid": {}}, {}, path)
+
+    def test_dev_results_are_not_saved_as_one_time_results(self):
+        self.assertIsNone(evaluate_recall.one_time_result_path("dev"))
+
+    def test_tunable_splits_exclude_one_time_splits(self):
+        self.assertEqual(TUNABLE_SPLITS, ("dev",))
 
     def test_unknown_split_is_rejected(self):
         with self.assertRaises(ValueError):

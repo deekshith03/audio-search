@@ -20,7 +20,8 @@ import argparse
 import json
 import os
 import sys
-from typing import List, Dict, Any
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -212,13 +213,23 @@ def refuse_rerun(split: str, force: bool) -> None:
         sys.exit(f"The {split} split was already run ({path}). Pass --force only to report an explicit rerun.")
 
 
-def save_one_time_result(split: str, report: Dict[str, Any], search_config: Dict[str, Any]) -> None:
+def one_time_result_path(split: str, now: Optional[datetime] = None) -> Optional[str]:
+    """Where a one-time split's result goes: the official file on the first run, a timestamped
+    `_rerun_` file beside it afterwards, so a forced rerun never overwrites the official result."""
     path = ONE_TIME_RESULTS.get(split)
+    if not path or not os.path.exists(path):
+        return path
+    stem, ext = os.path.splitext(path)
+    return f"{stem}_rerun_{(now or datetime.now()).strftime('%Y%m%d-%H%M%S')}{ext}"
+
+
+def save_one_time_result(split: str, report: Dict[str, Any], search_config: Dict[str, Any], path: Optional[str]) -> None:
     if path:
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump({"split": split, "search_config": search_config, "report": report}, f, indent=2)
-        print(f"Saved {path}")
+        rerun = path != ONE_TIME_RESULTS[split]
+        with open(path, "x", encoding="utf-8") as f:
+            json.dump({"split": split, "rerun": rerun, "search_config": search_config, "report": report}, f, indent=2)
+        print(f"Saved {path}" + (" (a rerun; the official result is unchanged)" if rerun else ""))
 
 
 if __name__ == "__main__":
@@ -226,12 +237,13 @@ if __name__ == "__main__":
     add_split_argument(parser)
     parser.add_argument("--enforce-gate", action="store_true")
     parser.add_argument("--search-config", default="{}", help='JSON SearchConfig overrides, e.g. \'{"chunker": "B"}\'')
-    parser.add_argument("--force", action="store_true", help="Rerun a one-time split (blind) that already has results.")
+    parser.add_argument("--force", action="store_true", help="Rerun a one-time split (blind) that already has results; saved as a separate _rerun_ file.")
     args = parser.parse_args()
     refuse_rerun(args.split, args.force)
+    result_path = one_time_result_path(args.split)
     search_config = json.loads(args.search_config)
     report = run_benchmark(split=args.split, search_config=search_config)
-    save_one_time_result(args.split, report, search_config)
+    save_one_time_result(args.split, report, search_config, result_path)
     print_scorecard(report)
     if args.enforce_gate:
         check_gate(report)

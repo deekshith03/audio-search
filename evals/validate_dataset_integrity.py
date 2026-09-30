@@ -17,6 +17,8 @@ Strictly proves:
    - Splits use disjoint turns unless the pair is in TURN_SHARING_ALLOWED. dev and blind may share
      turns: blind's queries were written after all tuning and none was ever tuned on, so the right
      answer wins over turn bookkeeping.
+   - No query text repeats a query of another split, retired ones included (a repeat has already
+     been seen, and possibly fixed, in that split), except the disclosed KNOWN_REPEATED_QUERIES.
    - short_keyword answers are labeled at phrase level: at least MIN_KEYWORD_LABEL_SECONDS long.
    - All query IDs are unique.
    - target_file_count strictly equals len(unique_files).
@@ -34,13 +36,33 @@ import wave
 import math
 
 try:
-    from qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, MIN_KEYWORD_LABEL_SECONDS, ONE_TIME_RESULTS, SPLIT_PATHS
+    from qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, MIN_KEYWORD_LABEL_SECONDS, RETIRED_SPLIT_PATHS, SPLIT_PATHS
 except ImportError:
-    from evals.qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, MIN_KEYWORD_LABEL_SECONDS, ONE_TIME_RESULTS, SPLIT_PATHS
+    from evals.qrels import CATEGORIES, EXPECTED_BREAKDOWN, MAX_SHORT_KEYWORD_WORDS, MIN_KEYWORD_LABEL_SECONDS, RETIRED_SPLIT_PATHS, SPLIT_PATHS
 
 
-TUNING_SPLIT = "dev"
 TURN_SHARING_ALLOWED = {frozenset({"dev", "blind"})}
+# Blind queries the test2 writer reused from earlier splits, found in the code review and disclosed
+# in docs/PHASE_3_PLAN.md §6 (blind is frozen, so they stay). Any other repeat is an error.
+KNOWN_REPEATED_QUERIES = {("blind", "TKW-01"), ("blind", "TSF-14"), ("blind", "TKW-06")}
+
+
+def normalized_query(text):
+    return " ".join("".join(c for c in text.lower() if c.isalnum() or c.isspace()).split())
+
+
+def repeated_queries(queries_by_split):
+    """(split, query_id, earlier_split, earlier_query_id) for every query whose normalized text
+    also appears in a different split; `queries_by_split` maps split -> list of query dicts."""
+    seen, repeats = {}, []
+    for split, queries in queries_by_split.items():
+        for q in queries:
+            key = normalized_query(q.get("query", ""))
+            for other_split, other_id in seen.get(key, []):
+                if other_split != split:
+                    repeats.append((split, q["query_id"], other_split, other_id))
+            seen.setdefault(key, []).append((split, q["query_id"]))
+    return repeats
 
 
 def validate_qrels(split, qrels_data, transcripts, audio_files, errors):
@@ -291,11 +313,15 @@ def validate_all():
     print(f"✓ Ground-truth transcripts validated: exactly {len(transcripts)} files with 100% exact turn continuity.")
 
     # 3. Validate benchmark queries: each split, then split independence
-    used_by_split, alternatives_by_split = {}, {}
+    used_by_split, queries_by_split = {}, {}
     for split in SPLIT_PATHS:
         with open(SPLIT_PATHS[split], "r", encoding="utf-8") as f:
             qrels_data = json.load(f)
-        used_by_split[split], alternatives_by_split[split] = validate_qrels(split, qrels_data, transcripts, audio_files, errors)
+        used_by_split[split], _ = validate_qrels(split, qrels_data, transcripts, audio_files, errors)
+        queries_by_split[split] = qrels_data.get("queries", [])
+    for split, path in RETIRED_SPLIT_PATHS.items():
+        with open(path, "r", encoding="utf-8") as f:
+            queries_by_split[split] = json.load(f).get("queries", [])
 
     splits = sorted(used_by_split)
     any_shared = False
@@ -304,15 +330,17 @@ def validate_all():
             if frozenset({a, b}) in TURN_SHARING_ALLOWED:
                 continue
             shared = used_by_split[a] & used_by_split[b]
-            if TUNING_SPLIT in (a, b):
-                other = b if a == TUNING_SPLIT else a
-                if other in ONE_TIME_RESULTS:
-                    shared |= alternatives_by_split[TUNING_SPLIT] & used_by_split[other]
             for fid, tid in sorted(shared):
                 any_shared = True
                 errors.append(f"{a} and {b} both reference {fid} turn {tid}; splits must use disjoint turns")
     if not any_shared:
         print(f"✓ {', '.join(splits)}: no turns shared outside the allowed pairs.")
+
+    repeats = [r for r in repeated_queries(queries_by_split) if not {r[:2], r[2:]} & KNOWN_REPEATED_QUERIES]
+    for split, qid, other_split, other_id in repeats:
+        errors.append(f"[{split}] {qid} repeats the query of {other_split} {other_id}")
+    if not repeats:
+        print(f"✓ No query repeats another split's ({len(KNOWN_REPEATED_QUERIES)} known, disclosed repeats in blind).")
 
     if errors:
         print(f"\n❌ FOUND {len(errors)} INTEGRITY ERRORS:")
