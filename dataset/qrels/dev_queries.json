@@ -2,11 +2,11 @@
   "version": "2.0.0",
   "benchmark_name": "Conversational Audio Hybrid Search Benchmark: dev split",
   "split": "dev",
-  "total_queries": 70,
+  "total_queries": 73,
   "query_breakdown": {
     "single_file": 33,
     "multi_file": 7,
-    "near_miss": 21,
+    "near_miss": 24,
     "short_keyword": 9
   },
   "corpus_files": [
@@ -2099,6 +2099,102 @@
         }
       ],
       "hard_negatives": [],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DNM-24",
+      "category": "near_miss",
+      "archetype": "speaker_attributed",
+      "query": "the question put to DHH about AI psychosis",
+      "description": "Post-test dev expansion (2026-09-30). Counter-case for speaker-name handling: DHH is named but the answer is Lex speaking.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 1,
+          "speaker": "Lex Fridman",
+          "start_seconds": 0.0,
+          "end_seconds": 6.72,
+          "matched_text": "So some people listening to you right now will say DHH is suffering from the old case of AI psychosis.",
+          "turn_start_seconds": 0.0,
+          "turn_end_seconds": 16.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_01_lex_dhh_omarchy.wav",
+          "turn_id": 2,
+          "speaker": "DHH",
+          "start_seconds": 16.0,
+          "end_seconds": 33.0,
+          "reason": "DHH's own reply; he is the named person, but the query asks for the question put to him."
+        }
+      ],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DNM-25",
+      "category": "near_miss",
+      "archetype": "speaker_attributed",
+      "query": "Dwarkesh asks Dylan why only 80 gigawatts",
+      "description": "Post-test dev expansion (2026-09-30). Counter-case for speaker-name handling: both are named; the asker (Dwarkesh) is the answer.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 9,
+          "speaker": "Dwarkesh Patel",
+          "start_seconds": 421.3,
+          "end_seconds": 431.0,
+          "matched_text": "The thing I’m confused about is why you think we only add 80 gigawatts in 2028 if we enter a world in which the value of compute increases so much.",
+          "turn_start_seconds": 421.3,
+          "turn_end_seconds": 431.0,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_04_macroeconomics_semiconductor.wav",
+          "turn_id": 10,
+          "speaker": "Dylan Patel",
+          "start_seconds": 431.0,
+          "end_seconds": 435.5,
+          "reason": "Dylan's reply; he is named too, but the query asks for Dwarkesh's question."
+        }
+      ],
+      "style": "semantic"
+    },
+    {
+      "query_id": "DNM-26",
+      "category": "near_miss",
+      "archetype": "speaker_attributed",
+      "query": "Tyler pushes Cass on immigration stereotypes",
+      "description": "Post-test dev expansion (2026-09-30). Counter-case for speaker-name handling: both are named; the asker (Tyler) is the answer.",
+      "target_file_count": 1,
+      "relevant_moments": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 17,
+          "speaker": "Tyler Cowen",
+          "start_seconds": 321.1,
+          "end_seconds": 324.18,
+          "matched_text": "But say some of the stereotypes are true.",
+          "turn_start_seconds": 321.1,
+          "turn_end_seconds": 348.4,
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "file_id": "audio_06_constitutional_jurisprudence.wav",
+          "turn_id": 18,
+          "speaker": "Cass Sunstein",
+          "start_seconds": 348.4,
+          "end_seconds": 412.2,
+          "reason": "Cass's reply; he is named too, but the query asks for Tyler's push."
+        }
+      ],
       "style": "semantic"
     }
   ]

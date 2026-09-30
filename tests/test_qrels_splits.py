@@ -22,7 +22,7 @@ class TestQrelsModule(unittest.TestCase):
             queries = load_qrels(split)["queries"]
             counts = {c: sum(q["category"] == c for q in queries) for c in CATEGORIES}
             self.assertEqual(counts, EXPECTED_BREAKDOWN[split])
-        self.assertEqual({s: sum(EXPECTED_BREAKDOWN[s].values()) for s in ("dev", "test", "holdout")}, {"dev": 70, "test": 21, "holdout": 9})
+        self.assertEqual({s: sum(EXPECTED_BREAKDOWN[s].values()) for s in ("dev", "test", "holdout")}, {"dev": 73, "test": 21, "holdout": 9})
 
     def test_holdout_is_a_one_time_split(self):
         self.assertIn("holdout", SPLIT_PATHS)

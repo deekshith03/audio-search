@@ -1,13 +1,17 @@
 """
 Hybrid search over indexed transcripts (docs/PHASE_3_PLAN.md §4, configuration frozen in §6).
 
-    query ─┬─ BM25 (pg_search) ─────────────────┐
-           ├─ trigram (pg_trgm, ≤ 3-word queries)┤ keyword: mode "lexical"
-           └─ EmbeddingGemma (pgvector HNSW) ────┤ semantic: mode "dense"     all three: mode "hybrid"
-                                                 ▼
-            convex fusion (BM25 1, trigram 1, dense 2) → top `localize_depth` chunks
+    query ─┬─ BM25 over chunks (pg_search) ─────────┐
+           ├─ trigram over chunks (≤ 3-word queries) ┤ keyword: mode "lexical"
+           ├─ EmbeddingGemma over chunks (HNSW) ─────┤ semantic: mode "dense"
+           └─ EmbeddingGemma over sentences ─────────┤ hybrid only (a chunk scores as its best sentence)
+                                                     ▼
+            convex fusion (BM25 1, trigram 1, dense 2, sentence 1) → top `localize_depth` chunks
             → localize each to 1-3 sentences (tightened to the matched words for short keyword
-            queries) → drop overlapping spans → top_k
+            queries) → drop clips under 1 s and overlapping spans → top_k
+
+Speaker names in the query ("does sunstein worry…") are removed from the text the embedding model
+sees, so semantic search matches what was said rather than lines that merely mention the person.
 
     uv run python -m src.search.engine "why were arrays added to postgres" [--mode dense] [--top-k 5]
 
@@ -36,7 +40,10 @@ from src.search.fusion import convex
 from src.search.indexer import vector_literal
 from src.search.localize import ScoredSentence, blend, dedupe, select_span, tighten_to_keywords
 
-MODES = {"lexical": ("bm25", "trigram"), "dense": ("dense",), "hybrid": ("bm25", "trigram", "dense")}
+MODES = {"lexical": ("bm25", "trigram"), "dense": ("dense",), "hybrid": ("bm25", "trigram", "dense", "sentence")}
+NAME_TOKEN = re.compile(r"[a-z]+")
+NAME_TITLES = {"dr", "mr", "mrs", "ms", "prof"}
+MIN_NAME_TOKEN = 3
 DEFAULT_WORKSPACES = ("dataset",)
 WORD_PATTERN = re.compile(r"\w+")
 
@@ -48,6 +55,7 @@ class SearchConfig:
     bm25_weight: float = 1.0
     trigram_weight: float = 1.0
     dense_weight: float = 2.0
+    sentence_weight: float = 1.0
     candidates: int = 50
     localize_depth: int = 20
     trigram_threshold: float = 0.4
@@ -55,9 +63,12 @@ class SearchConfig:
     hnsw_ef_search: int = 200
     span_max_sentences: int = 3
     span_max_seconds: float = 20.0
-    span_min_seconds: float = 4.0
+    span_min_seconds: float = 2.0
     span_extend_ratio: float = 0.8
     keyword_span_padding_seconds: float = 2.0
+    sentence_min_words: int = 4
+    result_min_seconds: float = 1.0
+    strip_speaker_names: bool = True
 
     @classmethod
     def from_dict(cls, values: Dict[str, Any]) -> "SearchConfig":
@@ -69,7 +80,7 @@ class SearchConfig:
 
     @property
     def weights(self) -> Dict[str, float]:
-        return {"bm25": self.bm25_weight, "trigram": self.trigram_weight, "dense": self.dense_weight}
+        return {"bm25": self.bm25_weight, "trigram": self.trigram_weight, "dense": self.dense_weight, "sentence": self.sentence_weight}
 
 
 @dataclass(frozen=True)
@@ -153,8 +164,9 @@ class SearchEngine:
 
         retrievers = [r for r in MODES[mode] if config.weights[r] > 0]
         query_vector = None
-        if "dense" in retrievers:
-            query_vector = self.embedder.encode_query(query)
+        if "dense" in retrievers or "sentence" in retrievers:
+            semantic_query = self._without_speaker_names(query, workspaces) if config.strip_speaker_names else query
+            query_vector = self.embedder.encode_query(semantic_query)
             lap("embed_query")
 
         try:
@@ -164,8 +176,10 @@ class SearchEngine:
                     lists["bm25"] = self._bm25(cur, query, config, workspaces, filters)
                 if "trigram" in retrievers and len(WORD_PATTERN.findall(query)) <= config.trigram_max_query_words:
                     lists["trigram"] = self._trigram(cur, query, config, workspaces, filters)
-                if query_vector is not None:
+                if "dense" in retrievers:
                     lists["dense"] = self._dense(cur, query_vector, config, workspaces, filters)
+                if "sentence" in retrievers:
+                    lists["sentence"] = self._dense_sentences(cur, query_vector, config, workspaces, filters)
                 lap("retrieve")
 
                 fused = convex(lists, config.weights)
@@ -176,6 +190,7 @@ class SearchEngine:
                 lap("fuse")
 
                 spans = self._localize(cur, query, query_vector, ranked, mode, config)
+                spans = [s for s in spans if s["end_seconds"] - s["start_seconds"] >= config.result_min_seconds]
                 keep = dedupe([(s["file_key"], s["start_seconds"], s["end_seconds"]) for s in spans])[:top_k]
                 results = [spans[i] for i in keep]
                 self._highlight(cur, query, results)
@@ -244,6 +259,45 @@ class SearchEngine:
             self.conn.rollback()
         keys = ("file_pk", "workspace", "file_id", "speaker_label", "display_name")
         return [dict(zip(keys, r)) for r in rows]
+
+    def _dense_sentences(self, cur, vector: Sequence[float], config: SearchConfig, workspaces: Sequence[str], filters: SearchFilters) -> List[Tuple[int, float]]:
+        """Semantic search over single sentences of at least `sentence_min_words` words (fragments
+        such as "from" have generic vectors); each chunk scores as its best matching sentence.
+        Brute force: a few thousand sentence vectors, so no ANN index is needed."""
+        model = self.embedder.model
+        distance = sql.SQL("se.embedding::vector({d}) <=> %(v)s::vector({d})").format(d=sql.Literal(model.dimensions))
+        cur.execute(
+            sql.SQL(
+                "WITH hits AS ("
+                " SELECT c.id AS sentence_id, c.file_pk, 1 - ({distance}) AS sim"
+                " FROM sentence_embeddings se JOIN sentences c ON c.id = se.sentence_id"
+                " WHERE se.model = %(model)s AND {scope}"
+                " AND array_length(regexp_split_to_array(btrim(c.text), '\\s+'), 1) >= %(min_words)s"
+                " ORDER BY {distance} LIMIT %(n)s)"
+                " SELECT ch.id, max(h.sim) FROM hits h"
+                " JOIN chunks ch ON ch.file_pk = h.file_pk AND h.sentence_id = ANY(ch.sentence_ids)"
+                " GROUP BY ch.id"
+            ).format(distance=distance, scope=sql.SQL(filters.clause())),
+            {"v": vector_literal(vector), "model": model.key, "n": config.candidates, "min_words": config.sentence_min_words,
+             **filters.params(workspaces)},
+        )
+        return sorted(((r[0], float(r[1])) for r in cur.fetchall()), key=lambda kv: (-kv[1], kv[0]))
+
+    def _without_speaker_names(self, query: str, workspaces: Sequence[str]) -> str:
+        """The query minus words naming an indexed speaker ("Sunstein", "khabib's"), so semantic
+        search is not pulled toward lines that merely mention that person. Unchanged if nothing
+        is left."""
+        query_tokens = set(NAME_TOKEN.findall(query.lower().replace("'s", " ").replace("’s", " ")))
+        used = set()
+        for row in self.speakers_in(workspaces):
+            if row["display_name"]:
+                tokens = {t for t in NAME_TOKEN.findall(row["display_name"].lower()) if len(t) >= MIN_NAME_TOKEN and t not in NAME_TITLES}
+                used |= tokens & query_tokens
+        if not used:
+            return query
+        pattern = re.compile(r"\b(" + "|".join(sorted(map(re.escape, used))) + r")(['’]s)?\b", re.IGNORECASE)
+        content = " ".join(pattern.sub(" ", query).split())
+        return content if WORD_PATTERN.search(content) else query
 
     def _chunk_rows(self, cur, chunk_ids: Sequence[int]) -> Dict[int, Dict[str, Any]]:
         if not chunk_ids:

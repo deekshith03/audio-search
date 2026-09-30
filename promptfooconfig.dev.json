@@ -1,5 +1,5 @@
 {
-  "description": "Conversational Audio Hybrid Search: dev split (70 queries)",
+  "description": "Conversational Audio Hybrid Search: dev split (73 queries)",
   "prompts": [
     "{{query}}"
   ],
@@ -2523,6 +2523,120 @@
           }
         ],
         "hard_negatives": []
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DNM-24] NEAR_MISS: the question put to DHH about AI psychosis...",
+      "vars": {
+        "query": "the question put to DHH about AI psychosis",
+        "query_id": "DNM-24",
+        "category": "near_miss",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 1,
+            "speaker": "Lex Fridman",
+            "start_seconds": 0.0,
+            "end_seconds": 6.72,
+            "matched_text": "So some people listening to you right now will say DHH is suffering from the old case of AI psychosis.",
+            "turn_start_seconds": 0.0,
+            "turn_end_seconds": 16.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": [
+          {
+            "file_id": "audio_01_lex_dhh_omarchy.wav",
+            "turn_id": 2,
+            "speaker": "DHH",
+            "start_seconds": 16.0,
+            "end_seconds": 33.0,
+            "reason": "DHH's own reply; he is the named person, but the query asks for the question put to him."
+          }
+        ]
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DNM-25] NEAR_MISS: Dwarkesh asks Dylan why only 80 gigawatts...",
+      "vars": {
+        "query": "Dwarkesh asks Dylan why only 80 gigawatts",
+        "query_id": "DNM-25",
+        "category": "near_miss",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_04_macroeconomics_semiconductor.wav",
+            "turn_id": 9,
+            "speaker": "Dwarkesh Patel",
+            "start_seconds": 421.3,
+            "end_seconds": 431.0,
+            "matched_text": "The thing I’m confused about is why you think we only add 80 gigawatts in 2028 if we enter a world in which the value of compute increases so much.",
+            "turn_start_seconds": 421.3,
+            "turn_end_seconds": 431.0,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": [
+          {
+            "file_id": "audio_04_macroeconomics_semiconductor.wav",
+            "turn_id": 10,
+            "speaker": "Dylan Patel",
+            "start_seconds": 431.0,
+            "end_seconds": 435.5,
+            "reason": "Dylan's reply; he is named too, but the query asks for Dwarkesh's question."
+          }
+        ]
+      },
+      "assert": [
+        {
+          "type": "python",
+          "value": "file://evals/assertions.py"
+        }
+      ]
+    },
+    {
+      "description": "[DNM-26] NEAR_MISS: Tyler pushes Cass on immigration stereotypes...",
+      "vars": {
+        "query": "Tyler pushes Cass on immigration stereotypes",
+        "query_id": "DNM-26",
+        "category": "near_miss",
+        "archetype": "speaker_attributed",
+        "expected_moments": [
+          {
+            "file_id": "audio_06_constitutional_jurisprudence.wav",
+            "turn_id": 17,
+            "speaker": "Tyler Cowen",
+            "start_seconds": 321.1,
+            "end_seconds": 324.18,
+            "matched_text": "But say some of the stereotypes are true.",
+            "turn_start_seconds": 321.1,
+            "turn_end_seconds": 348.4,
+            "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          }
+        ],
+        "hard_negatives": [
+          {
+            "file_id": "audio_06_constitutional_jurisprudence.wav",
+            "turn_id": 18,
+            "speaker": "Cass Sunstein",
+            "start_seconds": 348.4,
+            "end_seconds": 412.2,
+            "reason": "Cass's reply; he is named too, but the query asks for Tyler's push."
+          }
+        ]
       },
       "assert": [
         {

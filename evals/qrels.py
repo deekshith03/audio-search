@@ -29,7 +29,7 @@ DEFAULT_SPLIT = "dev"
 CATEGORIES = ("single_file", "multi_file", "near_miss", "short_keyword")
 ANY_OF_CATEGORIES = {"short_keyword"}
 EXPECTED_BREAKDOWN = {
-    "dev": {"single_file": 33, "multi_file": 7, "near_miss": 21, "short_keyword": 9},
+    "dev": {"single_file": 33, "multi_file": 7, "near_miss": 24, "short_keyword": 9},
     "test": {"single_file": 6, "multi_file": 6, "near_miss": 6, "short_keyword": 3},
     "holdout": {"single_file": 6, "multi_file": 0, "near_miss": 2, "short_keyword": 1},
 }

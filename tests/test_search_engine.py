@@ -223,6 +223,56 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
         filtered = self.run_search("theme zebra plain dark colors window", top_k=10, filters=SearchFilters())
         self.assertEqual(plain.results, filtered.results)
 
+    def test_sentence_search_scores_each_chunk_by_its_best_sentence(self):
+        engine = self.engine()
+        with self.conn.cursor() as cur:
+            ranked = engine._dense_sentences(cur, engine.embedder.encode_query("dough cold proof starter"), SearchConfig(), (self.tmp,), NO_FILTERS)
+            cur.execute("SELECT f.file_id FROM chunks c JOIN files f ON f.id = c.file_pk WHERE c.id = %s", (ranked[0][0],))
+            top_file = cur.fetchone()[0]
+        self.conn.rollback()
+        self.assertEqual(top_file, "cooking_show.wav")
+        self.assertEqual(len({chunk for chunk, _ in ranked}), len(ranked))
+
+    def test_sentence_search_ignores_sentences_below_the_word_minimum(self):
+        engine = self.engine()
+        with self.conn.cursor() as cur:
+            vector = engine.embedder.encode_query("zebra theme")
+            everything = engine._dense_sentences(cur, vector, SearchConfig(sentence_min_words=0), (self.tmp,), NO_FILTERS)
+            cur.execute("SELECT max(array_length(regexp_split_to_array(btrim(s.text), '\\s+'), 1)) FROM sentences s JOIN files f ON f.id = s.file_pk WHERE f.workspace = %s", (self.tmp,))
+            longest = cur.fetchone()[0]
+            only_longest = engine._dense_sentences(cur, vector, SearchConfig(sentence_min_words=longest), (self.tmp,), NO_FILTERS)
+            nothing = engine._dense_sentences(cur, vector, SearchConfig(sentence_min_words=longest + 1), (self.tmp,), NO_FILTERS)
+        self.conn.rollback()
+        self.assertTrue(everything)
+        self.assertTrue(0 < len(only_longest) < len(everything))
+        self.assertEqual(nothing, [])
+
+    def test_sentence_search_only_runs_in_hybrid(self):
+        hybrid = self.run_search("sourdough starter fermentation").timings_ms
+        self.assertTrue(self.run_search("sourdough starter fermentation", sentence_weight=0.0).results)
+        self.assertIn("embed_query", hybrid)
+        self.assertEqual(self.run_search("sourdough", mode="lexical", engine=self.engine(NoQueryEmbedder())).results[0]["file_id"], "cooking_show.wav")
+
+    def test_clips_shorter_than_the_minimum_are_dropped(self):
+        results = self.run_search("theme zebra plain dark colors window", top_k=10, result_min_seconds=0.0).results
+        shortest = min(r["end_seconds"] - r["start_seconds"] for r in results)
+        kept = self.run_search("theme zebra plain dark colors window", top_k=10, result_min_seconds=shortest + 0.01).results
+        self.assertTrue(all(r["end_seconds"] - r["start_seconds"] > shortest for r in kept))
+
+    def test_speaker_names_are_removed_from_the_semantic_query(self):
+        engine = self.engine()
+        self.assertEqual(engine._without_speaker_names("what did DHH say about tiling", (self.tmp,)), "what did say about tiling")
+        self.assertEqual(engine._without_speaker_names("Lex's zebra theme", (self.tmp,)), "zebra theme")
+        self.assertEqual(engine._without_speaker_names("zebra theme", (self.tmp,)), "zebra theme")
+        self.assertEqual(engine._without_speaker_names("DHH", (self.tmp,)), "DHH")
+
+    def test_speaker_name_stripping_reaches_the_embedder(self):
+        embedder = HashEmbedder()
+        self.run_search("what did DHH say about tiling", engine=self.engine(embedder))
+        self.assertEqual(embedder.queries[-1], "what did say about tiling")
+        self.run_search("what did DHH say about tiling", engine=self.engine(embedder), strip_speaker_names=False)
+        self.assertEqual(embedder.queries[-1], "what did DHH say about tiling")
+
     def test_zero_weight_retriever_is_skipped(self):
         self.assertEqual(self.run_search("Hyprland desktop setup on the laptop today", mode="lexical", bm25_weight=0.0).results, [])
 
@@ -246,9 +296,10 @@ class TestSearchConfig(unittest.TestCase):
 
     def test_frozen_defaults(self):
         config = SearchConfig()
-        self.assertEqual(config.weights, {"bm25": 1.0, "trigram": 1.0, "dense": 2.0})
+        self.assertEqual(config.weights, {"bm25": 1.0, "trigram": 1.0, "dense": 2.0, "sentence": 1.0})
         self.assertEqual((config.candidates, config.localize_depth, config.span_extend_ratio, config.span_min_seconds),
-                         (50, 20, 0.8, 4.0))
+                         (50, 20, 0.8, 2.0))
+        self.assertEqual((config.sentence_min_words, config.result_min_seconds, config.strip_speaker_names), (4, 1.0, True))
 
     def test_from_dict(self):
         self.assertEqual(SearchConfig.from_dict({"dense_weight": 1.5}).weights["dense"], 1.5)
