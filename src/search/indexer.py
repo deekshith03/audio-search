@@ -76,6 +76,7 @@ class Indexer:
         if prune:
             self.prune({s["file_id"] for s in stats})
         self.ensure_hnsw_indexes()
+        self.compact_bm25_index()
         return stats
 
     def index_file(self, canonical_path: str, force: bool = False) -> Dict[str, Any]:
@@ -221,6 +222,14 @@ class Indexer:
                         " USING hnsw ((embedding::vector({})) vector_cosine_ops) WHERE model = {}"
                     ).format(sql.Identifier(hnsw_index_name(model_key)), sql.Literal(dims), sql.Literal(model_key))
                 )
+        self.conn.commit()
+
+    def compact_bm25_index(self) -> None:
+        """Rebuilds the BM25 index so its corpus statistics (document count, average length) cover
+        only live chunks. pg_search keeps counting rows deleted by re-indexing until then, so BM25
+        scores, and near-tied rankings, would otherwise depend on how often the index was rebuilt."""
+        with self.conn.cursor() as cur:
+            cur.execute("REINDEX INDEX chunks_bm25_idx")
         self.conn.commit()
 
     def prune(self, keep_file_ids: set) -> int:

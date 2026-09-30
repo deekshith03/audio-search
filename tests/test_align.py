@@ -1,6 +1,6 @@
 import unittest
 
-from src.pipeline.align import MIN_INTERPOLATED_WORD_SECONDS, interpolate_untimed_words, is_wildcard_word
+from src.pipeline.align import MIN_INTERPOLATED_WORD_SECONDS, align_config, interpolate_untimed_words, is_wildcard_word, segment_words
 
 
 def timed(word, start, end, score=0.9):
@@ -72,6 +72,29 @@ class TestInterpolateUntimedWords(unittest.TestCase):
 
     def test_empty_input(self):
         self.assertEqual(interpolate_untimed_words([], 0.0, 1.0), ([], 0))
+
+
+class TestUnalignedSegments(unittest.TestCase):
+
+    def test_aligned_words_are_used_as_they_are(self):
+        words = [{"word": "Right.", "start": 1.0, "end": 1.2, "score": 0.9}]
+        self.assertEqual(segment_words({"text": "Right.", "words": words}), words)
+
+    def test_segment_with_no_words_keeps_its_text_as_untimed_words(self):
+        for seg in ({"text": " Right. Okay.", "words": []}, {"text": "Right. Okay."}):
+            self.assertEqual(segment_words(seg), [{"word": "Right."}, {"word": "Okay."}])
+
+    def test_unaligned_segment_is_spread_across_the_segment_and_counted_as_fallback(self):
+        words, n = interpolate_untimed_words(segment_words({"text": "Right.", "words": []}), 434.52, 434.62)
+        self.assertEqual(n, 1)
+        self.assertEqual(words, [{"word": "Right.", "start_seconds": 434.52, "end_seconds": 434.62,
+                                  "confidence": None, "timing_source": "interpolated_fallback"}])
+
+    def test_empty_segment_text_gives_no_words(self):
+        self.assertEqual(segment_words({"text": "  ", "words": []}), [])
+
+    def test_fallback_is_part_of_the_cache_key_config(self):
+        self.assertEqual(align_config()["unaligned_segment_fallback"], "segment_text")
 
 
 class TestWildcardWords(unittest.TestCase):

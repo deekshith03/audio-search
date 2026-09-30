@@ -121,6 +121,13 @@ class TestIndexer(ThrowawayDatabaseTestCase):
         self.assertTrue(all(s["rechunked"] for s in self.indexer().index_all(self.paths(), force=True)))
         self.assertNotEqual(self.scalar("SELECT array_agg(id ORDER BY id) FROM files"), first_ids)
 
+    def test_bm25_statistics_cover_only_live_chunks_after_reindexing(self):
+        for _ in range(3):
+            self.indexer().index_all(self.paths(), force=True)
+        live = self.scalar("SELECT count(*) FROM chunks")
+        self.assertEqual(self.scalar("SELECT sum(num_docs) FROM paradedb.index_info('chunks_bm25_idx')"), live)
+        self.assertEqual(self.scalar("SELECT sum(num_deleted) FROM paradedb.index_info('chunks_bm25_idx')"), 0)
+
     def test_changed_transcript_is_rechunked(self):
         self.indexer().index_all(self.paths())
         path = self.paths()[0]

@@ -9,14 +9,15 @@
     "model": "WAV2VEC2_ASR_BASE_960H",
     "language": "en",
     "device": "cpu",
-    "min_interpolated_word_seconds": 0.05
+    "min_interpolated_word_seconds": 0.05,
+    "unaligned_segment_fallback": "segment_text"
   },
-  "cache_key": "c7a34e5d9d012990d650c20c9a7356e82cde92718d8c6a277a7c52827df53ca9",
-  "runtime_seconds": 8.92,
+  "cache_key": "b5fc7206a19df55d4a3c590bdf00d7b4941825896aa19095d7d9ae19fa5b1b33",
+  "runtime_seconds": 10.81,
   "telemetry": {
-    "total_words": 1647,
-    "fallback_aligned_words": 0,
-    "alignment_fallback_rate": 0.0,
+    "total_words": 1648,
+    "fallback_aligned_words": 1,
+    "alignment_fallback_rate": 0.0006,
     "wildcard_aligned_words": 35
   },
   "segments": [
@@ -10118,7 +10119,15 @@
       "start": 434.52,
       "end": 434.62,
       "text": "Right.",
-      "words": []
+      "words": [
+        {
+          "word": "Right.",
+          "start_seconds": 434.52,
+          "end_seconds": 434.62,
+          "confidence": null,
+          "timing_source": "interpolated_fallback"
+        }
+      ]
     },
     {
       "start": 434.74,

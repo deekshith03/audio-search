@@ -9,10 +9,11 @@
     "model": "WAV2VEC2_ASR_BASE_960H",
     "language": "en",
     "device": "cpu",
-    "min_interpolated_word_seconds": 0.05
+    "min_interpolated_word_seconds": 0.05,
+    "unaligned_segment_fallback": "segment_text"
   },
-  "cache_key": "5848cabd7bded0cf83426f36de7a951fa8acbe9dee82380f30cb357b22a436a0",
-  "runtime_seconds": 9.76,
+  "cache_key": "c162d151eb2068297178c902a757de73a907762c860a9bc1ada24bc050b2c779",
+  "runtime_seconds": 11.39,
   "telemetry": {
     "total_words": 1497,
     "fallback_aligned_words": 0,

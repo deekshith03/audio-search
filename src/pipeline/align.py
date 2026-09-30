@@ -5,7 +5,9 @@ Refines Whisper word timestamps to CTC frame boundaries (~20 ms). WhisperX align
 outside the wav2vec2 vocabulary (digits, "$", "%") through a wildcard token, so those words are
 still acoustically timed; they are counted as `wildcard_aligned_words`. Words that receive no
 timing at all are spread evenly across the gap between their timed neighbours and tagged
-`interpolated_fallback`.
+`interpolated_fallback`. A segment WhisperX returns with no words at all (e.g. a 0.1 s "Right."
+it could not align) keeps its text the same way, spread across the segment, instead of vanishing
+from the transcript.
 """
 
 import json
@@ -43,6 +45,7 @@ def align_config() -> Dict[str, Any]:
         "language": LANGUAGE,
         "device": DEVICE,
         "min_interpolated_word_seconds": MIN_INTERPOLATED_WORD_SECONDS,
+        "unaligned_segment_fallback": "segment_text",
     }
 
 
@@ -106,6 +109,11 @@ def interpolate_untimed_words(
     return out, interpolated
 
 
+def segment_words(seg: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """The segment's aligned words, or its text as untimed words when alignment returned none."""
+    return seg.get("words") or [{"word": token} for token in seg.get("text", "").split()]
+
+
 def is_wildcard_word(word_text: str, dictionary: Dict[str, int]) -> bool:
     letters = [c for c in word_text.lower() if not c.isspace()]
     return bool(letters) and not any(c in dictionary for c in letters)
@@ -157,7 +165,7 @@ def align_file(
     for seg in aligned_result.get("segments", []):
         seg_start = float(seg.get("start", 0.0))
         seg_end = float(seg.get("end", seg_start))
-        words, n_interp = interpolate_untimed_words(seg.get("words", []), seg_start, seg_end)
+        words, n_interp = interpolate_untimed_words(segment_words(seg), seg_start, seg_end)
         total_words += len(words)
         fallback_words += n_interp
         wildcard_words += sum(1 for w in words if w["timing_source"] == "wav2vec2_aligned" and is_wildcard_word(w["word"], dictionary))

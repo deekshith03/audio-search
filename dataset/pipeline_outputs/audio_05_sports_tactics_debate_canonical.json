@@ -6,7 +6,7 @@
   "diarization_model": "pyannote/speaker-diarization-community-1",
   "audio_duration_seconds": 540.0,
   "upstream_cache_keys": {
-    "align": "168bac1c2000b61511bf4dd4320c9fd61f242bae3ba083fa6a093655c4eaf6c8",
+    "align": "29104d49242b75d5561d8e9521a20317d2300c284343a23fde4f0777b458ea48",
     "diarize": "66af37be500c7ac8ce149b7434b8ba278a19b7a547c97b0815bb341b0f438b1c"
   },
   "telemetry": {

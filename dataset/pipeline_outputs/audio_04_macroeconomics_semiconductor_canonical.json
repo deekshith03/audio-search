@@ -6,13 +6,13 @@
   "diarization_model": "pyannote/speaker-diarization-community-1",
   "audio_duration_seconds": 541.6,
   "upstream_cache_keys": {
-    "align": "c7a34e5d9d012990d650c20c9a7356e82cde92718d8c6a277a7c52827df53ca9",
+    "align": "b5fc7206a19df55d4a3c590bdf00d7b4941825896aa19095d7d9ae19fa5b1b33",
     "diarize": "21ad610b428edd108245414a4cf707605557a2f7b0fc192186f61fb1daf087ed"
   },
   "telemetry": {
-    "total_words": 1647,
-    "fallback_aligned_words": 0,
-    "alignment_fallback_rate": 0.0,
+    "total_words": 1648,
+    "fallback_aligned_words": 1,
+    "alignment_fallback_rate": 0.0006,
     "wildcard_aligned_words": 35,
     "total_turns": 18,
     "pause_splits": 5,
@@ -9265,7 +9265,7 @@
       "end_seconds": 456.74,
       "split_reason": "pause",
       "is_short_turn": false,
-      "text": "on their own. The thing I'm confused about is why you think we only add 80 gigawatts in 2028 if we enter in a world in which the value of compute increases so much. That's the upper bound, by the way. That's the, like, I'm so fucking bullish. Okay, so let's do some chain of thought here. So when I interviewed you a few months ago, you said, in order to make a gigawatt of, I think, Vera Rubens, you need, one sec, you need 55,000 N3 wafers, 6K N5 wafers, and 170K DRAM wafers. I don't know if those numbers might have changed. I'm going to troll you, but the way you said wafers was so fucking, you didn't pay for",
+      "text": "on their own. The thing I'm confused about is why you think we only add 80 gigawatts in 2028 if we enter in a world in which the value of compute increases so much. That's the upper bound, by the way. That's the, like, I'm so fucking bullish. Right. Okay, so let's do some chain of thought here. So when I interviewed you a few months ago, you said, in order to make a gigawatt of, I think, Vera Rubens, you need, one sec, you need 55,000 N3 wafers, 6K N5 wafers, and 170K DRAM wafers. I don't know if those numbers might have changed. I'm going to troll you, but the way you said wafers was so fucking, you didn't pay for",
       "words": [
         {
           "word": "on",
@@ -9602,6 +9602,13 @@
           "end_seconds": 434.32,
           "confidence": 0.364,
           "timing_source": "wav2vec2_aligned"
+        },
+        {
+          "word": "Right.",
+          "start_seconds": 434.52,
+          "end_seconds": 434.62,
+          "confidence": null,
+          "timing_source": "interpolated_fallback"
         },
         {
           "word": "Okay,",
