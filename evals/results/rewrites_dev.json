@@ -1,0 +1,313 @@
+{
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "system": "You rewrite search queries for a search engine over transcripts of spoken podcast conversations.",
+ "user": "Write 3 different ways the idea in this search query might actually be said out loud in a conversation. Use everyday spoken wording and concrete words a speaker would use. Do not answer the question and do not add facts. One per line, no numbering.\n\nQuery: {query}",
+ "split": "dev",
+ "rewrites": {
+  "Thaddeus Stevens wig lock of hair": [
+   "Thaddeus Stevens had a wig lock of hair.",
+   "I'm looking to get my hands on Thaddeus Stevens' wig lock of hair.",
+   "The museum has a wig lock of Thaddeus Stevens' hair."
+  ],
+  "Kahneman quote on his door": [
+   "I have a little sign on my door that says 'Thinking, Fast and Slow.'",
+   "My front door has a tagline that reads 'The Wisdom of Crowds.'",
+   "On my mailbox, I put up a note saying 'Read More About Thinking, Fast and Slow.'"
+  ],
+  "cube data type GiST index hundred dimensions": [
+   "So, you're saying we need to create a cube with a GiST index on a hundred-dimensional space? That's going to take some serious computing power!",
+   "I'm trying to figure out how to set up a cube using a GiST index with a hundred dimensions. Any tips?",
+   "We've got a hundred-dimensional space here, and we want to use a GiST index to organize our data. How do we go about creating that"
+  ],
+  "top two labs grabbing half of next year's capacity": [
+   "What are the top two research institutions that will secure half of the upcoming year's funding?",
+   "Which two leading laboratories are expected to get most of the available space next year?",
+   "Who are the frontrunners in securing half of the new laboratory capacities for the coming year?"
+  ],
+  "reaction to Tobi's AI memo": [
+   "What did you think about Tobi sending that AI memo?",
+   "How did you react when I mentioned Tobi's new AI memo?",
+   "I'm curious - how did you feel about Tobi's latest AI memo?"
+  ],
+  "from dial-up to fiber": [
+   "From my old dial-up connection all the way up to now with fiber internet.",
+   "I started with dial-up back then and now I have fiber internet at home.",
+   "My internet journey began with dial-up and ended with fiber."
+  ],
+  "calculations 1,500 times per row": [
+   "I need to make sure those numbers are accurate by doing 1,500 calculations each time I fill out that form.",
+   "Every time I enter my information, I want to double-check everything with at least 1,500 calculations just to be safe.",
+   "To keep track of all these details, I'm going to have to perform 1,500 calculations every single time I update my profile."
+  ],
+  "18 gigawatts by 2027 and 54 by 2028": [
+   "By 2027, we'll need 18 gigawatts.",
+   "In 2028, it will reach 54 gigawatts.",
+   "By 2027, we aim for 18 gigawatts."
+  ],
+  "I do worry about fertility": [
+   "I've been feeling anxious about my chances at having kids.",
+   "My partner and I are both concerned about conceiving.",
+   "I'm worried we won't be able to have children naturally."
+  ],
+  "Who had trouble pronouncing v and w after moving to the US?": [
+   "A friend was having issues with distinguishing between \"v\" and \"w\" sounds when she moved here.",
+   "The new neighbor kept confusing her pronunciation of these letters.",
+   "She's trying to adapt to the local accent which is affecting her ability to pronounce them correctly."
+  ],
+  "Thaddeus Stevens abolitionist equal rights for women": [
+   "Thaddeus Stevens was an abolitionist who fought for equal rights for both men and women.",
+   "I heard that Thaddeus Stevens was a strong advocate for women's suffrage too.",
+   "He believed strongly in abolishing slavery and also wanted to give women more rights."
+  ],
+  "adheres to his seat by his own slime": [
+   "He sticks to his spot on the bench.",
+   "She stays put at her desk without moving.",
+   "They maintain their position near the door."
+  ],
+  "How old is mixed martial arts compared with boxing?": [
+   "Aren't MMA fighters older than boxers?",
+   "How much older are MMA guys compared to boxers?",
+   "What's the age difference between MMA and boxing pros?"
+  ],
+  "biggest fight in UFC history": [
+   "What's the most intense fight ever in the UFC?",
+   "Who won the biggest battle in UFC history?",
+   "How did the greatest showdown between fighters end?"
+  ],
+  "picturing vectors beyond three dimensions": [
+   "I'm trying to visualize vectors that go past the third dimension.",
+   "Can you help me understand how to think about vectors in four or more dimensions?",
+   "How can I imagine vectors existing outside our usual three-dimensional space?"
+  ],
+  "praise for pgvector's creator": [
+   "I really want to give some big kudos to the guy who created PGVector.",
+   "I'm going to throw my hat into the ring and offer some serious praise to the person behind PGVector.",
+   "I think it's high time I gave this fellow credit for his work on PGVector."
+  ],
+  "deliver most of them in five minutes": [
+   "Sure! Here are three possible ways to say it:",
+   "I need to get those delivered within the next half hour.",
+   "Can you make sure they're all here by lunchtime?"
+  ],
+  "40 years with computers, never seen anything like the last two months": [
+   "I've been using computers for forty years now, but I can't believe how much worse things have gotten these past couple of months.",
+   "It's amazing to think that I've had computers for so long, yet it feels like they're getting progressively more frustrating lately.",
+   "I'm amazed at how little I know about computers compared to what I used to know back when I first started using them all those years ago."
+  ],
+  "Why do speakers say they feel optimistic about the future?": [
+   "Why do folks claim to feel positive about tomorrow?",
+   "How can people state that they're hopeful for the upcoming days?",
+   "What's the common way to express that one feels upbeat about the coming weeks?"
+  ],
+  "Which comparisons do speakers say are not apples to apples?": [
+   "I heard that comparing prices at two stores is like comparing apples to oranges.",
+   "The debate about which college is better often comes down to 'which degree programs are more relevant.'",
+   "When discussing fitness plans, it's important to avoid comparing diets too closely."
+  ],
+  "designed to feel and the illiberal human heart": [
+   "I'm looking at these designs that aim to make me feel good, but I just can't seem to connect with them.",
+   "The designer put so much thought into making it look nice, but I don't think it's really resonating with my illiberal heart.",
+   "This product is supposed to make me feel better, but I keep feeling like there's something missing from the illiberal human heart."
+  ],
+  "dedication to one's craft": [
+   "I'm really dedicated to my writing.",
+   "My passion is all about my photography.",
+   "She has an intense focus on her cooking skills."
+  ],
+  "podcast host introducing the guest": [
+   "Hey everyone! Today's special guest is going to share their insights on [topic].",
+   "Ladies and gentlemen, we have a real treat coming up tonight - our very own [guest] joining us live!",
+   "Attention all listeners! We're excited to welcome [guest]'s unique perspective today."
+  ],
+  "change about to speed up and overwhelm people": [
+   "Change it so that everything speeds up and makes too much sense.",
+   "Make it so that all changes make people feel overwhelmed.",
+   "Adjust things so they go faster and confuse everyone."
+  ],
+  "using your opponent's force against them": [
+   "I'm going to use my opponent's strength against them.",
+   "I'll leverage their power against them.",
+   "I'm gonna put their muscle up against them."
+  ],
+  "crying as a sign of weakness": [
+   "Crying is like showing my true feelings, just like admitting I'm weak.",
+   "It's like when you're so upset that your tears are proof that you can't handle it anymore.",
+   "I feel like crying is a way to show how much I care about something or someone, kind of like being vulnerable."
+  ],
+  "arrays added to Postgres for access rules": [
+   "I need to figure out how to add arrays to my PostgreSQL database so I can set up some custom access rules.",
+   "Can you help me understand how to include arrays when creating access rules in my PostgreSQL database?",
+   "How do I incorporate arrays into my PostgreSQL setup to create specific access control rules?"
+  ],
+  "skeptical at first, installed Claude Code late": [
+   "I was initially skeptical about it, but then I decided to give Claude Code a try.",
+   "At first, I wasn't convinced, but eventually, I installed Claude Code.",
+   "Initially, I had doubts, but later on, I chose to install Claude Code."
+  ],
+  "Did Lee resign from the US Army to join the Confederacy?": [
+   "Did Lee quit his job at the army to go with the South?",
+   "Was Lee fired from the army to switch sides?",
+   "Could it be that Lee left the army to support the Confederate cause?"
+  ],
+  "sad because I lost a loved one": [
+   "I'm feeling really down because someone I cared about passed away.",
+   "It's killing me that my dear friend is gone from my life.",
+   "I can't believe I lost someone so close to me."
+  ],
+  "Ali Foreman fight audience size": [
+   "Ali Foreman fight - \"So, you know that Ali Foreman fight? The one where the crowd was like... what, five thousand people?",
+   "Ali Foreman fight - \"I heard about that Ali Foreman fight. You know how big it must have been because there were only like... five thousand people in the stadium?",
+   "Ali Foreman fight - \"The Ali Foreman fight! I remember when the crowd was so small, they had to give tickets away just to get"
+  ],
+  "only 80 gigawatts in 2028": [
+   "Only 80 gigawatts available by 2028.",
+   "By 2028, we'll have just 80 gigawatts.",
+   "In 2028, there will be only 80 gigawatts."
+  ],
+  "who convinced DHH about AI early": [
+   "I heard that DHH was really swayed by someone when they first talked about AI.",
+   "It seems like DHH was persuaded by someone's argument regarding AI quite early on.",
+   "DHH must have been influenced by someone to start thinking seriously about AI."
+  ],
+  "steel man the case of delusion": [
+   "Steel man the case of delusion\" - I'm going to try to argue against that crazy belief.",
+   "Steel man the case of delusion\" - Let's put up a strong defense against that weird thinking.",
+   "Steel man the case of delusion\" - We're going to make sure that crazy idea doesn't get away with it."
+  ],
+  "undermined by illiberal forces": [
+   "The liberal movement was weakened by those who opposed its principles.",
+   "Our democracy faced threats from groups that didn't believe in freedom of speech.",
+   "The rights we cherish were threatened by people who believed in strict government control."
+  ],
+  "Does Cass agree immigration threatens European freedoms?": [
+   "Cass thinks immigrants are taking away our freedoms.",
+   "Does Cass think immigration is bad?",
+   "Is Cass okay with immigration restrictions?"
+  ],
+  "Grant failed at farming and business": [
+   "Grant couldn't make it with farming or running his own company.",
+   "Grant was unsuccessful trying to run a farm and start his own business.",
+   "Grant didn't succeed when he tried farming and starting up his own business."
+  ],
+  "Lee superb soldier on the wrong side": [
+   "Lee was an excellent soldier but ended up fighting on the enemy's side.",
+   "Lee served as a top-notch soldier but found himself on the opposing team.",
+   "Lee excelled as a brave soldier but wound up on the incorrect front."
+  ],
+  "Lee offered command of the Union Army": [
+   "Lee offered control of the Northern forces.",
+   "Lee presented leadership to the United States Army.",
+   "Lee proposed authority over the Confederate troops."
+  ],
+  "struggle as a comprehension problem": [
+   "I'm having trouble understanding what's being said.",
+   "It's really hard to grasp what they're trying to convey.",
+   "This is making it tough for me to comprehend."
+  ],
+  "what state DHH is in": [
+   "DHH stands for Developmentally Handicapped.",
+   "DHH refers to someone with developmental disabilities.",
+   "DHH means having intellectual or physical challenges from birth."
+  ],
+  "how quickly are top ai companies expanding capacity": [
+   "So, you know those super smart AI companies that are really good at crunching numbers? Well, they're like superheroes, right? They're growing so fast! How fast is it exactly?",
+   "Hey, have you heard about these top-notch AI firms? They're expanding their capabilities like crazy! Can you tell me how much faster they're going compared to everyone else?",
+   "I'm curious about these cutting-edge AI businesses. Are they just"
+  ],
+  "non-programmers making their own apps": [
+   "Hey, I'm trying to make my own app but I don't know where to start.",
+   "I want to create an app, but I'm not tech-savvy. Any tips?",
+   "How can non-techies like me build our own mobile apps?"
+  ],
+  "does sunstein worry about declining birth rates": [
+   "Doesn't Rick worry that fewer babies mean less future?",
+   "Is there any concern from Cass Sunstein about lower birth numbers?",
+   "Rick seems worried about the decline in births; is that right?"
+  ],
+  "is crying a sign of weakness": [
+   "Is shedding tears just another way to show I'm not strong?",
+   "Does letting my emotions out mean I'm too fragile?",
+   "Can you tell if someone's being weak by how they cry?"
+  ],
+  "what did khabib's grandfather teach him": [
+   "What did Khabib's grandpa tell him?",
+   "How did Khabib's great-grandfather impart his wisdom to him?",
+   "What did Khabib's ancestor share with him?"
+  ],
+  "connecting your brain directly to computers": [
+   "How can I hook up my noggin right into those tech gadgets?",
+   "What's the deal with getting my mind connected to all these digital devices?",
+   "I'm curious about how I could wirelessly link my head to the internet."
+  ],
+  "what family was robert e lee from": [
+   "So, you know who Robert E. Lee is? Well, his parents were named Henry and Mary.",
+   "I heard that Robert E. Lee's folks came from Virginia originally.",
+   "Robert E. Lee's family roots can be traced back to North Carolina."
+  ],
+  "why is life so hard": [
+   "Why does it feel like everything just keeps getting harder?",
+   "How come my days seem more challenging than ever before?",
+   "Can you explain why life feels tougher these days?"
+  ],
+  "largest ufc bout of all time": [
+   "What's the biggest UFC fight ever?",
+   "Who won the most-watched UFC match of all time?",
+   "How many people watched the UFC fight that broke records?"
+  ],
+  "why is exact vector search slow": [
+   "Why does it take so long to get results when I'm using exact vector search?",
+   "How can I speed up my exact vector search process?",
+   "What's causing my exact vector search to run slowly?"
+  ],
+  "dystopian novel about surveillance state": [
+   "I'm looking for a dystopian novel that explores how a surveillance state affects people's lives.",
+   "Can you recommend a dystopian book set in a world where governments keep track of everyone?",
+   "What dystopian novel features a society run by an all-knowing surveillance system?"
+  ],
+  "does sunstein think muslim immigration threatens europe": [
+   "Does Sunstein believe that Muslim immigration is a threat to Europe?",
+   "Is Professor Sunstein concerned about how much Muslim immigrants are affecting Europe?",
+   "What does Sunstein's opinion on Muslim immigration into Europe look like?"
+  ],
+  "khabib didn't hold back wrestling lex": [
+   "Khabib didn't hold back when he wrestled.",
+   "Khabib wasn't holding anything back during his match.",
+   "Khabib was very aggressive in his wrestling performance."
+  ],
+  "hard to picture many dimensions": [
+   "It's really tough to imagine so many different directions at once.",
+   "I find it difficult to visualize such a vast number of possibilities simultaneously.",
+   "This concept is hard to grasp because there are too many angles to consider."
+  ],
+  "moving to a new country": [
+   "I'm thinking about moving to a new country.",
+   "I need to decide if I want to move to a new country.",
+   "I'm considering whether or not to move to a new country."
+  ],
+  "when did dhh start omarchy": [
+   "A: \"When did DHH start Omarchy?",
+   "B: \"I heard DHH started Omarchy.",
+   "C: \"How long ago did DHH begin Omarchy?"
+  ],
+  "skeptic who later changed his mind": [
+   "So you're saying that person was always skeptical but then they started to change their views?",
+   "I heard someone say they were initially skeptical about something but eventually changed their minds.",
+   "The skeptic mentioned they had doubts at first but later realized they needed to reconsider."
+  ],
+  "the question put to DHH about AI psychosis": [
+   "So, you know how they're talking about these new AI systems that can think like humans? And then there's this guy who says he thinks it could lead to something really messed up... kind of like if we started seeing people with their own little minds inside computers.",
+   "I heard on the news today that some researchers are working on creating artificial intelligence that has its own consciousness. It got me thinking - what if one day we start seeing people developing mental"
+  ],
+  "Dwarkesh asks Dylan why only 80 gigawatts": [
+   "Dwarkesh asks Dylan why only eighty gigawatts.",
+   "Dwarkesh asks Dylan why just eighty gigawatts.",
+   "Dwarkesh asks Dylan why so few gigawatts."
+  ],
+  "Tyler pushes Cass on immigration stereotypes": [
+   "Tyler is pushing Cass to talk about how immigrants are stereotyped.",
+   "Tyler is trying to get Cass to explain why people have these misconceptions about immigrants.",
+   "Tyler wants Cass to share his thoughts on how immigrants are often misunderstood."
+  ]
+ },
+ "seconds_p50": 6.737674042000435
+}

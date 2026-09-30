@@ -37,7 +37,20 @@
           "matched_text": "He had a woman stop him on the steps to the Capitol and ask for a lock of his hair, took his whole wig off and said, “Madam, have them all.”",
           "turn_start_seconds": 500.0,
           "turn_end_seconds": 518.0,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_07_investigative_history_cafe.wav",
+              "turn_id": 30,
+              "speaker": "Gary Gallagher",
+              "start_seconds": 503.15,
+              "end_seconds": 509.6,
+              "matched_text": "Women used to ask for locks of hair as, from famous people, and he was completely bald and wore a full wig.",
+              "turn_start_seconds": 500.0,
+              "turn_end_seconds": 518.0,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         }
       ],
       "hard_negatives": [],
@@ -117,6 +130,17 @@
               "matched_text": "If Anthropic and OpenAI take on 45% of compute next year, you’ve got them in, let’s say, December ’27 having taken on half of the world’s incremental new compute.",
               "turn_start_seconds": 352.3,
               "turn_end_seconds": 421.3,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            },
+            {
+              "file_id": "audio_04_macroeconomics_semiconductor.wav",
+              "turn_id": 6,
+              "speaker": "Dylan Patel",
+              "start_seconds": 303.08,
+              "end_seconds": 309.5,
+              "matched_text": "It’s really by the end of next year when half of the incremental compute is already going to Anthropic and OpenAI.",
+              "turn_start_seconds": 230.6,
+              "turn_end_seconds": 309.5,
               "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
             }
           ]
@@ -501,7 +525,20 @@
           "matched_text": "I don’t have that sense. I don’t have the sense of overwhelm. I don’t have the sense of dread.",
           "turn_start_seconds": 310.0,
           "turn_end_seconds": 326.5,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_01_lex_dhh_omarchy.wav",
+              "turn_id": 13,
+              "speaker": "DHH",
+              "start_seconds": 315.61,
+              "end_seconds": 322.63,
+              "matched_text": "I don’t have the sense of distortion because I have a mission. I’m going somewhere",
+              "turn_start_seconds": 310.0,
+              "turn_end_seconds": 326.5,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         },
         {
           "file_id": "audio_06_constitutional_jurisprudence.wav",
@@ -604,7 +641,20 @@
           "matched_text": "I think there’s something illiberal in the human heart.",
           "turn_start_seconds": 113.3,
           "turn_end_seconds": 176.6,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_06_constitutional_jurisprudence.wav",
+              "turn_id": 8,
+              "speaker": "Cass Sunstein",
+              "start_seconds": 146.1,
+              "end_seconds": 158.25,
+              "matched_text": "In the human soul, the idea of cruelty or suppression — or maybe, in gentler form, an insistence on order — that’s just there, and it occasionally triumphs.",
+              "turn_start_seconds": 113.3,
+              "turn_end_seconds": 176.6,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         }
       ],
       "hard_negatives": [],
@@ -661,7 +711,20 @@
           "matched_text": "Hello and welcome to Postgres FM, a weekly show about all things PostgreSQL. I am Michael, founder of pgMustard, and today I am delighted to be joined by Jonathan Katz",
           "turn_start_seconds": 0.0,
           "turn_end_seconds": 17.5,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_02_postgres_fm_pgvector.wav",
+              "turn_id": 1,
+              "speaker": "Michael",
+              "start_seconds": 7.72,
+              "end_seconds": 17.5,
+              "matched_text": "Jonathan Katz, Postgres Core Team member amongst other things, Principal Product Manager at AWS and contributor to pgvector. Welcome to the show, Jonathan.",
+              "turn_start_seconds": 0.0,
+              "turn_end_seconds": 17.5,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         },
         {
           "file_id": "audio_04_macroeconomics_semiconductor.wav",
@@ -815,7 +878,20 @@
           "matched_text": "It was actually as a shortcut to be able to look up ACL rules.",
           "turn_start_seconds": 78.3,
           "turn_end_seconds": 227.8,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_02_postgres_fm_pgvector.wav",
+              "turn_id": 6,
+              "speaker": "Jonathan",
+              "start_seconds": 125.73,
+              "end_seconds": 133.34,
+              "matched_text": "So instead of having to do a join to another catalog table to get the ACL rules, it was just embedded within a single column as an array.",
+              "turn_start_seconds": 78.3,
+              "turn_end_seconds": 227.8,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         }
       ],
       "hard_negatives": [
@@ -1007,7 +1083,20 @@
           "matched_text": "He saw these things very early, and he tried to tell me, and I wasn’t seeing it.",
           "turn_start_seconds": 447.0,
           "turn_end_seconds": 466.0,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_01_lex_dhh_omarchy.wav",
+              "turn_id": 18,
+              "speaker": "DHH",
+              "start_seconds": 447.0,
+              "end_seconds": 450.11,
+              "matched_text": "Tobi, Tobi Lutke, the CEO of Shopify",
+              "turn_start_seconds": 447.0,
+              "turn_end_seconds": 466.0,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         },
         {
           "file_id": "audio_01_lex_dhh_omarchy.wav",
@@ -1242,7 +1331,20 @@
           "matched_text": "The struggle really is a comprehension problem.",
           "turn_start_seconds": 360.1,
           "turn_end_seconds": 402.0,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_03_brain_science_psychology.wav",
+              "turn_id": 16,
+              "speaker": "Adam Stacoviak",
+              "start_seconds": 377.4,
+              "end_seconds": 379.66,
+              "matched_text": "And the struggle is that comprehension process.",
+              "turn_start_seconds": 360.1,
+              "turn_end_seconds": 402.0,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         }
       ],
       "hard_negatives": [
@@ -1556,6 +1658,17 @@
               "turn_start_seconds": 309.5,
               "turn_end_seconds": 352.3,
               "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            },
+            {
+              "file_id": "audio_04_macroeconomics_semiconductor.wav",
+              "turn_id": 6,
+              "speaker": "Dylan Patel",
+              "start_seconds": 230.6,
+              "end_seconds": 240.5,
+              "matched_text": "At the beginning of this year, OpenAI started at 2 gigawatts and Anthropic at less than 2. End of this year, they’re both above 5.",
+              "turn_start_seconds": 230.6,
+              "turn_end_seconds": 309.5,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
             }
           ],
           "turn_start_seconds": 230.6,
@@ -1698,7 +1811,20 @@
           "matched_text": "Take Ali and Frazier, Thrilla in Manila, right? People called it the greatest rivalry, and it still is.",
           "turn_start_seconds": 391.0,
           "turn_end_seconds": 435.0,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_05_sports_tactics_debate.wav",
+              "turn_id": 20,
+              "speaker": "Khabib Nurmagomedov",
+              "start_seconds": 393.76,
+              "end_seconds": 399.71,
+              "matched_text": "Mike Tyson never had that signature rival like Muhammad Ali had in Joe Frazier.",
+              "turn_start_seconds": 391.0,
+              "turn_end_seconds": 435.0,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         },
         {
           "file_id": "audio_07_investigative_history_cafe.wav",
@@ -1778,7 +1904,20 @@
           "matched_text": "Lee is from an aristocratic family. Grant was from a solidly middle-class family.",
           "turn_start_seconds": 297.0,
           "turn_end_seconds": 337.0,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_07_investigative_history_cafe.wav",
+              "turn_id": 19,
+              "speaker": "Gary Gallagher",
+              "start_seconds": 309.99,
+              "end_seconds": 318.24,
+              "matched_text": "He has uncles who were prominent, two signed the Declaration of Independence. His father was a famous commander under George Washington.",
+              "turn_start_seconds": 297.0,
+              "turn_end_seconds": 337.0,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         }
       ],
       "hard_negatives": [
@@ -1833,7 +1972,20 @@
           "matched_text": "Kahneman finally said, “It’s an empirical question, and I don’t have the evidence. It’s not a matter of thinking.”",
           "turn_start_seconds": 186.5,
           "turn_end_seconds": 220.6,
-          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+          "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)",
+          "alternatives": [
+            {
+              "file_id": "audio_06_constitutional_jurisprudence.wav",
+              "turn_id": 10,
+              "speaker": "Cass Sunstein",
+              "start_seconds": 213.87,
+              "end_seconds": 220.6,
+              "matched_text": "Whether this is an empirical truth about repression, let’s say the three beautiful words: “I don’t know.”",
+              "turn_start_seconds": 186.5,
+              "turn_end_seconds": 220.6,
+              "span_source": "wav2vec2_forced_alignment_of_reference_turn (WAV2VEC2_ASR_BASE_960H)"
+            }
+          ]
         }
       ],
       "hard_negatives": [],

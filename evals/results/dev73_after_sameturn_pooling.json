@@ -1,0 +1,2105 @@
+{
+  "label": "frozen post-test engine, dev-73 after same-turn pooling alternatives",
+  "report": {
+    "hybrid": {
+      "split": "dev",
+      "macro_overall": {
+        "recall@1": 0.747716894977169,
+        "recall@3": 0.8333333333333334,
+        "recall@5": 0.8812785388127853,
+        "mrr": 0.8589041095890412
+      },
+      "micro_moments": {
+        "recall@1": 0.6896551724137931,
+        "recall@3": 0.7816091954022989,
+        "recall@5": 0.8275862068965517
+      },
+      "by_category": {
+        "single_file": {
+          "recall@1": 0.7424242424242424,
+          "recall@3": 0.803030303030303,
+          "recall@5": 0.9090909090909091,
+          "mrr": 0.8343434343434344
+        },
+        "multi_file": {
+          "recall@1": 0.4404761904761905,
+          "recall@3": 0.619047619047619,
+          "recall@5": 0.619047619047619,
+          "mrr": 1.0
+        },
+        "near_miss": {
+          "recall@1": 0.75,
+          "recall@3": 0.875,
+          "recall@5": 0.875,
+          "mrr": 0.7986111111111112
+        },
+        "short_keyword": {
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "mrr": 1.0
+        }
+      },
+      "near_miss_rejection_rate": 0.875,
+      "queries": [
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-01",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-02",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-03",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-04",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-05",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-06",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-07",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-08",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-10",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-12",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-13",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-14",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-16",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-17",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-18",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-19",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-20",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-21",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.3333333333333333,
+          "recall@3": 0.3333333333333333,
+          "recall@5": 0.3333333333333333,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-01",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-02",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-03",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-05",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.25,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-08",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-14",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-01",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-02",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-03",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-04",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-05",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-06",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-08",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-09",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-10",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-11",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-12",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-13",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-14",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-15",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-17",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-18",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-19",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-01",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-02",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-03",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-04",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-05",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-06",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-07",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-08",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-09",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-22",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.2,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-23",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-24",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-25",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-20",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-15",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-26",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.25,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-27",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-21",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-28",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-29",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-30",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-31",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-32",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-22",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-33",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-23",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-34",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.25,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-35",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-36",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-24",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-25",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-26",
+          "category": "near_miss"
+        }
+      ]
+    },
+    "lexical": {
+      "split": "dev",
+      "macro_overall": {
+        "recall@1": 0.4668949771689498,
+        "recall@3": 0.6038812785388128,
+        "recall@5": 0.6449771689497718,
+        "mrr": 0.5796803652968037
+      },
+      "micro_moments": {
+        "recall@1": 0.41379310344827586,
+        "recall@3": 0.5517241379310345,
+        "recall@5": 0.5862068965517241
+      },
+      "by_category": {
+        "single_file": {
+          "recall@1": 0.36363636363636365,
+          "recall@3": 0.4696969696969697,
+          "recall@5": 0.5303030303030303,
+          "mrr": 0.43787878787878787
+        },
+        "multi_file": {
+          "recall@1": 0.15476190476190474,
+          "recall@3": 0.36904761904761907,
+          "recall@5": 0.36904761904761907,
+          "mrr": 0.5952380952380952
+        },
+        "near_miss": {
+          "recall@1": 0.5,
+          "recall@3": 0.7083333333333334,
+          "recall@5": 0.75,
+          "mrr": 0.6124999999999999
+        },
+        "short_keyword": {
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "mrr": 1.0
+        }
+      },
+      "near_miss_rejection_rate": 0.6666666666666666,
+      "queries": [
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-01",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-02",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-03",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.25,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-04",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-05",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-06",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-07",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-08",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-10",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-12",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-13",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-14",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-16",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-17",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-18",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-19",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-20",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-21",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.3333333333333333,
+          "recall@3": 0.3333333333333333,
+          "recall@5": 0.3333333333333333,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-01",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-02",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-03",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-05",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.25,
+          "recall@3": 0.25,
+          "recall@5": 0.25,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-08",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DMF-14",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-01",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-02",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-03",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-04",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-05",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-06",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-08",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-09",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-10",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-11",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-12",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-13",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-14",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-15",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-17",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-18",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-19",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-01",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-02",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-03",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-04",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-05",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-06",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-07",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-08",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-09",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-22",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-23",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.2,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-24",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-25",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-20",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-15",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-26",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-27",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-21",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-28",
+          "category": "single_file"
+        },
+        {
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "mrr": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-29",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-30",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-31",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-32",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.2,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-22",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-33",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-23",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-34",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-35",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-36",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-24",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-25",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-26",
+          "category": "near_miss"
+        }
+      ]
+    },
+    "dense": {
+      "split": "dev",
+      "macro_overall": {
+        "recall@1": 0.6518264840182648,
+        "recall@3": 0.7922374429223744,
+        "recall@5": 0.8333333333333334,
+        "mrr": 0.773972602739726
+      },
+      "micro_moments": {
+        "recall@1": 0.5977011494252874,
+        "recall@3": 0.735632183908046,
+        "recall@5": 0.7816091954022989
+      },
+      "by_category": {
+        "single_file": {
+          "recall@1": 0.6515151515151515,
+          "recall@3": 0.8181818181818182,
+          "recall@5": 0.8939393939393939,
+          "mrr": 0.7474747474747475
+        },
+        "multi_file": {
+          "recall@1": 0.4404761904761905,
+          "recall@3": 0.5476190476190477,
+          "recall@5": 0.619047619047619,
+          "mrr": 1.0
+        },
+        "near_miss": {
+          "recall@1": 0.7083333333333334,
+          "recall@3": 0.8333333333333334,
+          "recall@5": 0.8333333333333334,
+          "mrr": 0.7638888888888888
+        },
+        "short_keyword": {
+          "recall@1": 0.6666666666666666,
+          "recall@3": 0.7777777777777778,
+          "recall@5": 0.7777777777777778,
+          "mrr": 0.7222222222222222
+        }
+      },
+      "near_miss_rejection_rate": 0.8333333333333334,
+      "queries": [
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-01",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-02",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-03",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-04",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-05",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-06",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-07",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-08",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-10",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-12",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-13",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-14",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-16",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-17",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-18",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-19",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-20",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-21",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.3333333333333333,
+          "recall@3": 0.3333333333333333,
+          "recall@5": 0.3333333333333333,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-01",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-02",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-03",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-05",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.25,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-08",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-14",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-01",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-02",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-03",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-04",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-05",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-06",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-08",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-09",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-10",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-11",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-12",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-13",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-14",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-15",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-17",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-18",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-19",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-01",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-02",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-03",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DKW-04",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-05",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-06",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-07",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DKW-08",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DKW-09",
+          "category": "short_keyword"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-22",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.25,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-23",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-24",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-25",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-20",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "avoided_hard_negative": true,
+          "query_id": "DMF-15",
+          "category": "multi_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-26",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-27",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-21",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.25,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-28",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-29",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-30",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-31",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-32",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-22",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-33",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.5,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-23",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-34",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.3333333333333333,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DSF-35",
+          "category": "single_file"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DSF-36",
+          "category": "single_file"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-24",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "avoided_hard_negative": true,
+          "query_id": "DNM-25",
+          "category": "near_miss"
+        },
+        {
+          "mrr": 0.0,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "avoided_hard_negative": false,
+          "query_id": "DNM-26",
+          "category": "near_miss"
+        }
+      ]
+    }
+  }
+}
