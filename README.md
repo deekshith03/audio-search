@@ -415,7 +415,8 @@ docker compose up --build
 Needs ffmpeg (`brew install ffmpeg` or your package manager), [uv](https://docs.astral.sh/uv/), and Docker, used only for the database. Python 3.12 and Node 22 (for promptfoo) are pinned in `.mise.toml`.
 
 ```bash
-mise install                                         # optional: Python 3.12.12 + Node 22 from .mise.toml
+mise trust && mise install                           # optional: Python 3.12.12 + Node 22 from .mise.toml
+                                                     # (mise asks you to trust a freshly cloned or unzipped folder once)
 uv sync                                              # dependencies (uv fetches Python 3.12 itself if needed)
 docker compose up -d db                              # ParadeDB on 127.0.0.1:5433
 uv run python -m src.db.migrate                      # schema
