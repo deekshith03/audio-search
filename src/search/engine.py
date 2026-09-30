@@ -14,7 +14,9 @@ Hybrid search over indexed transcripts (docs/PHASE_3_PLAN.md §4, configuration 
 `lexical` and `dense` exist as the ablations the eval gate compares hybrid against. Results follow
 the eval harness contract: file_id, speaker (human name when labeled, else the SPEAKER_xx label),
 start_seconds, end_seconds, plus text, highlight (<mark> around keyword matches) and score.
-Speaker names are joined at query time, so renaming never needs re-indexing.
+Speaker names are joined at query time, so renaming never needs re-indexing. Optional
+SearchFilters narrow every retriever to some recordings or speakers; without them the SQL is the
+exact query the eval ran.
 """
 
 import argparse
@@ -70,6 +72,33 @@ class SearchConfig:
         return {"bm25": self.bm25_weight, "trigram": self.trigram_weight, "dense": self.dense_weight}
 
 
+@dataclass(frozen=True)
+class SearchFilters:
+    """Narrows retrieval to some recordings (files.id) and/or some speakers ((files.id, speaker_label))."""
+
+    file_pks: Tuple[int, ...] = ()
+    speakers: Tuple[Tuple[int, str], ...] = ()
+
+    def clause(self) -> str:
+        parts = ["c.file_pk IN (SELECT id FROM files WHERE workspace = ANY(%(ws)s))"]
+        if self.file_pks:
+            parts.append("c.file_pk = ANY(%(file_pks)s)")
+        if self.speakers:
+            parts.append("(c.file_pk, c.speaker_label) IN (SELECT * FROM unnest(%(speaker_pks)s::int[], %(speaker_labels)s::text[]))")
+        return " AND ".join(parts)
+
+    def params(self, workspaces: Sequence[str]) -> Dict[str, Any]:
+        return {
+            "ws": list(workspaces),
+            "file_pks": list(self.file_pks),
+            "speaker_pks": [pk for pk, _ in self.speakers],
+            "speaker_labels": [label for _, label in self.speakers],
+        }
+
+
+NO_FILTERS = SearchFilters()
+
+
 @dataclass
 class SearchResponse:
     results: List[Dict[str, Any]]
@@ -103,6 +132,7 @@ class SearchEngine:
         top_k: int = 5,
         config: Optional[SearchConfig] = None,
         workspaces: Sequence[str] = DEFAULT_WORKSPACES,
+        filters: SearchFilters = NO_FILTERS,
     ) -> SearchResponse:
         if mode not in MODES:
             raise ValueError(f"unknown mode {mode!r}; choose from {sorted(MODES)}")
@@ -131,11 +161,11 @@ class SearchEngine:
             with self.conn.cursor() as cur:
                 lists: Dict[str, List[Tuple[int, float]]] = {}
                 if "bm25" in retrievers:
-                    lists["bm25"] = self._bm25(cur, query, config, workspaces)
+                    lists["bm25"] = self._bm25(cur, query, config, workspaces, filters)
                 if "trigram" in retrievers and len(WORD_PATTERN.findall(query)) <= config.trigram_max_query_words:
-                    lists["trigram"] = self._trigram(cur, query, config, workspaces)
+                    lists["trigram"] = self._trigram(cur, query, config, workspaces, filters)
                 if query_vector is not None:
-                    lists["dense"] = self._dense(cur, query_vector, config, workspaces)
+                    lists["dense"] = self._dense(cur, query_vector, config, workspaces, filters)
                 lap("retrieve")
 
                 fused = convex(lists, config.weights)
@@ -162,28 +192,28 @@ class SearchEngine:
         timings["total"] = round(sum(timings.values()), 2)
         return response
 
-    def _bm25(self, cur, query: str, config: SearchConfig, workspaces: Sequence[str]) -> List[Tuple[int, float]]:
+    def _bm25(self, cur, query: str, config: SearchConfig, workspaces: Sequence[str], filters: SearchFilters) -> List[Tuple[int, float]]:
         cur.execute(
             "SELECT c.id, pdb.score(c.id) FROM chunks c"
             " WHERE c.text ||| %(q)s"
-            " AND c.file_pk IN (SELECT id FROM files WHERE workspace = ANY(%(ws)s))"
+            f" AND {filters.clause()}"
             " ORDER BY pdb.score(c.id) DESC, c.id LIMIT %(n)s",
-            {"q": query, "ws": list(workspaces), "n": config.candidates},
+            {"q": query, "n": config.candidates, **filters.params(workspaces)},
         )
         return [(r[0], float(r[1])) for r in cur.fetchall()]
 
-    def _trigram(self, cur, query: str, config: SearchConfig, workspaces: Sequence[str]) -> List[Tuple[int, float]]:
+    def _trigram(self, cur, query: str, config: SearchConfig, workspaces: Sequence[str], filters: SearchFilters) -> List[Tuple[int, float]]:
         cur.execute("SELECT set_config('pg_trgm.word_similarity_threshold', %s, true)", (str(config.trigram_threshold),))
         cur.execute(
             "SELECT c.id, word_similarity(%(q)s, c.text) AS sim FROM chunks c"
             " WHERE %(q)s <%% c.text"
-            " AND c.file_pk IN (SELECT id FROM files WHERE workspace = ANY(%(ws)s))"
+            f" AND {filters.clause()}"
             " ORDER BY sim DESC, c.id LIMIT %(n)s",
-            {"q": query, "ws": list(workspaces), "n": config.candidates},
+            {"q": query, "n": config.candidates, **filters.params(workspaces)},
         )
         return [(r[0], float(r[1])) for r in cur.fetchall()]
 
-    def _dense(self, cur, vector: Sequence[float], config: SearchConfig, workspaces: Sequence[str]) -> List[Tuple[int, float]]:
+    def _dense(self, cur, vector: Sequence[float], config: SearchConfig, workspaces: Sequence[str], filters: SearchFilters) -> List[Tuple[int, float]]:
         model = self.embedder.model
         cur.execute("SELECT set_config('hnsw.ef_search', %s, true)", (str(config.hnsw_ef_search),))
         cur.execute("SELECT set_config('hnsw.iterative_scan', 'relaxed_order', true)")
@@ -192,12 +222,28 @@ class SearchEngine:
             sql.SQL(
                 "SELECT e.chunk_id, 1 - ({distance}) AS sim FROM chunk_embeddings e JOIN chunks c ON c.id = e.chunk_id"
                 " WHERE e.model = %(model)s"
-                " AND c.file_pk IN (SELECT id FROM files WHERE workspace = ANY(%(ws)s))"
+                " AND {scope}"
                 " ORDER BY {distance} LIMIT %(n)s"
-            ).format(distance=distance),
-            {"v": vector_literal(vector), "model": model.key, "ws": list(workspaces), "n": config.candidates},
+            ).format(distance=distance, scope=sql.SQL(filters.clause())),
+            {"v": vector_literal(vector), "model": model.key, "n": config.candidates, **filters.params(workspaces)},
         )
         return sorted(((r[0], float(r[1])) for r in cur.fetchall()), key=lambda kv: (-kv[1], kv[0]))
+
+    def speakers_in(self, workspaces: Sequence[str]) -> List[Dict[str, Any]]:
+        """Every indexed (recording, speaker) pair in `workspaces`: the options for search filters."""
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute(
+                    "SELECT f.id, f.workspace, f.file_id, sp.speaker_label, sp.display_name"
+                    " FROM files f JOIN speakers sp ON sp.file_pk = f.id"
+                    " WHERE f.workspace = ANY(%s) ORDER BY f.file_id, sp.speaker_label",
+                    (list(workspaces),),
+                )
+                rows = cur.fetchall()
+        finally:
+            self.conn.rollback()
+        keys = ("file_pk", "workspace", "file_id", "speaker_label", "display_name")
+        return [dict(zip(keys, r)) for r in rows]
 
     def _chunk_rows(self, cur, chunk_ids: Sequence[int]) -> Dict[int, Dict[str, Any]]:
         if not chunk_ids:

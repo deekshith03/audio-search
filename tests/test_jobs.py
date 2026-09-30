@@ -59,6 +59,15 @@ class TestRunJob(JobTestCase):
             log = f.read()
         self.assertIn("=== diarizing (src.pipeline.diarize) ===", log)
         self.assertIn("ran src.pipeline.reconcile", log)
+        self.assertIn("=== indexing (src.search.indexer) ===", log)
+
+    def test_indexing_runs_after_the_transcript_is_built(self):
+        names = [s for s, _ in jobs.STAGES]
+        self.assertEqual(names[-2:], ["reconciling", "indexing"])
+        self.assertEqual(jobs.stage_command("src.search.indexer", self.ws, "/x/upload.wav")[-4:],
+                         ["--workspace", self.ws.root, "--file", "/x/upload.wav"])
+        self.assertIn("indexing", jobs.RUNNING_STATUSES)
+        self.assertEqual(jobs.estimate_stage_seconds("indexing", 600.0, jobs.DEFAULT_STAGE_COST), jobs.DEFAULT_STAGE_COST["indexing"])
 
     def test_existing_labels_finish_as_labeled(self):
         save_labels(self.ws, "upload_abc.wav", {"SPEAKER_00": "A", "SPEAKER_01": "B"}, ["SPEAKER_00", "SPEAKER_01"])

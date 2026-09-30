@@ -10,7 +10,7 @@ The worker runs each stage as its own subprocess (the same CLIs as run_pipeline.
 progress in `<workspace>/jobs/{file_id}.json`; the app only polls that file. Workers take an
 exclusive lock so concurrent uploads queue instead of competing for CPU and memory.
 
-Status flow: queued → transcribing → aligning → diarizing → reconciling → awaiting_labels → labeled
+Status flow: queued → transcribing → aligning → diarizing → reconciling → indexing → awaiting_labels → labeled
              (any running state) → failed
 """
 
@@ -33,10 +33,11 @@ STAGES = [
     ("aligning", "src.pipeline.align"),
     ("diarizing", "src.pipeline.diarize"),
     ("reconciling", "src.pipeline.reconcile"),
+    ("indexing", "src.search.indexer"),
 ]
 # Default cost per stage before any job has finished on this machine: seconds per second of audio
 # for the length-dependent stages, flat seconds otherwise. Replaced by observed timings once available.
-DEFAULT_STAGE_COST = {"transcribing": 0.18, "aligning": 12.0, "diarizing": 0.47, "reconciling": 3.0}
+DEFAULT_STAGE_COST = {"transcribing": 0.18, "aligning": 12.0, "diarizing": 0.47, "reconciling": 3.0, "indexing": 15.0}
 PER_AUDIO_SECOND_STAGES = {"transcribing", "diarizing"}
 RATE_HISTORY = 5
 

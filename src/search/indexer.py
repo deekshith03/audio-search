@@ -158,6 +158,19 @@ class Indexer:
             [(file_pk, label, names.get(label)) for label in speaker_labels],
         )
 
+    def sync_speaker_names(self, file_id: str) -> bool:
+        """Re-reads speaker_labels/ for one indexed file; False when the file is not indexed yet."""
+        with self.conn.cursor() as cur:
+            cur.execute("SELECT id FROM files WHERE workspace = %s AND file_id = %s", (self.workspace.root, file_id))
+            row = cur.fetchone()
+            if row is None:
+                self.conn.rollback()
+                return False
+            cur.execute("SELECT speaker_label FROM speakers WHERE file_pk = %s ORDER BY speaker_label", (row[0],))
+            self._sync_speakers(cur, row[0], file_id, [r[0] for r in cur.fetchall()])
+        self.conn.commit()
+        return True
+
     def _embed_missing(self, file_pk: int, embedder) -> int:
         with self.conn.cursor() as cur:
             cur.execute(

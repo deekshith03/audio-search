@@ -177,6 +177,23 @@ class TestIndexer(ThrowawayDatabaseTestCase):
         self.assertFalse(any(s["rechunked"] for s in stats))
         self.assertEqual(self.scalar(name_of, (file_id,)), "Lex")
 
+    def test_sync_speaker_names_updates_only_that_file(self):
+        self.indexer().index_all(self.paths())
+        file_id = "audio_01_lex_dhh_omarchy.wav"
+        save_labels(self.workspace, file_id, {"SPEAKER_00": "Lex", "SPEAKER_01": "DHH"}, ["SPEAKER_00", "SPEAKER_01"])
+        self.assertTrue(self.indexer().sync_speaker_names(file_id))
+        names = "SELECT f.file_id, s.speaker_label, s.display_name FROM speakers s JOIN files f ON f.id = s.file_pk ORDER BY 1, 2"
+        with self.conn.cursor() as cur:
+            cur.execute(names)
+            rows = cur.fetchall()
+        self.assertIn((file_id, "SPEAKER_00", "Lex"), rows)
+        self.assertIn((file_id, "SPEAKER_01", "DHH"), rows)
+        self.assertTrue(all(name is None for f, _, name in rows if f != file_id))
+
+    def test_sync_speaker_names_for_unindexed_file_is_a_no_op(self):
+        self.assertFalse(self.indexer().sync_speaker_names("never_indexed.wav"))
+        self.assertEqual(self.scalar("SELECT count(*) FROM speakers"), 0)
+
     def test_prune_removes_files_no_longer_on_disk(self):
         self.indexer().index_all(self.paths())
         os.remove(self.paths()[0])

@@ -3,7 +3,8 @@ Downloads every model the pipeline needs into the model cache (HF_HOME / TORCH_H
 
   uv run python -m scripts.bootstrap_models
 
-Exit codes: 0 ready, 2 no Hugging Face token, 3 token invalid, 4 pyannote terms not accepted,
+Exit codes: 0 ready, 2 no Hugging Face token, 3 token invalid, 4 terms of a gated model (pyannote
+diarization or EmbeddingGemma) not accepted,
 1 any other download failure. A marker file records a successful bootstrap so later container
 starts skip straight to the app (and work offline).
 """
@@ -18,8 +19,10 @@ from src.pipeline.asr import MODEL_NAME as ASR_MODEL_NAME
 from src.pipeline.asr import MODEL_REPO as ASR_MODEL_REPO
 from src.pipeline.common import load_env_file
 from src.pipeline.diarize import DIARIZATION_MODEL
+from src.search.embedders import EMBEDDING_MODEL
 
 PYANNOTE_TERMS_URL = f"https://huggingface.co/{DIARIZATION_MODEL}"
+EMBEDDING_TERMS_URL = f"https://huggingface.co/{EMBEDDING_MODEL.repo}"
 TOKEN_SETTINGS_URL = "https://huggingface.co/settings/tokens"
 
 
@@ -29,7 +32,7 @@ def marker_path() -> str:
 
 
 def expected_marker() -> dict:
-    return {"asr": ASR_MODEL_REPO, "alignment": ALIGN_MODEL, "diarization": DIARIZATION_MODEL}
+    return {"asr": ASR_MODEL_REPO, "alignment": ALIGN_MODEL, "diarization": DIARIZATION_MODEL, "embedding": EMBEDDING_MODEL.repo}
 
 
 def already_bootstrapped() -> bool:
@@ -45,21 +48,29 @@ def fail(code: int, message: str) -> None:
     sys.exit(code)
 
 
-def download_diarization(token: str) -> None:
+def download_gated(repo: str, token: str) -> None:
     from huggingface_hub import snapshot_download
     from huggingface_hub.errors import GatedRepoError, HfHubHTTPError, RepositoryNotFoundError
 
     try:
-        snapshot_download(DIARIZATION_MODEL, token=token)
+        snapshot_download(repo, token=token)
     except GatedRepoError:
-        fail(4, f"Your Hugging Face account has not accepted the terms for {DIARIZATION_MODEL}.\n"
-                f"  Open {PYANNOTE_TERMS_URL}, log in, accept the conditions, then restart.")
+        fail(4, f"Your Hugging Face account has not accepted the terms for {repo}.\n"
+                f"  Open https://huggingface.co/{repo}, log in, accept the conditions, then restart.")
     except RepositoryNotFoundError:
-        fail(3, f"Hugging Face could not authorize access to {DIARIZATION_MODEL}. Check HF_TOKEN ({TOKEN_SETTINGS_URL}).")
+        fail(3, f"Hugging Face could not authorize access to {repo}. Check HF_TOKEN ({TOKEN_SETTINGS_URL}).")
     except HfHubHTTPError as e:
         if e.response is not None and e.response.status_code == 401:
             fail(3, f"HF_TOKEN was rejected by Hugging Face. Create a read token at {TOKEN_SETTINGS_URL}.")
         raise
+
+
+def download_diarization(token: str) -> None:
+    download_gated(DIARIZATION_MODEL, token)
+
+
+def download_embedding(token: str) -> None:
+    download_gated(EMBEDDING_MODEL.repo, token)
 
 
 def download_asr() -> None:
@@ -82,15 +93,16 @@ def main() -> None:
     load_env_file()
     token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN")
     if not token:
-        fail(2, "HF_TOKEN is not set. Speaker diarization uses a gated pyannote model:\n"
+        fail(2, "HF_TOKEN is not set. Speaker diarization and search embeddings use gated models:\n"
                 f"  1. Create a read token at {TOKEN_SETTINGS_URL}\n"
-                f"  2. Accept the terms at {PYANNOTE_TERMS_URL}\n"
+                f"  2. Accept the terms at {PYANNOTE_TERMS_URL} and {EMBEDDING_TERMS_URL}\n"
                 "  3. Put HF_TOKEN=hf_... in .env and restart.")
 
     steps: List[Tuple[str, Callable[[], None]]] = [
         (f"Speaker diarization  {DIARIZATION_MODEL}", lambda: download_diarization(token)),
         (f"Speech recognition   {ASR_MODEL_REPO} (~1.6 GB)", download_asr),
         (f"Word alignment       torchaudio {ALIGN_MODEL} (~360 MB)", download_alignment),
+        (f"Search embeddings    {EMBEDDING_MODEL.repo} (~1.2 GB)", lambda: download_embedding(token)),
     ]
     print("Downloading models (first start only)...")
     for i, (label, step) in enumerate(steps, start=1):

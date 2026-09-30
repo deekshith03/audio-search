@@ -43,11 +43,24 @@ class TestBootstrapFailures(BootstrapTestCase):
         message = "".join(c.args[0] for c in stderr.write.call_args_list)
         self.assertIn("HF_TOKEN is not set", message)
         self.assertIn(bootstrap_models.PYANNOTE_TERMS_URL, message)
+        self.assertIn(bootstrap_models.EMBEDDING_TERMS_URL, message)
 
     def test_unaccepted_terms_exit_4(self):
         os.environ["HF_TOKEN"] = "hf_test"
         with patch("huggingface_hub.snapshot_download", side_effect=http_error(GatedRepoError, 403)), patch("sys.stderr"):
             self.assertEqual(self.run_main(), 4)
+
+    def test_unaccepted_embedding_terms_exit_4_and_name_the_model(self):
+        os.environ["HF_TOKEN"] = "hf_test"
+        with patch.object(bootstrap_models, "download_diarization"), \
+                patch.object(bootstrap_models, "download_asr"), \
+                patch.object(bootstrap_models, "download_alignment"), \
+                patch("huggingface_hub.snapshot_download", side_effect=http_error(GatedRepoError, 403)) as download, \
+                patch("sys.stderr") as stderr:
+            self.assertEqual(self.run_main(), 4)
+        download.assert_called_once_with("google/embeddinggemma-300m", token="hf_test")
+        self.assertIn("google/embeddinggemma-300m", "".join(c.args[0] for c in stderr.write.call_args_list))
+        self.assertFalse(os.path.exists(bootstrap_models.marker_path()))
 
     def test_rejected_token_exits_3(self):
         os.environ["HF_TOKEN"] = "hf_bad"
@@ -74,11 +87,13 @@ class TestBootstrapSuccess(BootstrapTestCase):
         os.environ["HF_TOKEN"] = "hf_test"
         with patch.object(bootstrap_models, "download_diarization") as diar, \
                 patch.object(bootstrap_models, "download_asr") as asr, \
-                patch.object(bootstrap_models, "download_alignment") as align:
+                patch.object(bootstrap_models, "download_alignment") as align, \
+                patch.object(bootstrap_models, "download_embedding") as embed:
             bootstrap_models.main()
         diar.assert_called_once_with("hf_test")
         asr.assert_called_once()
         align.assert_called_once()
+        embed.assert_called_once_with("hf_test")
         with open(bootstrap_models.marker_path()) as f:
             self.assertEqual(json.load(f), bootstrap_models.expected_marker())
 
@@ -90,6 +105,13 @@ class TestBootstrapSuccess(BootstrapTestCase):
         with open(bootstrap_models.marker_path(), "w") as f:
             json.dump({"asr": "old-model"}, f)
         self.assertFalse(bootstrap_models.already_bootstrapped())
+
+    def test_marker_from_before_search_embeddings_triggers_a_download(self):
+        marker = {k: v for k, v in bootstrap_models.expected_marker().items() if k != "embedding"}
+        with open(bootstrap_models.marker_path(), "w") as f:
+            json.dump(marker, f)
+        self.assertFalse(bootstrap_models.already_bootstrapped())
+        self.assertEqual(bootstrap_models.expected_marker()["embedding"], "google/embeddinggemma-300m")
 
     def test_marker_lives_in_model_cache_dir(self):
         self.assertEqual(bootstrap_models.marker_path(), os.path.join(self.tmp.name, ".bootstrap.json"))

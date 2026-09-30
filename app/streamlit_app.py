@@ -1,33 +1,44 @@
 """
-Audio Search: upload a two-speaker recording, let the pipeline transcribe and diarize it, then
-name each speaker. Run with:  uv run streamlit run app/streamlit_app.py
+Audio Search: search what was said across recordings (file, speaker, timestamp, playable clip), or
+upload a two-speaker recording, let the pipeline transcribe, diarize and index it, then name each
+speaker. Run with:  uv run streamlit run app/streamlit_app.py
 """
 
 import json
 import os
 import re
 import sys
+import threading
 import uuid
 from datetime import datetime, timezone
 
+import psycopg2
 import streamlit as st
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from src.db.connection import connect  # noqa: E402
 from src.pipeline import jobs  # noqa: E402
 from src.pipeline.common import GOLDEN, Workspace, file_base  # noqa: E402
 from src.pipeline.ingest import MAX_DURATION_SECONDS, SUPPORTED_EXTENSIONS, IngestError, format_duration, ingest  # noqa: E402
 from src.pipeline.labels import LabelValidationError, load_labels, save_labels, speaker_name, swap_labels  # noqa: E402
 from src.pipeline.speaker_samples import extract_clip, select_speaker_samples, speaking_time  # noqa: E402
+from src.search.engine import SearchEngine, SearchFilters  # noqa: E402
+from src.search.indexer import Indexer  # noqa: E402
 
 UPLOADS = Workspace(os.environ.get("APP_DATA_DIR", "data"))
 GOLDEN_SET = Workspace(os.environ.get("GOLDEN_DATA_DIR", GOLDEN.root))
 WORKSPACES = {"Uploads": UPLOADS, "Golden set": GOLDEN_SET}
+VIEWS = ("🔍 Search", "🎙️ Recordings")
+SEARCH_MODES = {"Hybrid": "hybrid", "Keyword": "lexical", "Semantic": "dense"}
+CLIP_PADDING_SECONDS = 2.0
+DB_DOWN = "The search database is not reachable. Start it with `docker compose up -d db`."
 STAGE_LABELS = {
     "transcribing": "Transcribing speech",
     "aligning": "Aligning word timings",
     "diarizing": "Identifying speakers",
     "reconciling": "Building transcript",
+    "indexing": "Indexing for search",
 }
 STATUS_BADGES = {
     "queued": "⏳ Queued",
@@ -35,6 +46,7 @@ STATUS_BADGES = {
     "aligning": "⚙️ Processing",
     "diarizing": "⚙️ Processing",
     "reconciling": "⚙️ Processing",
+    "indexing": "⚙️ Processing",
     "awaiting_labels": "🏷️ Needs speaker names",
     "labeled": "✅ Ready",
     "failed": "❌ Failed",
@@ -60,7 +72,6 @@ def select_file(file_id: str) -> None:
 
 
 def render_sidebar() -> Workspace:
-    st.sidebar.title("🎙️ Audio Search")
     ws_name = st.sidebar.radio("Workspace", list(WORKSPACES), horizontal=True, key="workspace_name")
     ws = WORKSPACES[ws_name]
 
@@ -224,8 +235,28 @@ def render_labeling(ws: Workspace, file_id: str) -> None:
             st.error(str(e))
         else:
             jobs.mark_labeled(ws, file_id)
-            st.success("Speaker names saved.")
+            sync_search_speakers(ws, file_id)
             st.rerun()
+
+
+def sync_search_speakers(ws: Workspace, file_id: str) -> None:
+    try:
+        conn = connect(connect_timeout=3)
+        try:
+            Indexer(conn, ws).sync_speaker_names(file_id)
+        finally:
+            conn.close()
+    except psycopg2.Error:
+        st.session_state["flash"] = ("warning", "Speaker names saved, but search could not be updated (database not reachable). "
+                                                "They sync the next time this recording is indexed.")
+    else:
+        st.session_state["flash"] = ("success", "Speaker names saved.")
+
+
+def render_flash() -> None:
+    flash = st.session_state.pop("flash", None)
+    if flash:
+        getattr(st, flash[0])(flash[1])
 
 
 def render_transcript(ws: Workspace, file_id: str) -> None:
@@ -247,6 +278,7 @@ def render_file(ws: Workspace, file_id: str) -> None:
         return
 
     render_status_caption(status, job)
+    render_flash()
     if status == "failed":
         render_failed(ws, file_id, job)
     elif status in jobs.DONE_STATUSES:
@@ -256,8 +288,109 @@ def render_file(ws: Workspace, file_id: str) -> None:
         st.info("This recording has not been processed.")
 
 
+@st.cache_resource(show_spinner=False)
+def search_engine() -> SearchEngine:
+    return SearchEngine()
+
+
+@st.cache_resource(show_spinner=False)
+def search_lock() -> threading.Lock:
+    """The engine holds one connection, so browser sessions take turns using it."""
+    return threading.Lock()
+
+
+def workspace_at(root: str) -> Workspace:
+    return next(ws for ws in WORKSPACES.values() if ws.root == root)
+
+
+def recording_names(rows: list) -> dict:
+    """(workspace, file_id) → the name people know the recording by: the uploaded filename, else the file id."""
+    uploaded = {}
+    for root in {r["workspace"] for r in rows}:
+        uploaded.update({(root, e["file_id"]): e["display_name"] for e in jobs.list_files(workspace_at(root)) if e["display_name"] != e["file_id"]})
+    return {(r["workspace"], r["file_id"]): uploaded.get((r["workspace"], r["file_id"])) or file_base(r["file_id"]) for r in rows}
+
+
+def filter_options(rows: list, names: dict) -> tuple:
+    """Recording choices keyed by files.id, and speaker choices by name spanning every recording they appear in."""
+    recordings, speakers = {}, {}
+    for r in rows:
+        recording = names[(r["workspace"], r["file_id"])]
+        recordings[r["file_pk"]] = recording
+        speaker = r["display_name"] or f"{r['speaker_label']} ({recording})"
+        speakers.setdefault(speaker, []).append((r["file_pk"], r["speaker_label"]))
+    return recordings, speakers
+
+
+def render_result(r: dict, name: str) -> None:
+    wav_path = os.path.join(workspace_at(r["workspace"]).audio_dir, r["file_id"])
+    with st.container(border=True):
+        st.markdown(f"**{r['rank']}. {name}** · {r['speaker']} · `{mmss(r['start_seconds'])}–{mmss(r['end_seconds'])}`")
+        st.html(f"<p>{r['highlight']}</p>")
+        if os.path.exists(wav_path):
+            clip = clip_bytes(wav_path, r["start_seconds"], r["end_seconds"] + CLIP_PADDING_SECONDS, os.path.getmtime(wav_path))
+            st.audio(clip, format="audio/wav")
+
+
+def render_search() -> None:
+    st.header("Search conversations")
+    query = st.text_input("Search", key="query", placeholder="e.g. why were arrays added to postgres", label_visibility="collapsed")
+    left, middle, right = st.columns([2, 2, 1])
+    mode = left.radio("Mode", list(SEARCH_MODES), horizontal=True, key="search_mode")
+    with middle:
+        st.caption("Search in")
+        in_golden = st.checkbox("Golden set", value=True, key="search_golden")
+        in_uploads = st.checkbox("Uploads", value=False, key="search_uploads")
+    top_k = right.number_input("Results", min_value=1, max_value=20, value=5, key="top_k")
+    roots = [ws.root for ws, on in ((GOLDEN_SET, in_golden), (UPLOADS, in_uploads)) if on]
+    if not roots:
+        st.info("Choose at least one place to search.")
+        return
+
+    engine, lock = search_engine(), search_lock()
+    try:
+        with lock:
+            rows = engine.speakers_in(roots)
+    except psycopg2.OperationalError:
+        st.error(DB_DOWN)
+        return
+    if not rows:
+        st.info("Nothing is indexed here yet. Golden set: `uv run python -m src.search.indexer`; uploads are indexed after processing.")
+        return
+
+    names = recording_names(rows)
+    recordings, speakers = filter_options(rows, names)
+    with st.expander("Filters"):
+        picked_files = st.multiselect("Recording", list(recordings), format_func=recordings.get, key="filter_recordings")
+        picked_speakers = st.multiselect("Speaker", sorted(speakers), key="filter_speakers")
+    if not query.strip():
+        return
+
+    filters = SearchFilters(
+        file_pks=tuple(picked_files),
+        speakers=tuple(pair for name in picked_speakers for pair in speakers[name]),
+    )
+    try:
+        with st.spinner("Searching..."), lock:
+            response = engine.search(query, SEARCH_MODES[mode], int(top_k), workspaces=roots, filters=filters)
+    except psycopg2.OperationalError:
+        st.error(DB_DOWN)
+        return
+
+    if not response.results:
+        st.info("No matches. Try other words, or Semantic mode for a description of what was said.")
+        return
+    st.caption(f"{len(response.results)} results · {response.timings_ms.get('total', 0):.0f} ms")
+    for r in response.results:
+        render_result(r, names.get((r["workspace"], r["file_id"]), file_base(r["file_id"])))
+
+
 def main() -> None:
     st.set_page_config(page_title="Audio Search", page_icon="🎙️", layout="wide")
+    st.sidebar.title("🎙️ Audio Search")
+    if st.sidebar.radio("View", VIEWS, horizontal=True, key="view", label_visibility="collapsed") == VIEWS[0]:
+        render_search()
+        return
     ws = render_sidebar()
     selected = st.session_state.get("selected")
     known = {e["file_id"] for e in jobs.list_files(ws)}

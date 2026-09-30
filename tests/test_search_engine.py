@@ -13,7 +13,7 @@ from src.db import connection
 from src.pipeline.common import Workspace
 from src.pipeline.labels import save_labels
 from src.search.embedders import EMBEDDING_MODEL
-from src.search.engine import SearchConfig, SearchEngine
+from src.search.engine import NO_FILTERS, SearchConfig, SearchEngine, SearchFilters
 from src.search.indexer import Indexer, canonical_paths
 from tests.db_support import ThrowawayDatabaseTestCase, requires_database
 
@@ -101,8 +101,11 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
     def engine(self, embedder=None):
         return SearchEngine(self.conn, embedder=embedder or HashEmbedder())
 
-    def run_search(self, query, mode="hybrid", top_k=5, engine=None, **config):
-        return (engine or self.engine()).search(query, mode, top_k, SearchConfig(**config), workspaces=(self.tmp,))
+    def run_search(self, query, mode="hybrid", top_k=5, engine=None, filters=NO_FILTERS, **config):
+        return (engine or self.engine()).search(query, mode, top_k, SearchConfig(**config), workspaces=(self.tmp,), filters=filters)
+
+    def file_pk(self, file_id):
+        return next(r["file_pk"] for r in self.engine().speakers_in((self.tmp,)) if r["file_id"] == file_id)
 
     def test_result_contract(self):
         (top, *_) = self.run_search("tiling window compositor").results
@@ -183,8 +186,60 @@ class TestSearchEngine(ThrowawayDatabaseTestCase):
         self.assertTrue({"embed_query", "retrieve", "fuse", "localize", "total"} <= set(response.timings_ms))
         self.assertTrue(response.fused_chunk_ids)
 
+    def test_speakers_in_lists_every_indexed_speaker_with_names(self):
+        rows = self.engine().speakers_in((self.tmp,))
+        pairs = {(r["file_id"], r["speaker_label"]): r["display_name"] for r in rows}
+        self.assertEqual(pairs, {
+            ("cooking_show.wav", "SPEAKER_00"): None, ("cooking_show.wav", "SPEAKER_01"): None,
+            ("linux_talk.wav", "SPEAKER_00"): "Lex", ("linux_talk.wav", "SPEAKER_01"): "DHH",
+        })
+        self.assertEqual(self.engine().speakers_in(("somewhere-else",)), [])
+
+    def test_recording_filter_keeps_only_those_files_in_every_mode(self):
+        only_linux = SearchFilters(file_pks=(self.file_pk("linux_talk.wav"),))
+        for mode in ("hybrid", "lexical", "dense"):
+            results = self.run_search("secret patience theme window", mode=mode, top_k=10, filters=only_linux).results
+            self.assertTrue(results, mode)
+            self.assertEqual({r["file_id"] for r in results}, {"linux_talk.wav"}, mode)
+
+    def test_speaker_filter_keeps_only_that_speakers_lines(self):
+        lex = SearchFilters(speakers=((self.file_pk("linux_talk.wav"), "SPEAKER_00"),))
+        results = self.run_search("zebra theme", top_k=10, filters=lex).results
+        self.assertTrue(results)
+        self.assertEqual({(r["file_id"], r["speaker"]) for r in results}, {("linux_talk.wav", "Lex")})
+
+    def test_speaker_filter_spans_recordings(self):
+        both = SearchFilters(speakers=((self.file_pk("linux_talk.wav"), "SPEAKER_01"), (self.file_pk("cooking_show.wav"), "SPEAKER_01")))
+        results = self.run_search("zebra theme secret sourdough", top_k=10, filters=both).results
+        self.assertEqual({r["file_id"] for r in results}, {"linux_talk.wav", "cooking_show.wav"})
+        self.assertEqual({r["speaker_label"] for r in results}, {"SPEAKER_01"})
+
+    def test_combined_filters_are_intersected(self):
+        mismatch = SearchFilters(file_pks=(self.file_pk("cooking_show.wav"),), speakers=((self.file_pk("linux_talk.wav"), "SPEAKER_00"),))
+        self.assertEqual(self.run_search("zebra theme sourdough", filters=mismatch).results, [])
+
+    def test_empty_filters_change_nothing(self):
+        plain = self.engine().search("theme zebra plain dark colors window", "hybrid", 10, SearchConfig(), workspaces=(self.tmp,))
+        filtered = self.run_search("theme zebra plain dark colors window", top_k=10, filters=SearchFilters())
+        self.assertEqual(plain.results, filtered.results)
+
     def test_zero_weight_retriever_is_skipped(self):
         self.assertEqual(self.run_search("Hyprland desktop setup on the laptop today", mode="lexical", bm25_weight=0.0).results, [])
+
+
+class TestSearchFilters(unittest.TestCase):
+
+    def test_no_filters_is_exactly_the_workspace_clause(self):
+        self.assertEqual(NO_FILTERS.clause(), "c.file_pk IN (SELECT id FROM files WHERE workspace = ANY(%(ws)s))")
+
+    def test_clauses_and_params_for_each_filter(self):
+        filters = SearchFilters(file_pks=(3,), speakers=((3, "SPEAKER_00"), (7, "SPEAKER_01")))
+        clause = filters.clause()
+        self.assertIn("c.file_pk = ANY(%(file_pks)s)", clause)
+        self.assertIn("unnest(%(speaker_pks)s::int[], %(speaker_labels)s::text[])", clause)
+        self.assertEqual(filters.params(["dataset"]), {
+            "ws": ["dataset"], "file_pks": [3], "speaker_pks": [3, 7], "speaker_labels": ["SPEAKER_00", "SPEAKER_01"],
+        })
 
 
 class TestSearchConfig(unittest.TestCase):
